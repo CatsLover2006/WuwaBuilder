@@ -7,9 +7,11 @@ public class Build {
     public Level weaponLevel;
     public int chainLength;
     public int weaponRank;
-    public Echo echo1;
-    public Echo echo2;
-    public Echo echo3;
-    public Echo echo4;
-    public Echo echo5;
+    public Echo[] echoes;
+    public int[] skillLevels;
+    
+    public Build() {
+        echoes = new Echo[5];
+        skillLevels = new int[5];
+    }
 }
