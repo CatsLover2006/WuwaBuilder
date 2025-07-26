@@ -18,22 +18,26 @@ public class FindClosestImageTest {
     @Test
     public void FindClosestSonataTest() throws IOException {
         Assert.assertEquals(12, FindClosestImage.findClosestSonata(
-                ImageIO.read(new File("midnightVeil.jpg"))));
+                ImageIO.read(new File("testData/sonata/midnightVeil.jpg"))));
+        Assert.assertEquals(19, FindClosestImage.findClosestSonata(
+                ImageIO.read(new File("testData/sonata/dreamOfTheLost.png"))));
+        Assert.assertEquals(11, FindClosestImage.findClosestSonata(
+                ImageIO.read(new File("testData/sonata/eternalRadance.jpg"))));
     }
     
     @Test
     public void FindClosestEchoInSonataTest() throws IOException {
         Assert.assertEquals(6000115, FindClosestImage.findClosestEcho(
-                ImageIO.read(new File("nmHecate.png")), 19));
+                ImageIO.read(new File("testData/nmHecate.png")), 19));
         Assert.assertEquals(6000073, FindClosestImage.findClosestEcho(
-                ImageIO.read(new File("qNight.jpg")), 12));
+                ImageIO.read(new File("testData/qNight.jpg")), 12));
     }
     
     @Test
     public void FindClosestEchoGlobalTest() throws IOException {
         Assert.assertEquals(6000115, FindClosestImage.findClosestEcho(
-                ImageIO.read(new File("nmHecate.png"))));
+                ImageIO.read(new File("testData/nmHecate.png"))));
         Assert.assertEquals(6000073, FindClosestImage.findClosestEcho(
-                ImageIO.read(new File("qNight.jpg"))));
+                ImageIO.read(new File("testData/qNight.jpg"))));
     }
 }
