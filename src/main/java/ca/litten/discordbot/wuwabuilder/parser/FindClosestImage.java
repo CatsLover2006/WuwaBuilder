@@ -24,7 +24,7 @@ public class FindClosestImage {
             Graphics2D g2d = bufferedCheckImage.createGraphics();
             g2d.setColor(bgColor);
             g2d.fillRect(0, 0, dim, dim);
-            g2d.drawImage(HakushinInterface.echoImageCache.get(sonata)
+            g2d.drawImage(HakushinInterface.sonataImageCache.get(sonata)
                     .getScaledInstance(dim, dim, Image.SCALE_SMOOTH), 0, 0, null);
             g2d.dispose();
             for (int x = 0; x < sonataImage.getWidth(); x++)
