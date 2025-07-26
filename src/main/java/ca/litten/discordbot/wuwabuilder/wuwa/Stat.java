@@ -1,16 +1,13 @@
 package ca.litten.discordbot.wuwabuilder.wuwa;
 
-public enum Stats {
+public enum Stat {
     critDMG,
     critRate,
     flatATK,
-    baseATK,
     percentATK,
     flatHP,
-    baseHP,
     percentHP,
     flatDEF,
-    baseDEF,
     percentDEF,
     energyRegen,
     healingBonus,
