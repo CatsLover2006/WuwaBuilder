@@ -5,7 +5,6 @@ import ca.litten.discordbot.wuwabuilder.wuwa.Weapon;
 import org.junit.*;
 
 public class HakushinInterfaceTest {
-    
     @BeforeClass
     public static void Startup() {
         HakushinInterface.init();

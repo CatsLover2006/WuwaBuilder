@@ -20,11 +20,18 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class HakushinInterface {
-    private static final Map<Long, BufferedImage> sonataImageCache = new HashMap<>();
-    private static final Map<Long, BufferedImage> echoImageCache = new HashMap<>();
-    private static final Map<Long, String> sonataNameCache = new HashMap<>();
-    private static final Map<Long, String> echoNameCache = new HashMap<>();
-    private static final Map<Long, ArrayList<Long>> sonataEchoCache = new HashMap<>();
+    private static final Map<Long, BufferedImage> sonataImageCacheMutable = new HashMap<>();
+    private static final Map<Long, BufferedImage> echoImageCacheMutable = new HashMap<>();
+    private static final Map<Long, String> sonataNameCacheMutable = new HashMap<>();
+    private static final Map<Long, String> echoNameCacheMutable = new HashMap<>();
+    private static final Map<Long, ArrayList<Long>> sonataEchoCacheMutable = new HashMap<>();
+    
+    
+    public static final Map<Long, BufferedImage> sonataImageCache = Collections.unmodifiableMap(sonataImageCacheMutable);
+    public static final Map<Long, BufferedImage> echoImageCache = Collections.unmodifiableMap(echoImageCacheMutable);
+    public static final Map<Long, String> sonataNameCache = Collections.unmodifiableMap(sonataNameCacheMutable);
+    public static final Map<Long, String> echoNameCache = Collections.unmodifiableMap(echoNameCacheMutable);
+    public static final Map<Long, ArrayList<Long>> sonataEchoCache = Collections.unmodifiableMap(sonataEchoCacheMutable);
     
     public static URL baseURL;
     
@@ -36,10 +43,6 @@ public class HakushinInterface {
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
-    }
-    
-    public static Map<Long, BufferedImage> getEchoImageCache() {
-        return echoImageCache;
     }
     
     private static class UrlInputStreamReturnValue {
@@ -121,11 +124,11 @@ public class HakushinInterface {
             JSONObject echoObject = new JSONObject(new BufferedReader(
                     new InputStreamReader(cacheData.inputStream, StandardCharsets.UTF_8))
                     .lines().collect(Collectors.joining("\n")));
-            echoNameCache.put(echoObject.getLong("Id"), echoObject.getString("Name"));
+            echoNameCacheMutable.put(echoObject.getLong("Id"), echoObject.getString("Name"));
             try {
                 String iconSubURL = echoObject.getString("Icon").replace("/Game/Aki", "");
                 imageGrabberThread = new ImageGrabberThread(image -> {
-                    echoImageCache.put(echoObject.getLong("Id"), image);
+                    echoImageCacheMutable.put(echoObject.getLong("Id"), image);
                 }, new URL(baseURL, "ww" + iconSubURL.substring(0, iconSubURL.lastIndexOf('.')) + ".webp"));
                 imageGrabberThread.start();
                 imageGrabberThreads.add(imageGrabberThread);
@@ -134,15 +137,15 @@ public class HakushinInterface {
             }
             JSONObject echoSonatas = echoObject.getJSONObject("Group");
             for (String sonata : echoSonatas.keySet()) {
-                if (sonataEchoCache.containsKey(Long.parseLong(sonata))) {
-                    sonataEchoCache.get(Long.parseLong(sonata)).add(echoObject.getLong("Id"));
+                if (sonataEchoCacheMutable.containsKey(Long.parseLong(sonata))) {
+                    sonataEchoCacheMutable.get(Long.parseLong(sonata)).add(echoObject.getLong("Id"));
                     continue;
                 }
                 JSONObject sonataJSON = echoSonatas.getJSONObject(sonata);
                 try {
                     String iconSubURL = sonataJSON.getString("Icon").replace("/Game/Aki", "");
                     imageGrabberThread = new ImageGrabberThread(image -> {
-                        sonataImageCache.put(sonataJSON.getLong("Id"), image);
+                        sonataImageCacheMutable.put(sonataJSON.getLong("Id"), image);
                     }, new URL(baseURL, "ww" + iconSubURL.substring(0, iconSubURL.lastIndexOf('.')) + ".webp"));
                     imageGrabberThread.start();
                     imageGrabberThreads.add(imageGrabberThread);
@@ -151,8 +154,8 @@ public class HakushinInterface {
                 }
                 ArrayList<Long> sonataEcho = new ArrayList<>();
                 sonataEcho.add(echoObject.getLong("Id"));
-                sonataEchoCache.put(sonataJSON.getLong("Id"), sonataEcho);
-                sonataNameCache.put(sonataJSON.getLong("Id"), sonataJSON.getString("Name"));
+                sonataEchoCacheMutable.put(sonataJSON.getLong("Id"), sonataEcho);
+                sonataNameCacheMutable.put(sonataJSON.getLong("Id"), sonataJSON.getString("Name"));
             }
         }
         System.out.println("Caching weapon names, images, and stats...");
