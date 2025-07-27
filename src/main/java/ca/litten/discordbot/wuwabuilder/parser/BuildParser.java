@@ -45,7 +45,7 @@ public class BuildParser {
         return Level.valueOf("abcdefghi".charAt(ascension) + String.valueOf(level));
     }
     
-    private static StatPair readStat(String name, String value) {
+    public static StatPair readStat(String name, String value) {
         value = value.replaceAll("[^0-9\\.%]", "");
         switch (name) {
             case "ATK":

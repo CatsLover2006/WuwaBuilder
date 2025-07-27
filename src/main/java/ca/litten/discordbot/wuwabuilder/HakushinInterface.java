@@ -37,14 +37,6 @@ public class HakushinInterface {
     
     private static boolean initialized = false;
     
-    static {
-        try {
-            baseURL = new URL("https://api.hakush.in/"); // Will put the domain in config later
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-    
     private static class UrlInputStreamReturnValue {
         public HttpURLConnection urlConnection;
         public InputStream inputStream;
@@ -99,6 +91,15 @@ public class HakushinInterface {
     }
     
     public static void init() {
+        try { // Default URL
+            init(new URL("https://api.hakush.in/"));
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    public static void init(URL baseURL) {
+        HakushinInterface.baseURL = baseURL;
         if (initialized) return; // Leave before we fuck shit up
         initialized = true;
         UrlInputStreamReturnValue cacheData;

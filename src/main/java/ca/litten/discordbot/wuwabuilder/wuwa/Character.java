@@ -1,6 +1,7 @@
 package ca.litten.discordbot.wuwabuilder.wuwa;
 
 import ca.litten.discordbot.wuwabuilder.HakushinInterface;
+import ca.litten.discordbot.wuwabuilder.parser.BuildParser;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -11,6 +12,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import static ca.litten.discordbot.wuwabuilder.HakushinInterface.baseURL;
 
@@ -28,10 +30,14 @@ public class Character {
     private int starCount;
     private long id;
     
-    public class MinorStatBuff {
-        HakushinInterface.StatPair stat;
-        BufferedImage image;
-        int overtop;
+    public static class MinorStatBuff {
+        public HakushinInterface.StatPair stat;
+        public BufferedImage image;
+    }
+    
+    private static class StatBufPassalong {
+        public MinorStatBuff statBuff;
+        public int pointedAt;
     }
     
     private Character() {
@@ -43,7 +49,7 @@ public class Character {
         minorStatBuffs = new MinorStatBuff[8];
     };
     
-    public void createCharacter(JSONObject hakushinJSON) {
+    public static void createCharacter(JSONObject hakushinJSON) {
         Character character = new Character();
         characters.put(hakushinJSON.getLong("Id"), character);
         character.id = hakushinJSON.getLong("Id");
@@ -70,7 +76,10 @@ public class Character {
                 imageGrabberThreads.add(imageGrabberThread);
             }
             JSONObject skillTreeCache = hakushinJSON.getJSONObject("SkillTrees");
-            for (String key : skillTreeCache.keySet()) {
+            Set<String> skillTreeCacheKeys = skillTreeCache.keySet();
+            Object[] info = new Object[skillTreeCacheKeys.size()];
+            for (int i = 0; i < skillTreeCacheKeys.size(); i++) info[i] = null;
+            for (String key : skillTreeCacheKeys) {
                 JSONObject skillObject = skillTreeCache.getJSONObject(key);
                 switch (skillObject.getInt("NodeType")) {
                     case 1: { // Forte
@@ -96,6 +105,7 @@ public class Character {
                                         skillURL.lastIndexOf('.')) + ".webp"));
                         imageGrabberThread.start();
                         imageGrabberThreads.add(imageGrabberThread);
+                        info[Integer.parseInt(key) - 1] = skillObject.getInt("Coordinate");
                         break;
                     }
                     case 3: {
@@ -114,15 +124,65 @@ public class Character {
                     }
                     case 4: {
                         MinorStatBuff statBuff = new MinorStatBuff();
-                        String skillURL = skillObject.getJSONObject("Skill").getString("Icon")
-                                .replace("/Game/Aki", "");
+                        JSONObject skillObj = skillObject.getJSONObject("Skill");
+                        String skillURL = skillObj.getString("Icon").replace("/Game/Aki", "");
                         imageGrabberThread = new HakushinInterface.ImageGrabberThread(image ->
                                 statBuff.image = image,
                                 new URL(baseURL, "ww" + skillURL.substring(0,
                                         skillURL.lastIndexOf('.')) + ".webp"));
                         imageGrabberThread.start();
                         imageGrabberThreads.add(imageGrabberThread);
-                        // Here comes the hard part: figuring out where the fuck it goes
+                        statBuff.stat = BuildParser.readStat(skillObj.getString("Name").replace("+",""),
+                                skillObj.getJSONArray("Param").getString(0));
+                        StatBufPassalong passer = new StatBufPassalong();
+                        passer.statBuff = statBuff;
+                        passer.pointedAt = skillObject.getJSONArray("ParentNodes").getInt(0) - 1;
+                        info[Integer.parseInt(key) - 1] = passer; // Pass it on!
+                    }
+                }
+            }
+            for (int i = 0; i < skillTreeCacheKeys.size(); i++) {
+                if (info[i] == null || info[i] instanceof Integer) continue;
+                if (info[i] instanceof StatBufPassalong) {
+                    Object pointedAt = info[((StatBufPassalong) info[i]).pointedAt];
+                    if (pointedAt instanceof Integer) {
+                        switch ((Integer) pointedAt) {
+                            case 1: { // 1: Basic
+                                character.minorStatBuffs[0] = ((StatBufPassalong) info[i]).statBuff;
+                                break;
+                            }
+                            case 2: { // 2: Skill
+                                character.minorStatBuffs[2] = ((StatBufPassalong) info[i]).statBuff;
+                                break;
+                            }
+                            case 3: { // 3: Liberation
+                                character.minorStatBuffs[4] = ((StatBufPassalong) info[i]).statBuff;
+                                break;
+                            }
+                            case 4: { // 4: Intro
+                                character.minorStatBuffs[6] = ((StatBufPassalong) info[i]).statBuff;
+                                break;
+                            }
+                        }
+                    } else { // It's pointed at a stat buff
+                        switch ((Integer) info[((StatBufPassalong) pointedAt).pointedAt]) {
+                            case 1: { // 1: Basic
+                                character.minorStatBuffs[1] = ((StatBufPassalong) info[i]).statBuff;
+                                break;
+                            }
+                            case 2: { // 2: Skill
+                                character.minorStatBuffs[3] = ((StatBufPassalong) info[i]).statBuff;
+                                break;
+                            }
+                            case 3: { // 3: Liberation
+                                character.minorStatBuffs[5] = ((StatBufPassalong) info[i]).statBuff;
+                                break;
+                            }
+                            case 4: { // 4: Intro
+                                character.minorStatBuffs[7] = ((StatBufPassalong) info[i]).statBuff;
+                                break;
+                            }
+                        }
                     }
                 }
             }
