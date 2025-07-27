@@ -17,7 +17,7 @@ public enum Stat {
     aeroBonus,
     spectroBonus,
     havocBonus,
-    naBonus,
+    basicBonus,
     heavyBonus,
     skillBonus,
     ultBonus

@@ -2,7 +2,7 @@ package ca.litten.discordbot.wuwabuilder.parser;
 
 
 import static ca.litten.discordbot.wuwabuilder.HakushinInterface.StatPair;
-import ca.litten.discordbot.wuwabuilder.HakushinInterface;
+
 import ca.litten.discordbot.wuwabuilder.wuwa.*;
 
 import java.awt.image.BufferedImage;
@@ -15,6 +15,8 @@ import org.bytedeco.tesseract.*;
 public class BuildParser {
     private static int[] sequenceX = {190, 264, 345, 425, 505, 585};
     private static int[] echoX = {25, 398, 772, 1147, 1520};
+    private static int[] skillX = {1172, 1053, 820, 1256, 912};
+    private static int[] skillY = {588, 185, 341, 341, 588};
     
     private static String ocrExec(TessBaseAPI ocr, BufferedImage subsegment) {
         byte[] OCRbytes = new byte[subsegment.getHeight() * subsegment.getWidth() * 3];
@@ -27,6 +29,20 @@ public class BuildParser {
             }
         ocr.SetImage(OCRbytes, subsegment.getWidth(), subsegment.getHeight(), 3, 3 * subsegment.getWidth());
         return ocr.GetUTF8Text().getString(StandardCharsets.UTF_8).trim().replace("\n", " ");
+    }
+    
+    private static Level levelLookup(int level) {
+        if (level > 80) return levelLookup(level, 6);
+        if (level > 70) return levelLookup(level, 5);
+        if (level > 60) return levelLookup(level, 4);
+        if (level > 50) return levelLookup(level, 3);
+        if (level > 40) return levelLookup(level, 2);
+        if (level > 20) return levelLookup(level, 1);
+        return levelLookup(level, 0);
+    }
+    
+    private static Level levelLookup(int level, int ascension) {
+        return Level.valueOf("abcdefghi".charAt(ascension) + String.valueOf(level));
     }
     
     private static StatPair readStat(String name, String value) {
@@ -63,7 +79,7 @@ public class BuildParser {
             case "Spectro DMG Bonus":
                 return new StatPair(Stat.spectroBonus, Float.parseFloat(value.replace("%","")));
             case "Basic Attack DMG Bonus":
-                return new StatPair(Stat.naBonus, Float.parseFloat(value.replace("%","")));
+                return new StatPair(Stat.basicBonus, Float.parseFloat(value.replace("%","")));
             case "Heavy Attack DMG Bonus":
                 return new StatPair(Stat.heavyBonus, Float.parseFloat(value.replace("%","")));
             case "Resonance Skill DMG Bonus":
@@ -85,24 +101,59 @@ public class BuildParser {
         }
         TessBaseAPI ocr_name = new TessBaseAPI();
         TessBaseAPI ocr_digits = new TessBaseAPI();
-        if (ocr_name.Init(null, "eng", 1) != 0) {
-            throw new RuntimeException("Failed to start tesseract");
-        }
-        if (ocr_digits.Init(null, "eng", 1) != 0) {
+        TessBaseAPI ocr_weap = new TessBaseAPI();
+        if (ocr_name.Init(null, "eng", 1) != 0
+                || ocr_digits.Init(null, "eng", 1) != 0
+                || ocr_weap.Init(null, "eng", 1) != 0) {
             throw new RuntimeException("Failed to start tesseract");
         }
         ocr_name.SetVariable("tessedit_char_whitelist", "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm .");
-        ocr_digits.SetVariable("tessedit_char_whitelist", "1234567890.%");
+        ocr_weap.SetVariable("tessedit_char_whitelist", "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm" +
+                " .-':1234890#");
+        ocr_digits.SetVariable("tessedit_char_whitelist", "1234567890/.%");
         build.weaponRank = 1; // IDK if this even is on the thing
+        BufferedImage charaLevel = image.getSubimage(68, 41, 686, 23);
+        // 70 wide
+        boolean columnGood;
+        int x, y, r, b, rgb;
+        for (x = 0; x < charaLevel.getWidth(); x++) {
+            columnGood = true;
+            for (y = 0; y < charaLevel.getHeight(); y++) {
+                rgb = charaLevel.getRGB(x, y);
+                r = (rgb >> 16) & 0x0ff;
+                b = rgb & 0x0ff;
+                if (r < 180) columnGood = false;
+                if (b > 150) columnGood = false;
+                if (!columnGood) break;
+            }
+            if (columnGood) break;
+        }
         build.character = Character.getCharacterByName(
-                ocrExec(ocr_name, image.getSubimage(68, 23, 686, 65))
-                        .replace("LV", ""));
+                ocrExec(ocr_name, image.getSubimage(68, 23, x-4, 65)));
+        BufferedImage charaLevelSubimage;
+        try {
+            charaLevelSubimage = charaLevel.getSubimage(x, 0, 55, charaLevel.getHeight());
+        } catch (Exception e) {
+            charaLevelSubimage = charaLevel; // Backup
+        }
+        build.characterLevel = levelLookup(Integer.parseInt(
+                ocrExec(ocr_digits, charaLevelSubimage).replace(".", "")));
+        build.weapon = Weapon.getWeaponByName(ocrExec(ocr_weap, image.getSubimage(1602, 455, 275, 24)));
+        // Get weapon ascension
+        int ascension;
+        for (ascension = 0; ascension <= 6; ascension++) {
+            if ((image.getRGB(1618 + 25 * ascension, 599) & 0x00ff0000) < 0x00800000)
+                break;
+        }
         String stat, value;
+        value = ocrExec(ocr_weap, image.getSubimage(1645, 506, 65, 32));
+        build.weaponLevel = levelLookup(Integer.parseInt(value.substring(value.lastIndexOf('.') + 1)), ascension);
+        // Echoes
         for (int i = 0; i < 5; i++) {
             long sonata = FindClosestImage.findClosestSonata(image.getSubimage(echoX[i] + 243, 663, 48, 48));
             long echoID = FindClosestImage.findClosestEcho(image.getSubimage(echoX[i], 654, 190, 180), sonata);
             BufferedImage OCRimage = image.getSubimage(echoX[i] + 17, 726, 338, 335);
-            stat = ocrExec(ocr_name, OCRimage.getSubimage(28, 119, 222, 25));
+            stat = ocrExec(ocr_name, OCRimage.getSubimage(22, 119, 228, 25));
             value = ocrExec(ocr_digits, OCRimage.getSubimage(250, 119, 88, 25));
             StatPair mainStat = readStat(stat, value);
             stat = ocrExec(ocr_name, OCRimage.getSubimage(179, 0, 159, 19));
@@ -119,9 +170,18 @@ public class BuildParser {
                 }
             }
             build.echoes[i] = new Echo(echoID, sonata, mainStat.stat, mainStat.value,
-                    stat2.stat, stat2.value, subStats);
+                    stat2.stat, stat2.value % 100, subStats);
+        }
+        // Skills
+        for (int i = 0; i < 5; i++) {
+            BufferedImage temp = image.getSubimage(skillX[i], skillY[i], 113, 25);
+            value = ocrExec(ocr_digits, temp);
+            value = value.substring(value.indexOf('.'), value.lastIndexOf('/')).replace(".","");
+            build.skillLevels[i] = Integer.parseInt(value);
         }
         ocr_name.End();
+        ocr_digits.End();
+        ocr_weap.End();
         return build;
     }
 }

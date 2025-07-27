@@ -13,5 +13,6 @@ public class Build {
     public Build() {
         echoes = new Echo[5];
         skillLevels = new int[5];
+        for (int i = 0; i < 5; i++) skillLevels[i] = 1;
     }
 }

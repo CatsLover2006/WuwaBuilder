@@ -23,19 +23,27 @@ public class Character {
     private BufferedImage image;
     private final BufferedImage[] chains;
     private final BufferedImage[] skills;
+    private final MinorStatBuff[] minorStatBuffs;
     private String name;
     private int starCount;
     private long id;
+    
+    public class MinorStatBuff {
+        HakushinInterface.StatPair stat;
+        BufferedImage image;
+        int overtop;
+    }
     
     private Character() {
         atkMagnitude = new HashMap<>();
         hpMagnitude = new HashMap<>();
         defMagnitude = new HashMap<>();
         chains = new BufferedImage[6];
-        skills = new BufferedImage[5];
+        skills = new BufferedImage[8];
+        minorStatBuffs = new MinorStatBuff[8];
     };
     
-    public static void createCharacter(JSONObject hakushinJSON) {
+    public void createCharacter(JSONObject hakushinJSON) {
         Character character = new Character();
         characters.put(hakushinJSON.getLong("Id"), character);
         character.id = hakushinJSON.getLong("Id");
@@ -64,27 +72,58 @@ public class Character {
             JSONObject skillTreeCache = hakushinJSON.getJSONObject("SkillTrees");
             for (String key : skillTreeCache.keySet()) {
                 JSONObject skillObject = skillTreeCache.getJSONObject(key);
-                if (skillObject.getInt("NodeType") == 1) { // Forte
-                    String skillURL = skillObject.getJSONObject("Skill").getString("Icon")
-                            .replace("/Game/Aki", "");
-                    imageGrabberThread = new HakushinInterface.ImageGrabberThread(image -> character.skills[0] = image,
-                            new URL(baseURL, "ww" + skillURL.substring(0,
-                                    skillURL.lastIndexOf('.')) + ".webp"));
-                    imageGrabberThread.start();
-                    imageGrabberThreads.add(imageGrabberThread);
-                } else if (skillObject.getInt("NodeType") == 2) {
-                    // 1: Basic
-                    // 2: Skill
-                    // 3: Liberation
-                    // 4: Intro
-                    String skillURL = skillObject.getJSONObject("Skill").getString("Icon")
-                            .replace("/Game/Aki", "");
-                    imageGrabberThread = new HakushinInterface.ImageGrabberThread(image ->
-                            character.skills[skillObject.getInt("Coordinate")] = image,
-                            new URL(baseURL, "ww" + skillURL.substring(0,
-                                    skillURL.lastIndexOf('.')) + ".webp"));
-                    imageGrabberThread.start();
-                    imageGrabberThreads.add(imageGrabberThread);
+                switch (skillObject.getInt("NodeType")) {
+                    case 1: { // Forte
+                        String skillURL = skillObject.getJSONObject("Skill").getString("Icon")
+                                .replace("/Game/Aki", "");
+                        imageGrabberThread = new HakushinInterface.ImageGrabberThread(image -> character.skills[0] = image,
+                                new URL(baseURL, "ww" + skillURL.substring(0,
+                                        skillURL.lastIndexOf('.')) + ".webp"));
+                        imageGrabberThread.start();
+                        imageGrabberThreads.add(imageGrabberThread);
+                        break;
+                    }
+                    case 2: {
+                        // 1: Basic
+                        // 2: Skill
+                        // 3: Liberation
+                        // 4: Intro
+                        String skillURL = skillObject.getJSONObject("Skill").getString("Icon")
+                                .replace("/Game/Aki", "");
+                        imageGrabberThread = new HakushinInterface.ImageGrabberThread(image ->
+                                character.skills[skillObject.getInt("Coordinate")] = image,
+                                new URL(baseURL, "ww" + skillURL.substring(0,
+                                        skillURL.lastIndexOf('.')) + ".webp"));
+                        imageGrabberThread.start();
+                        imageGrabberThreads.add(imageGrabberThread);
+                        break;
+                    }
+                    case 3: {
+                        // 1: Outro
+                        // 2: Inherent 1
+                        // 3: Inherent 2
+                        String skillURL = skillObject.getJSONObject("Skill").getString("Icon")
+                                .replace("/Game/Aki", "");
+                        imageGrabberThread = new HakushinInterface.ImageGrabberThread(image ->
+                                character.skills[skillObject.getInt("Coordinate") + 4] = image,
+                                new URL(baseURL, "ww" + skillURL.substring(0,
+                                        skillURL.lastIndexOf('.')) + ".webp"));
+                        imageGrabberThread.start();
+                        imageGrabberThreads.add(imageGrabberThread);
+                        break;
+                    }
+                    case 4: {
+                        MinorStatBuff statBuff = new MinorStatBuff();
+                        String skillURL = skillObject.getJSONObject("Skill").getString("Icon")
+                                .replace("/Game/Aki", "");
+                        imageGrabberThread = new HakushinInterface.ImageGrabberThread(image ->
+                                statBuff.image = image,
+                                new URL(baseURL, "ww" + skillURL.substring(0,
+                                        skillURL.lastIndexOf('.')) + ".webp"));
+                        imageGrabberThread.start();
+                        imageGrabberThreads.add(imageGrabberThread);
+                        // Here comes the hard part: figuring out where the fuck it goes
+                    }
                 }
             }
         } catch (MalformedURLException e) {

@@ -8,7 +8,6 @@ import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
 
-@TestClassOrder(ClassOrderer.OrderAnnotation.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Order(1)
 public class FindClosestImageTest {
