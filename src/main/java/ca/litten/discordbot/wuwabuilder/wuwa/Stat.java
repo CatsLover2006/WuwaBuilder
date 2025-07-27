@@ -16,5 +16,9 @@ public enum Stat {
     electroBonus,
     aeroBonus,
     spectroBonus,
-    havocBonus
+    havocBonus,
+    naBonus,
+    heavyBonus,
+    skillBonus,
+    ultBonus
 }

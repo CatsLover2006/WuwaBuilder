@@ -40,14 +40,14 @@ public class FindClosestImage {
     }
     
     private static int getColorDif(int rgb1, int rgb2) {
-        int red1 = (rgb1 >> 24) & 0x0ff;
-        int green1 = (rgb1 >> 16) & 0x0ff;
-        int blue1 = (rgb1 >> 8) & 0x0ff;
-        int alpha1 = rgb1 & 0x0ff;
-        int red2 = (rgb2 >> 24) & 0x0ff;
-        int green2 = (rgb2 >> 16) & 0x0ff;
-        int blue2 = (rgb2 >> 8) & 0x0ff;
-        int alpha2 = rgb2 & 0x0ff;
+        int alpha1 = (rgb1 >> 24) & 0x0ff;
+        int red1 = (rgb1 >> 16) & 0x0ff;
+        int green1 = (rgb1 >> 8) & 0x0ff;
+        int blue1 = rgb1 & 0x0ff;
+        int alpha2 = (rgb2 >> 24) & 0x0ff;
+        int red2 = (rgb2 >> 16) & 0x0ff;
+        int green2 = (rgb2 >> 8) & 0x0ff;
+        int blue2 = rgb2 & 0x0ff;
         return (Math.abs(red1 - red2) + Math.abs(green1 - green2) + Math.abs(blue1 - blue2)) * Math.min(alpha1, alpha2);
     }
     

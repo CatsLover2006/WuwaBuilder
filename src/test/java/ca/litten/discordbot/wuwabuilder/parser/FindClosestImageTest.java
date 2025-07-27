@@ -1,43 +1,48 @@
 package ca.litten.discordbot.wuwabuilder.parser;
 
 import ca.litten.discordbot.wuwabuilder.HakushinInterface;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
 
+@TestClassOrder(ClassOrderer.OrderAnnotation.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@Order(1)
 public class FindClosestImageTest {
-    @BeforeClass
+    @BeforeAll
     public static void Startup() {
         HakushinInterface.init(); // We need the images
     }
     
     @Test
+    @Order(1)
     public void FindClosestSonataTest() throws IOException {
-        Assert.assertEquals(12, FindClosestImage.findClosestSonata(
+        assertEquals(12, FindClosestImage.findClosestSonata(
                 ImageIO.read(new File("testData/sonata/midnightVeil.jpg"))));
-        Assert.assertEquals(19, FindClosestImage.findClosestSonata(
+        assertEquals(19, FindClosestImage.findClosestSonata(
                 ImageIO.read(new File("testData/sonata/dreamOfTheLost.png"))));
-        Assert.assertEquals(11, FindClosestImage.findClosestSonata(
+        assertEquals(11, FindClosestImage.findClosestSonata(
                 ImageIO.read(new File("testData/sonata/eternalRadance.jpg"))));
     }
     
     @Test
+    @Order(2)
     public void FindClosestEchoInSonataTest() throws IOException {
-        Assert.assertEquals(6000115, FindClosestImage.findClosestEcho(
+        assertEquals(6000115, FindClosestImage.findClosestEcho(
                 ImageIO.read(new File("testData/nmHecate.png")), 19));
-        Assert.assertEquals(6000073, FindClosestImage.findClosestEcho(
+        assertEquals(6000073, FindClosestImage.findClosestEcho(
                 ImageIO.read(new File("testData/qNight.jpg")), 12));
     }
     
     @Test
+    @Order(3)
     public void FindClosestEchoGlobalTest() throws IOException {
-        Assert.assertEquals(6000115, FindClosestImage.findClosestEcho(
+        assertEquals(6000115, FindClosestImage.findClosestEcho(
                 ImageIO.read(new File("testData/nmHecate.png"))));
-        Assert.assertEquals(6000073, FindClosestImage.findClosestEcho(
+        assertEquals(6000073, FindClosestImage.findClosestEcho(
                 ImageIO.read(new File("testData/qNight.jpg"))));
     }
 }

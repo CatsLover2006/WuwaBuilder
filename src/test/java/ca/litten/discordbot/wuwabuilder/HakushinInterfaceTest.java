@@ -2,17 +2,20 @@ package ca.litten.discordbot.wuwabuilder;
 
 import ca.litten.discordbot.wuwabuilder.wuwa.Character;
 import ca.litten.discordbot.wuwabuilder.wuwa.Weapon;
-import org.junit.*;
+import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.*;
 
+@TestClassOrder(ClassOrderer.OrderAnnotation.class)
+@Order(0)
 public class HakushinInterfaceTest {
-    @BeforeClass
+    @BeforeAll
     public static void Startup() {
         HakushinInterface.init();
     }
     
     @Test
     public void VerifyByID() {
-        Assert.assertEquals("Sanhua", Character.getCharacterByID(1102).getName());
-        Assert.assertEquals("Emerald of Genesis", Weapon.getWeaponByID(21020015).getName());
+        assertEquals("Sanhua", Character.getCharacterByID(1102).getName());
+        assertEquals("Emerald of Genesis", Weapon.getWeaponByID(21020015).getName());
     }
 }
