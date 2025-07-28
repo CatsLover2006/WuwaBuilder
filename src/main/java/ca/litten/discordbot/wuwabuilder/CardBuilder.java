@@ -33,7 +33,7 @@ public class CardBuilder {
     
     public void drawCircledImage(Graphics2D g2d, int x, int y, int r, BufferedImage image, Color front, Color back) {
         g2d.setColor(back);
-        g2d.drawArc(x, y, r * 2, r * 2, 0, 360);
+        g2d.fillArc(x, y, r, r, 0, 360);
         BufferedImage imageTint = new BufferedImage(r, r, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g3d = imageTint.createGraphics();
         g3d.drawImage(image.getScaledInstance(r, r, Image.SCALE_SMOOTH), 0, 0, null);
@@ -113,8 +113,8 @@ public class CardBuilder {
         g2d.setPaint(mainLightModePaint);
         g2d.drawString(characterLevelText, characterPositionX, characterNameHeight + (int)(0.8 * characterLevelHeight));
         for (int i = 0; i < 6; i++) {
-            drawCircledImage(g2d, 762, 175 * i + 12, 101, build.character.getChain(i),
-                    new Color(0x80151617, build.chainLength > i), new Color(0xffffff));
+            drawCircledImage(g2d, 762, 125 * i + 12, 101, build.character.getChain(i),
+                    new Color(0x80151617, !(build.chainLength > i)), new Color(0xffffff));
         }
         g2d.dispose();
         return output;
