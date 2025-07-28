@@ -25,7 +25,6 @@ public class HakushinInterface {
     private static final Map<Long, String> sonataNameCacheMutable = new HashMap<>();
     private static final Map<Long, String> echoNameCacheMutable = new HashMap<>();
     private static final Map<Long, ArrayList<Long>> sonataEchoCacheMutable = new HashMap<>();
-    private static final Map<Stat, BufferedImage> statLogosMutable = new HashMap<>();
     
     
     public static final Map<Long, BufferedImage> sonataImageCache = Collections.unmodifiableMap(sonataImageCacheMutable);
@@ -33,7 +32,6 @@ public class HakushinInterface {
     public static final Map<Long, String> sonataNameCache = Collections.unmodifiableMap(sonataNameCacheMutable);
     public static final Map<Long, String> echoNameCache = Collections.unmodifiableMap(echoNameCacheMutable);
     public static final Map<Long, ArrayList<Long>> sonataEchoCache = Collections.unmodifiableMap(sonataEchoCacheMutable);
-    public static final Map<Stat, BufferedImage> statLogos = Collections.unmodifiableMap(statLogosMutable);
     
     public static URL baseURL;
     

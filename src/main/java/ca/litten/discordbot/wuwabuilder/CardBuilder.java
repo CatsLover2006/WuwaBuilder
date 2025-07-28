@@ -31,7 +31,18 @@ public class CardBuilder {
         this.isLightMode = isLightMode;
     }
     
-    public void drawCircledImage(Graphics2D g2d, int x, int y, int r, BufferedImage image, Color front, Color back) {}
+    public void drawCircledImage(Graphics2D g2d, int x, int y, int r, BufferedImage image, Color front, Color back) {
+        g2d.setColor(back);
+        g2d.drawArc(x, y, r * 2, r * 2, 0, 360);
+        BufferedImage imageTint = new BufferedImage(r, r, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g3d = imageTint.createGraphics();
+        g3d.drawImage(image.getScaledInstance(r, r, Image.SCALE_SMOOTH), 0, 0, null);
+        g3d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, front.getAlpha() / 255.0f));
+        g3d.setColor(front);
+        g3d.fillRect(0, 0, r, r);
+        g3d.dispose();
+        g2d.drawImage(imageTint, x, y, null);
+    }
     
     public BufferedImage createCard(Build build) {
         StatPage statPage = StatPage.calculateStats(build);
@@ -60,7 +71,51 @@ public class CardBuilder {
         g2d.fillArc(characterPositionX + characterNameWidth - characterNameHeight/10, (int)(characterNameHeight * 0.8), characterNameHeight/5, characterNameHeight/5, 0, -90);
         g2d.fillArc(characterPositionX - characterNameHeight/10, (int)(characterNameHeight * 0.8), characterNameHeight/5, characterNameHeight/5, 180, 90);
         g2d.setPaint(mainLightModePaint);
+        g2d.fillRect(875, 0, 10, 750);
         g2d.drawString(build.character.getName(), characterPositionX, (int)(0.8 * characterNameHeight));
+        int characterLevelHeight = 35;
+        g2d.setFont(font.deriveFont(Font.PLAIN, (int)(characterLevelHeight * 0.9)));
+        String characterLevelText = build.characterLevel.toString();
+        switch (characterLevelText.charAt(0)) {
+            case 'b':
+                characterLevelText = characterLevelText + "/40";
+                break;
+            case 'c':
+                characterLevelText = characterLevelText + "/50";
+                break;
+            case 'd':
+                characterLevelText = characterLevelText + "/60";
+                break;
+            case 'e':
+                characterLevelText = characterLevelText + "/70";
+                break;
+            case 'f':
+                characterLevelText = characterLevelText + "/80";
+                break;
+            case 'g':
+                characterLevelText = characterLevelText + "/90";
+                break;
+            case 'a':
+            default:
+                characterLevelText = characterLevelText + "/20";
+                break;
+        }
+        characterLevelText = "Lv. " + characterLevelText.substring(1);
+        int characterLevelWidth = g2d.getFontMetrics().stringWidth(characterLevelText);
+        System.out.println(characterLevelWidth);
+        characterPositionX = 375 - characterLevelWidth/2;
+        g2d.setPaint(dualLightModePaint);
+        g2d.fillRect(characterPositionX, characterNameHeight, characterLevelWidth, characterLevelHeight);
+        g2d.fillRect(characterPositionX + characterLevelWidth, characterNameHeight, characterLevelHeight/10, (int)(characterLevelHeight * 0.9));
+        g2d.fillRect(characterPositionX - characterLevelHeight/10, characterNameHeight, characterLevelHeight/10, (int)(characterLevelHeight * 0.9));
+        g2d.fillArc(characterPositionX + characterLevelWidth - characterLevelHeight/10, characterNameHeight + (int)(characterLevelHeight * 0.8), characterLevelHeight/5, characterLevelHeight/5, 0, -90);
+        g2d.fillArc(characterPositionX - characterLevelHeight/10, characterNameHeight + (int)(characterLevelHeight * 0.8), characterLevelHeight/5, characterLevelHeight/5, 180, 90);
+        g2d.setPaint(mainLightModePaint);
+        g2d.drawString(characterLevelText, characterPositionX, characterNameHeight + (int)(0.8 * characterLevelHeight));
+        for (int i = 0; i < 6; i++) {
+            drawCircledImage(g2d, 762, 175 * i + 12, 101, build.character.getChain(i),
+                    new Color(0x80151617, build.chainLength > i), new Color(0xffffff));
+        }
         g2d.dispose();
         return output;
     }

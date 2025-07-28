@@ -2,6 +2,7 @@ package ca.litten.discordbot.wuwabuilder;
 
 import ca.litten.discordbot.wuwabuilder.parser.BuildParser;
 import ca.litten.discordbot.wuwabuilder.wuwa.Build;
+import ca.litten.discordbot.wuwabuilder.wuwa.ExtraData;
 import ca.litten.discordbot.wuwabuilder.wuwa.StatPage;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Order;

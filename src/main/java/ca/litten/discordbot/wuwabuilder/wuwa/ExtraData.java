@@ -6,10 +6,7 @@ import static ca.litten.discordbot.wuwabuilder.HakushinInterface.StatPair;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Objects;
+import java.util.*;
 
 public class ExtraData {
     public static class Sonata {
@@ -37,6 +34,7 @@ public class ExtraData {
     // Unconditional buffs
     public static final HashMap<Long, StatPair[][]> weaponPassiveBuffs = new HashMap<>();
     private static final HashMap<Sonata, StatPair[]> sonataBuffs = new HashMap<>();
+    private static final HashMap<Stat, BufferedImage> statLogos = new HashMap<>();
     
     private static final StatPair[] noBuffs = new StatPair[0];
     
@@ -156,6 +154,35 @@ public class ExtraData {
             {basic12, heavy12},{basic15, heavy15},{basic18, heavy18},{basic21, heavy21},{basic24, heavy24}};
     
     static {
+        // Stat Logos
+        try {
+            BufferedImage atk = ImageIO.read(new File("res/attack.png"));
+            BufferedImage def = ImageIO.read(new File("res/defense.png"));
+            BufferedImage hp = ImageIO.read(new File("res/hp.png"));
+            statLogos.put(Stat.flatATK, atk);
+            statLogos.put(Stat.percentATK, atk);
+            statLogos.put(Stat.flatDEF, def);
+            statLogos.put(Stat.percentDEF, def);
+            statLogos.put(Stat.flatHP, hp);
+            statLogos.put(Stat.percentHP, hp);
+            statLogos.put(Stat.critRate, ImageIO.read(new File("res/critRate.png")));
+            statLogos.put(Stat.critDMG, ImageIO.read(new File("res/critDMG.png")));
+            statLogos.put(Stat.energyRegen, ImageIO.read(new File("res/energyRegen.png")));
+            statLogos.put(Stat.basicBonus, ImageIO.read(new File("res/basicBonus.png")));
+            statLogos.put(Stat.heavyBonus, ImageIO.read(new File("res/heavyBonus.png")));
+            statLogos.put(Stat.skillBonus, ImageIO.read(new File("res/skillBonus.png")));
+            statLogos.put(Stat.ultBonus, ImageIO.read(new File("res/ultBonus.png")));
+            statLogos.put(Stat.healingBonus, ImageIO.read(new File("res/healingBonus.png")));
+            statLogos.put(Stat.havocBonus, ImageIO.read(new File("res/havocBonus.png")));
+            statLogos.put(Stat.spectroBonus, ImageIO.read(new File("res/spectroBonus.png")));
+            statLogos.put(Stat.fusionBonus, ImageIO.read(new File("res/fusionBonus.png")));
+            statLogos.put(Stat.glacioBonus, ImageIO.read(new File("res/glacioBonus.png")));
+            statLogos.put(Stat.electroBonus, ImageIO.read(new File("res/electroBonus.png")));
+            statLogos.put(Stat.aeroBonus, ImageIO.read(new File("res/aeroBonus.png")));
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
         // Sonata Buffs
         sonataBuffs.put(new Sonata(1, 2), new StatPair[]{glacio10});
         sonataBuffs.put(new Sonata(2, 2), new StatPair[]{fusion10});
