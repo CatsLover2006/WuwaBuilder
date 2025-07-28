@@ -17,6 +17,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Order(3)
 public class CardBuilderTest {
+    private static CardBuilder lightModeCardBuilder = new CardBuilder(true);
+    
     @BeforeAll
     public static void Startup() {
         HakushinInterface.init(); // We need the images
@@ -30,7 +32,19 @@ public class CardBuilderTest {
         phrolova.minorSkills[3] = false;
         phrolova.minorSkills[5] = false;
         phrolova.minorSkills[7] = false;
-        BufferedImage card = CardBuilder.createCard(phrolova);
+        BufferedImage card = lightModeCardBuilder.createCard(phrolova);
         ImageIO.write(card, "png", new File("testOut/phrolova.png"));
+    }
+    
+    @Test
+    public void ZaniTest() throws IOException {
+        // Compensate for my shit build
+        Build phrolova = BuildParser.parseBuild(ImageIO.read(new File("testData/zani.JPEG")));
+        phrolova.minorSkills[1] = false;
+        phrolova.minorSkills[3] = false;
+        phrolova.minorSkills[5] = false;
+        phrolova.minorSkills[7] = false;
+        BufferedImage card = lightModeCardBuilder.createCard(phrolova);
+        ImageIO.write(card, "png", new File("testOut/zani.png"));
     }
 }

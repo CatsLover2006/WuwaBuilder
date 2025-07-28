@@ -1,7 +1,11 @@
 package ca.litten.discordbot.wuwabuilder.wuwa;
 
+import javax.imageio.ImageIO;
+
 import static ca.litten.discordbot.wuwabuilder.HakushinInterface.StatPair;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
