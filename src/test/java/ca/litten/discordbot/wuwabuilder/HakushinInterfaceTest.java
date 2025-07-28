@@ -5,7 +5,6 @@ import ca.litten.discordbot.wuwabuilder.wuwa.Weapon;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-@TestClassOrder(ClassOrderer.OrderAnnotation.class)
 @Order(0)
 public class HakushinInterfaceTest {
     @BeforeAll
