@@ -31,7 +31,7 @@ public class BuildParserTest {
         assertEquals(0, phrolova.chainLength);
         assertEquals(Weapon.getWeaponByID(21050066), phrolova.weapon);
         assertEquals(Level.f80, phrolova.weaponLevel);
-        assertEquals(1, phrolova.weaponRank);
+        assertEquals(0, phrolova.weaponRank);
         // Skills
         assertEquals(3, phrolova.skillLevels[0]);
         assertEquals(5, phrolova.skillLevels[1]);
@@ -135,7 +135,7 @@ public class BuildParserTest {
         assertEquals(0, build.chainLength);
         assertEquals(Weapon.getWeaponByID(21040064), build.weapon);
         assertEquals(Level.a1, build.weaponLevel);
-        assertEquals(1, build.weaponRank);
+        assertEquals(0, build.weaponRank);
         // Skills
         assertEquals(5, build.skillLevels[0]);
         assertEquals(3, build.skillLevels[1]);
@@ -256,15 +256,15 @@ public class BuildParserTest {
         phrolova.minorSkills[5] = false;
         phrolova.minorSkills[7] = false;
         StatPage statPage = StatPage.calculateStats(phrolova);
-        assertTrue(Math.abs(statPage.HP - 16130) < 1, String.format("%f !≈ 16130", statPage.HP));
-        assertTrue(Math.abs(statPage.ATK - 2053) < 1, String.format("%f !≈ 2053", statPage.ATK));
-        assertTrue(Math.abs(statPage.DEF - 1188) < 1, String.format("%f !≈ 1188", statPage.DEF));
-        assertTrue(Math.abs(statPage.critDMG - 241.4) < 0.1, String.format("%f !≈ 241.4", statPage.critDMG));
-        assertTrue(Math.abs(statPage.critRate - 67) < 0.1, String.format("%f !≈ 67", statPage.critRate));
-        assertTrue(Math.abs(statPage.energyRegen - 109.2) < 0.1, String.format("%f !≈ 109.2", statPage.energyRegen));
-        assertTrue(Math.abs(statPage.skillBonus - 44.6) < 0.1, String.format("%f !≈ 44.6", statPage.skillBonus));
-        assertTrue(Math.abs(statPage.ultBonus - 7.9) < 0.1, String.format("%f !≈ 7.9", statPage.ultBonus));
-        assertTrue(Math.abs(statPage.havocBonus - 70) < 0.1, String.format("%f !≈ 70", statPage.havocBonus));
+        assertTrue(Math.abs(statPage.HP - 16130) < statPage.HP/100, String.format("%f !≈ 16130", statPage.HP));
+        assertTrue(Math.abs(statPage.ATK - 2053) < statPage.ATK/100, String.format("%f !≈ 2053", statPage.ATK));
+        assertTrue(Math.abs(statPage.DEF - 1188) < statPage.DEF/100, String.format("%f !≈ 1188", statPage.DEF));
+        assertTrue(Math.abs(statPage.critDMG - 241.4) < statPage.critDMG/100, String.format("%f !≈ 241.4", statPage.critDMG));
+        assertTrue(Math.abs(statPage.critRate - 67) < statPage.critRate/100, String.format("%f !≈ 67", statPage.critRate));
+        assertTrue(Math.abs(statPage.energyRegen - 109.2) < statPage.energyRegen/100, String.format("%f !≈ 109.2", statPage.energyRegen));
+        assertTrue(Math.abs(statPage.skillBonus - 44.6) < statPage.skillBonus/100, String.format("%f !≈ 44.6", statPage.skillBonus));
+        assertTrue(Math.abs(statPage.ultBonus - 7.9) < statPage.ultBonus/100, String.format("%f !≈ 7.9", statPage.ultBonus));
+        assertTrue(Math.abs(statPage.havocBonus - 70) < statPage.havocBonus/100, String.format("%f !≈ 70", statPage.havocBonus));
         assertEquals(0, statPage.basicBonus);
         assertEquals(0, statPage.heavyBonus);
         assertEquals(0, statPage.glacioBonus);

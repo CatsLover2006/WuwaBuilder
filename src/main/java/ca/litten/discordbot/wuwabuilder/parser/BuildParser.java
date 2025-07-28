@@ -119,7 +119,6 @@ public class BuildParser {
                 " .-':1234890#");
         ocr_numbers.SetVariable("tessedit_char_whitelist", "1234567890/.%");
         ocr_digits.SetVariable("tessedit_char_whitelist", "1234567890.");
-        build.weaponRank = 1; // IDK if this even is on the thing
         BufferedImage charaLevel = image.getSubimage(68, 41, 686, 23);
         // 70 wide
         boolean columnGood;
@@ -153,6 +152,8 @@ public class BuildParser {
         build.characterLevel = levelLookup(Integer.parseInt(
                 ocrExec(ocr_digits, charaLevelSubimage).replace(".", "")));
         build.weapon = Weapon.getWeaponByName(ocrExec(ocr_weap, image.getSubimage(1602, 455, 275, 24)));
+        // IDK if this even is on the thing, R1 for 5 stars, R5 otherwise
+        build.weaponRank = build.weapon.getStarCount() == 5 ? 0 : 4;
         // Get weapon ascension
         int ascension;
         for (ascension = 0; ascension <= 6; ascension++) {

@@ -1,5 +1,11 @@
 package ca.litten.discordbot.wuwabuilder.wuwa;
 
+import static ca.litten.discordbot.wuwabuilder.HakushinInterface.StatPair;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+
 public class StatPage {
     public final float HP, ATK, DEF, energyRegen,
             critRate, critDMG, healingBonus,
@@ -110,6 +116,73 @@ public class StatPage {
                 totalHeB += statToAdd;
                 break;
         }
+        StatPair[] weaponBuffs = build.weapon.getUnconditionalBuffs(build.weaponRank);
+        for (StatPair buff : weaponBuffs) {
+            statToAdd = buff.value;
+            switch (buff.stat) {
+                case flatDEF:
+                    totalFlatDEF += statToAdd;
+                    break;
+                case flatHP:
+                    totalFlatHP += statToAdd;
+                    break;
+                case flatATK:
+                    totalFlatATK += statToAdd;
+                    break;
+                case percentDEF:
+                    totalDEFpercent += statToAdd;
+                    break;
+                case percentHP:
+                    totalHPpercent += statToAdd;
+                    break;
+                case percentATK:
+                    totalATKpercent += statToAdd;
+                    break;
+                case critDMG:
+                    totalCD += statToAdd;
+                    break;
+                case critRate:
+                    totalCR += statToAdd;
+                    break;
+                case energyRegen:
+                    totalER += statToAdd;
+                    break;
+                case skillBonus:
+                    totalSkB += statToAdd;
+                    break;
+                case ultBonus:
+                    totalUlB += statToAdd;
+                    break;
+                case basicBonus:
+                    totalBaB += statToAdd;
+                    break;
+                case havocBonus:
+                    totalHaB += statToAdd;
+                    break;
+                case heavyBonus:
+                    totalHhB += statToAdd;
+                    break;
+                case spectroBonus:
+                    totalSpB += statToAdd;
+                    break;
+                case aeroBonus:
+                    totalAeB += statToAdd;
+                    break;
+                case fusionBonus:
+                    totalFuB += statToAdd;
+                    break;
+                case glacioBonus:
+                    totalGlB += statToAdd;
+                    break;
+                case electroBonus:
+                    totalElB += statToAdd;
+                    break;
+                case healingBonus:
+                    totalHeB += statToAdd;
+                    break;
+            }
+        }
+        HashMap<Long, Set<Long>> sonata = new HashMap<>();
         for (Echo echo : build.echoes) {
             statToAdd = echo.mainStatMagnitude;
             switch (echo.mainStat) {
@@ -240,6 +313,77 @@ public class StatPage {
             for (Stat substat : echo.subStats.keySet()) {
                 statToAdd = echo.subStats.get(substat);
                 switch (substat) {
+                    case flatDEF:
+                        totalFlatDEF += statToAdd;
+                        break;
+                    case flatHP:
+                        totalFlatHP += statToAdd;
+                        break;
+                    case flatATK:
+                        totalFlatATK += statToAdd;
+                        break;
+                    case percentDEF:
+                        totalDEFpercent += statToAdd;
+                        break;
+                    case percentHP:
+                        totalHPpercent += statToAdd;
+                        break;
+                    case percentATK:
+                        totalATKpercent += statToAdd;
+                        break;
+                    case critDMG:
+                        totalCD += statToAdd;
+                        break;
+                    case critRate:
+                        totalCR += statToAdd;
+                        break;
+                    case energyRegen:
+                        totalER += statToAdd;
+                        break;
+                    case skillBonus:
+                        totalSkB += statToAdd;
+                        break;
+                    case ultBonus:
+                        totalUlB += statToAdd;
+                        break;
+                    case basicBonus:
+                        totalBaB += statToAdd;
+                        break;
+                    case havocBonus:
+                        totalHaB += statToAdd;
+                        break;
+                    case heavyBonus:
+                        totalHhB += statToAdd;
+                        break;
+                    case spectroBonus:
+                        totalSpB += statToAdd;
+                        break;
+                    case aeroBonus:
+                        totalAeB += statToAdd;
+                        break;
+                    case fusionBonus:
+                        totalFuB += statToAdd;
+                        break;
+                    case glacioBonus:
+                        totalGlB += statToAdd;
+                        break;
+                    case electroBonus:
+                        totalElB += statToAdd;
+                        break;
+                    case healingBonus:
+                        totalHeB += statToAdd;
+                        break;
+                }
+            }
+            // Sonata calculations
+            sonata.computeIfAbsent(echo.sonataID, k -> new HashSet<>(1)).add(echo.echoID);
+        }
+        for (long sonataID : sonata.keySet()) {
+            int echoCount = sonata.get(sonataID).size();
+            StatPair[] sonataBuffs = ExtraData.getSonataBuffs(new ExtraData.Sonata(sonataID, echoCount));
+            for (StatPair buff : sonataBuffs) {
+                statToAdd = buff.value;
+                switch (buff.stat) {
                     case flatDEF:
                         totalFlatDEF += statToAdd;
                         break;

@@ -114,6 +114,10 @@ public class Weapon {
         return subStatMagnitude.get(level);
     }
     
+    public HakushinInterface.StatPair[] getUnconditionalBuffs(int rank) {
+        return ExtraData.weaponPassiveBuffs.getOrDefault(id, new HakushinInterface.StatPair[5][0])[rank];
+    }
+    
     public int getStarCount() {
         return starCount;
     }
