@@ -248,8 +248,9 @@ public class BuildParserTest {
     
     @Test
     @Order(3)
-    public void StatPageTest() {
+    public void StatPageTest() throws IOException {
         // Compensate for my shit build
+        phrolova = BuildParser.parseBuild(ImageIO.read(new File("testData/phrolova.JPEG")));
         phrolova.minorSkills[1] = false;
         phrolova.minorSkills[3] = false;
         phrolova.minorSkills[5] = false;
