@@ -6,11 +6,16 @@ import static ca.litten.discordbot.wuwabuilder.HakushinInterface.StatPair;
 import ca.litten.discordbot.wuwabuilder.wuwa.*;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.Objects;
 
 import ca.litten.discordbot.wuwabuilder.wuwa.Character;
 import org.bytedeco.tesseract.*;
+
+import javax.imageio.ImageIO;
 
 public class BuildParser {
     private static int[] sequenceX = {190, 264, 345, 425, 505, 585};
@@ -100,17 +105,20 @@ public class BuildParser {
             if (((resonanceRGB >> 16) & 0x0ff) > 100) build.chainLength = i + 1;
         }
         TessBaseAPI ocr_name = new TessBaseAPI();
+        TessBaseAPI ocr_numbers = new TessBaseAPI();
         TessBaseAPI ocr_digits = new TessBaseAPI();
         TessBaseAPI ocr_weap = new TessBaseAPI();
         if (ocr_name.Init(null, "eng", 1) != 0
-                || ocr_digits.Init(null, "eng", 1) != 0
-                || ocr_weap.Init(null, "eng", 1) != 0) {
+                || ocr_numbers.Init(null, "eng", 1) != 0
+                || ocr_weap.Init(null, "eng", 1) != 0
+                || ocr_digits.Init(null, "eng", 1) != 0) {
             throw new RuntimeException("Failed to start tesseract");
         }
-        ocr_name.SetVariable("tessedit_char_whitelist", "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm .");
+        ocr_name.SetVariable("tessedit_char_whitelist", "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm .:");
         ocr_weap.SetVariable("tessedit_char_whitelist", "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm" +
                 " .-':1234890#");
-        ocr_digits.SetVariable("tessedit_char_whitelist", "1234567890/.%");
+        ocr_numbers.SetVariable("tessedit_char_whitelist", "1234567890/.%");
+        ocr_digits.SetVariable("tessedit_char_whitelist", "1234567890.");
         build.weaponRank = 1; // IDK if this even is on the thing
         BufferedImage charaLevel = image.getSubimage(68, 41, 686, 23);
         // 70 wide
@@ -122,14 +130,20 @@ public class BuildParser {
                 rgb = charaLevel.getRGB(x, y);
                 r = (rgb >> 16) & 0x0ff;
                 b = rgb & 0x0ff;
-                if (r < 180) columnGood = false;
+                if (r < 170) columnGood = false;
                 if (b > 150) columnGood = false;
                 if (!columnGood) break;
             }
             if (columnGood) break;
         }
-        build.character = Character.getCharacterByName(
-                ocrExec(ocr_name, image.getSubimage(68, 23, x-4, 65)));
+        String value = ocrExec(ocr_name, image.getSubimage(68, 23, x-4, 65));
+        if (value.equals("Rover")) {
+            // TODO: male/female Rover
+            // TODO: Rover Element
+            value = "FRover: Spectro";
+        }
+        System.out.println();
+        build.character = Character.getCharacterByName(value);
         BufferedImage charaLevelSubimage;
         try {
             charaLevelSubimage = charaLevel.getSubimage(x, 0, 55, charaLevel.getHeight());
@@ -145,25 +159,25 @@ public class BuildParser {
             if ((image.getRGB(1618 + 25 * ascension, 599) & 0x00ff0000) < 0x00800000)
                 break;
         }
-        String stat, value;
-        value = ocrExec(ocr_weap, image.getSubimage(1645, 506, 65, 32));
+        value = ocrExec(ocr_digits, image.getSubimage(1640, 506, 70, 32));
         build.weaponLevel = levelLookup(Integer.parseInt(value.substring(value.lastIndexOf('.') + 1)), ascension);
         // Echoes
+        String stat;
         for (int i = 0; i < 5; i++) {
             long sonata = FindClosestImage.findClosestSonata(image.getSubimage(echoX[i] + 243, 663, 48, 48));
             long echoID = FindClosestImage.findClosestEcho(image.getSubimage(echoX[i], 654, 190, 180), sonata);
             BufferedImage OCRimage = image.getSubimage(echoX[i] + 17, 726, 338, 335);
             stat = ocrExec(ocr_name, OCRimage.getSubimage(22, 119, 228, 25));
-            value = ocrExec(ocr_digits, OCRimage.getSubimage(250, 119, 88, 25));
+            value = ocrExec(ocr_numbers, OCRimage.getSubimage(250, 119, 88, 25));
             StatPair mainStat = readStat(stat, value);
             stat = ocrExec(ocr_name, OCRimage.getSubimage(179, 0, 159, 19));
-            value = ocrExec(ocr_digits, OCRimage.getSubimage(179, 19, 159, 43));
+            value = ocrExec(ocr_numbers, OCRimage.getSubimage(179, 19, 159, 43));
             StatPair stat2 = readStat(stat, value);
             HashMap<Stat, Float> subStats = new HashMap<>();
             StatPair subStat;
             for (int s = 0; s < 5; s++) {
                 stat = ocrExec(ocr_name, OCRimage.getSubimage(20, 159 + 34 * s, 230, 34));
-                value = ocrExec(ocr_digits, OCRimage.getSubimage(250, 157 + 34 * s, 88, 38));
+                value = ocrExec(ocr_numbers, OCRimage.getSubimage(250, 157 + 34 * s, 88, 38));
                 subStat = readStat(stat, value);
                 if (subStat != null) {
                     subStats.put(subStat.stat, subStat.value);
@@ -175,13 +189,30 @@ public class BuildParser {
         // Skills
         for (int i = 0; i < 5; i++) {
             BufferedImage temp = image.getSubimage(skillX[i], skillY[i], 113, 25);
-            value = ocrExec(ocr_digits, temp);
-            value = value.substring(value.indexOf('.'), value.lastIndexOf('/')).replace(".","");
+            value = ocrExec(ocr_numbers, temp);
+            int dot = value.indexOf('.');
+            int slash = value.lastIndexOf('/');
+            if (dot == -1) dot = 0;
+            value = value.substring(dot < slash ? dot : 0, slash).replace(".","");
             build.skillLevels[i] = Integer.parseInt(value);
         }
+        // Minors (for stat page math)
+        if (build.characterLevel.toString().charAt(0) > 'b') {
+            build.minorSkills[0] = true;
+            build.minorSkills[2] = true;
+            build.minorSkills[4] = true;
+            build.minorSkills[6] = true;
+        }
+        if (build.characterLevel.toString().charAt(0) > 'd') {
+            build.minorSkills[1] = true;
+            build.minorSkills[3] = true;
+            build.minorSkills[5] = true;
+            build.minorSkills[7] = true;
+        }
         ocr_name.End();
-        ocr_digits.End();
+        ocr_numbers.End();
         ocr_weap.End();
+        ocr_digits.End();
         return build;
     }
 }

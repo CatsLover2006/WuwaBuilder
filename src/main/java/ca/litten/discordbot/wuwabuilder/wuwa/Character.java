@@ -54,6 +54,10 @@ public class Character {
         characters.put(hakushinJSON.getLong("Id"), character);
         character.id = hakushinJSON.getLong("Id");
         character.name = hakushinJSON.getString("Name");
+        if (character.name.contains("Rover:")) {
+            character.name = hakushinJSON.getJSONObject("CharaInfo").getString("Sex").substring(0, 1)
+                    + character.name;
+        }
         character.starCount = hakushinJSON.getInt("Rarity");
         ArrayList<Thread> imageGrabberThreads = new ArrayList<>();
         try {
@@ -244,5 +248,17 @@ public class Character {
     
     public float getDefForLevel(Level level) {
         return defMagnitude.get(level);
+    }
+    
+    public BufferedImage getChain(int index) {
+        return chains[index];
+    }
+    
+    public BufferedImage getSkill(int index) {
+        return skills[index];
+    }
+    
+    public MinorStatBuff getStatBuf(int index) {
+        return minorStatBuffs[index];
     }
 }
