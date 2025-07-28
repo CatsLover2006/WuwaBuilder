@@ -28,24 +28,51 @@ public class CardBuilderTest {
     @Test
     public void PhrolovaTest() throws IOException {
         // Compensate for my shit build
-        Build phrolova = BuildParser.parseBuild(ImageIO.read(new File("testData/phrolova.JPEG")));
-        phrolova.minorSkills[1] = false;
-        phrolova.minorSkills[3] = false;
-        phrolova.minorSkills[5] = false;
-        phrolova.minorSkills[7] = false;
-        BufferedImage card = lightModeCardBuilder.createCard(phrolova);
+        Build build = BuildParser.parseBuild(ImageIO.read(new File("testData/phrolova.JPEG")));
+        build.minorSkills[1] = false;
+        build.minorSkills[3] = false;
+        build.minorSkills[5] = false;
+        build.minorSkills[7] = false;
+        BufferedImage card = lightModeCardBuilder.createCard(build);
         ImageIO.write(card, "png", new File("testOut/phrolova.png"));
     }
     
     @Test
     public void ZaniTest() throws IOException {
         // Compensate for my shit build
-        Build phrolova = BuildParser.parseBuild(ImageIO.read(new File("testData/zani.JPEG")));
-        phrolova.minorSkills[1] = false;
-        phrolova.minorSkills[3] = false;
-        phrolova.minorSkills[5] = false;
-        phrolova.minorSkills[7] = false;
-        BufferedImage card = lightModeCardBuilder.createCard(phrolova);
+        Build build = BuildParser.parseBuild(ImageIO.read(new File("testData/zani.JPEG")));
+        for (int i = 0; i < 8; i++) build.minorSkills[i] = false;
+        build.minorSkills[3] = true;
+        build.minorSkills[5] = true;
+        BufferedImage card = lightModeCardBuilder.createCard(build);
         ImageIO.write(card, "png", new File("testOut/zani.png"));
+    }
+    
+    @Test
+    public void SanhuaTest() throws IOException {
+        // Compensate for my shit build
+        Build build = BuildParser.parseBuild(ImageIO.read(new File("testData/sanhua.JPEG")));
+        for (int i = 0; i < 8; i++) build.minorSkills[i] = false;
+        BufferedImage card = lightModeCardBuilder.createCard(build);
+        ImageIO.write(card, "png", new File("testOut/sanhua.png"));
+    }
+    
+    @Test
+    public void VerinaTest() throws IOException {
+        // Compensate for my shit build
+        Build build = BuildParser.parseBuild(ImageIO.read(new File("testData/verina.JPEG")));
+        for (int i = 0; i < 8; i++) build.minorSkills[i] = false;
+        BufferedImage card = lightModeCardBuilder.createCard(build);
+        ImageIO.write(card, "png", new File("testOut/verina.png"));
+    }
+    
+    @Test
+    public void CartethyiaTest() throws IOException {
+        // Compensate for my shit build
+        Build build = BuildParser.parseBuild(ImageIO.read(new File("testData/cartethyia.jpeg")));
+        build.minorSkills[1] = false;
+        build.minorSkills[7] = false;
+        BufferedImage card = lightModeCardBuilder.createCard(build);
+        ImageIO.write(card, "png", new File("testOut/cartethyia.png"));
     }
 }

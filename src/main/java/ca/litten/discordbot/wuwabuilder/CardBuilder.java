@@ -32,16 +32,23 @@ public class CardBuilder {
     }
     
     public void drawCircledImage(Graphics2D g2d, int x, int y, int r, BufferedImage image, Color front, Color back) {
+        drawCircledImage(g2d, x, y, r, image, 1, front, back);
+    }
+    
+    public void drawCircledImage(Graphics2D g2d, int x, int y, int r, BufferedImage image, double relativeImageSize, Color front, Color back) {
         g2d.setColor(back);
         g2d.fillArc(x, y, r, r, 0, 360);
-        BufferedImage imageTint = new BufferedImage(r, r, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage imageTint = new BufferedImage((int) (r * relativeImageSize),
+                (int) (r * relativeImageSize), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g3d = imageTint.createGraphics();
-        g3d.drawImage(image.getScaledInstance(r, r, Image.SCALE_SMOOTH), 0, 0, null);
+        g3d.drawImage(image.getScaledInstance((int) (r * relativeImageSize),
+                (int) (r * relativeImageSize), Image.SCALE_SMOOTH), 0, 0, null);
         g3d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, front.getAlpha() / 255.0f));
         g3d.setColor(front);
-        g3d.fillRect(0, 0, r, r);
+        g3d.fillRect(0, 0, (int) (r * relativeImageSize), (int) (r * relativeImageSize));
         g3d.dispose();
-        g2d.drawImage(imageTint, x, y, null);
+        g2d.drawImage(imageTint, x + (int) (r * (1 - relativeImageSize) / 2),
+                y + (int) (r * (1 - relativeImageSize) / 2), null);
     }
     
     public BufferedImage createCard(Build build) {
@@ -65,16 +72,25 @@ public class CardBuilder {
         }
         System.out.println(characterNameHeight);
         int characterPositionX = 375 - characterNameWidth/2;
+        int characterNameHeightDiv10 = characterNameHeight/10;
         g2d.fillRect(characterPositionX, 0, characterNameWidth, characterNameHeight);
-        g2d.fillRect(characterPositionX + characterNameWidth, 0, characterNameHeight/10, (int)(characterNameHeight * 0.9));
-        g2d.fillRect(characterPositionX - characterNameHeight/10, 0, characterNameHeight/10, (int)(characterNameHeight * 0.9));
-        g2d.fillArc(characterPositionX + characterNameWidth - characterNameHeight/10, (int)(characterNameHeight * 0.8), characterNameHeight/5, characterNameHeight/5, 0, -90);
-        g2d.fillArc(characterPositionX - characterNameHeight/10, (int)(characterNameHeight * 0.8), characterNameHeight/5, characterNameHeight/5, 180, 90);
+        g2d.fillRect(characterPositionX + characterNameWidth, 0,
+                characterNameHeightDiv10, characterNameHeight - characterNameHeightDiv10);
+        g2d.fillRect(characterPositionX - characterNameHeightDiv10, 0,
+                characterNameHeightDiv10, characterNameHeight - characterNameHeightDiv10);
+        g2d.fillArc(characterPositionX + characterNameWidth - characterNameHeightDiv10,
+                characterNameHeight - characterNameHeightDiv10 * 2, characterNameHeightDiv10 * 2,
+                characterNameHeightDiv10 * 2, 0, -90);
+        g2d.fillArc(characterPositionX - characterNameHeightDiv10,
+                characterNameHeight - characterNameHeightDiv10 * 2, characterNameHeightDiv10 * 2,
+                characterNameHeightDiv10 * 2, 180, 90);
         g2d.setPaint(mainLightModePaint);
         g2d.fillRect(875, 0, 10, 750);
-        g2d.drawString(build.character.getName(), characterPositionX, (int)(0.8 * characterNameHeight));
+        g2d.drawString(build.character.getName(), characterPositionX,
+                characterNameHeight - characterNameHeightDiv10 * 2);
         int characterLevelHeight = 35;
-        g2d.setFont(font.deriveFont(Font.PLAIN, (int)(characterLevelHeight * 0.9)));
+        int characterLevelHeightDiv10 = characterLevelHeight/10;
+        g2d.setFont(font.deriveFont(Font.PLAIN, characterLevelHeight - characterLevelHeightDiv10));
         String characterLevelText = build.characterLevel.toString();
         switch (characterLevelText.charAt(0)) {
             case 'b':
@@ -106,15 +122,22 @@ public class CardBuilder {
         characterPositionX = 375 - characterLevelWidth/2;
         g2d.setPaint(dualLightModePaint);
         g2d.fillRect(characterPositionX, characterNameHeight, characterLevelWidth, characterLevelHeight);
-        g2d.fillRect(characterPositionX + characterLevelWidth, characterNameHeight, characterLevelHeight/10, (int)(characterLevelHeight * 0.9));
-        g2d.fillRect(characterPositionX - characterLevelHeight/10, characterNameHeight, characterLevelHeight/10, (int)(characterLevelHeight * 0.9));
-        g2d.fillArc(characterPositionX + characterLevelWidth - characterLevelHeight/10, characterNameHeight + (int)(characterLevelHeight * 0.8), characterLevelHeight/5, characterLevelHeight/5, 0, -90);
-        g2d.fillArc(characterPositionX - characterLevelHeight/10, characterNameHeight + (int)(characterLevelHeight * 0.8), characterLevelHeight/5, characterLevelHeight/5, 180, 90);
+        g2d.fillRect(characterPositionX + characterLevelWidth, characterNameHeight,
+                characterLevelHeightDiv10, characterLevelHeight - characterLevelHeightDiv10);
+        g2d.fillRect(characterPositionX - characterLevelHeightDiv10, characterNameHeight,
+                characterLevelHeightDiv10, characterLevelHeight - characterLevelHeightDiv10);
+        g2d.fillArc(characterPositionX + characterLevelWidth - characterLevelHeightDiv10,
+                characterNameHeight + characterLevelHeight - characterLevelHeightDiv10 * 2, characterLevelHeightDiv10 * 2,
+                characterLevelHeightDiv10 * 2, 0, -90);
+        g2d.fillArc(characterPositionX - characterLevelHeightDiv10,
+                characterNameHeight + characterLevelHeight - characterLevelHeightDiv10 * 2, characterLevelHeightDiv10 * 2,
+                characterLevelHeightDiv10 * 2, 180, 90);
         g2d.setPaint(mainLightModePaint);
-        g2d.drawString(characterLevelText, characterPositionX, characterNameHeight + (int)(0.8 * characterLevelHeight));
+        g2d.drawString(characterLevelText, characterPositionX, characterNameHeight + characterLevelHeight - characterLevelHeightDiv10 * 2);
         for (int i = 0; i < 6; i++) {
-            drawCircledImage(g2d, 762, 125 * i + 12, 101, build.character.getChain(i),
-                    new Color(0x80151617, !(build.chainLength > i)), new Color(0xffffff));
+            drawCircledImage(g2d, 762, 125 * i + 12, 101, build.character.getChain(i), 0.9,
+                    new Color(0x80151617, !(build.chainLength > i)),
+                    new Color(0x40ffffff, !(build.chainLength > i)));
         }
         g2d.dispose();
         return output;
