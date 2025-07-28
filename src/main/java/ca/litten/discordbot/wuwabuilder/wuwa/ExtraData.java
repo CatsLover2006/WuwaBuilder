@@ -5,6 +5,7 @@ import static ca.litten.discordbot.wuwabuilder.HakushinInterface.StatPair;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class ExtraData {
     public static class Sonata {
@@ -14,6 +15,18 @@ public class ExtraData {
         public Sonata(long sonataID, int count) {
             this.sonataID = sonataID;
             this.count = count;
+        }
+        
+        @Override
+        public boolean equals(Object obj) {
+            if (!(obj instanceof Sonata)) return false;
+            Sonata sonata = (Sonata) obj;
+            return sonata.sonataID == this.sonataID && sonata.count == this.count;
+        }
+        
+        @Override
+        public int hashCode() {
+            return Objects.hash(sonataID, count);
         }
     }
     
