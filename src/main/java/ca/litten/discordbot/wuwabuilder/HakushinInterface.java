@@ -102,7 +102,6 @@ public class HakushinInterface {
         HakushinInterface.baseURL = baseURL;
         if (initialized) return; // Leave before we fuck shit up
         initialized = true;
-        
         UrlInputStreamReturnValue cacheData;
         System.out.println("Caching echo and sonata names and images...");
         try {
