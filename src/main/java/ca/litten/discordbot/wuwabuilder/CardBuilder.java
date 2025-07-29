@@ -445,6 +445,7 @@ public class CardBuilder {
         // Small size: 50
         // Top Left, Bottom Left: 60x645
         g2d.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        // Skill Chain 1 (Basic)
         drawCircledImage(g2d, 40, 655, 60, build.character.getSkill(1),
                 0.8, dualFullPaint, mainPaint);
         g2d.setPaint(build.minorSkills[0] ? mainPaint : dualHalfPaint);
@@ -457,45 +458,50 @@ public class CardBuilder {
         drawCircledImage(g2d, 263, 442, 50, build.character.getStatBuf(1).image,
                 0.8, build.minorSkills[1] ? dualFullPaint : dualPaint,
                 build.minorSkills[1] ? mainPaint : dualHalfPaint);
-        drawCircledImage(g2d, 140, 655, 60, build.character.getSkill(2),
+        // Skill Chain 2 (Skill)
+        drawCircledImage(g2d, 160, 655, 60, build.character.getSkill(2),
                 0.8, dualFullPaint, mainPaint);
         g2d.setPaint(build.minorSkills[2] ? mainPaint : dualHalfPaint);
-        g2d.drawLine(196, 659, 254, 601);
-        drawCircledImage(g2d, 254, 551, 50, build.character.getStatBuf(2).image,
+        g2d.drawLine(216, 659, 274, 601);
+        drawCircledImage(g2d, 274, 551, 50, build.character.getStatBuf(2).image,
                 0.8, build.minorSkills[2] ? dualFullPaint : dualPaint,
                 build.minorSkills[2] ? mainPaint : dualHalfPaint);
         g2d.setPaint(build.minorSkills[3] ? mainPaint : dualHalfPaint);
-        g2d.drawLine(304, 551, 363, 492);
-        drawCircledImage(g2d, 363, 442, 50, build.character.getStatBuf(3).image,
+        g2d.drawLine(324, 551, 383, 492);
+        drawCircledImage(g2d, 383, 442, 50, build.character.getStatBuf(3).image,
                 0.8, build.minorSkills[3] ? dualFullPaint : dualPaint,
                 build.minorSkills[3] ? mainPaint : dualHalfPaint);
-        drawCircledImage(g2d, 240, 655, 60, build.character.getSkill(0),
+        // Skill Chain 3 (Forte)
+        drawCircledImage(g2d, 290, 655, 60, build.character.getSkill(0),
                 0.8, dualFullPaint, mainPaint); // TODO: inherent skills
-        drawCircledImage(g2d, 340, 655, 60, build.character.getSkill(3),
+        // Skill Chain 4 (Ult)
+        drawCircledImage(g2d, 420, 655, 60, build.character.getSkill(3),
                 0.8, dualFullPaint, mainPaint);
         g2d.setPaint(build.minorSkills[4] ? mainPaint : dualHalfPaint);
-        g2d.drawLine(396, 659, 454, 601);
-        drawCircledImage(g2d, 454, 551, 50, build.character.getStatBuf(4).image,
+        g2d.drawLine(476, 659, 534, 601);
+        drawCircledImage(g2d, 534, 551, 50, build.character.getStatBuf(4).image,
                 0.8, build.minorSkills[4] ? dualFullPaint : dualPaint,
                 build.minorSkills[4] ? mainPaint : dualHalfPaint);
         g2d.setPaint(build.minorSkills[5] ? mainPaint : dualHalfPaint);
-        g2d.drawLine(504, 551, 563, 492);
-        drawCircledImage(g2d, 563, 442, 50, build.character.getStatBuf(5).image,
+        g2d.drawLine(584, 551, 643, 492);
+        drawCircledImage(g2d, 643, 442, 50, build.character.getStatBuf(5).image,
                 0.8, build.minorSkills[5] ? dualFullPaint : dualPaint,
                 build.minorSkills[5] ? mainPaint : dualHalfPaint);
-        drawCircledImage(g2d, 440, 655, 60, build.character.getSkill(4),
+        // Skill Chain 5 (Intro)
+        drawCircledImage(g2d, 540, 655, 60, build.character.getSkill(4),
                 0.8, dualFullPaint, mainPaint);
         g2d.setPaint(build.minorSkills[6] ? mainPaint : dualHalfPaint);
-        g2d.drawLine(496, 659, 554, 601);
-        drawCircledImage(g2d, 554, 551, 50, build.character.getStatBuf(6).image,
+        g2d.drawLine(596, 659, 654, 601);
+        drawCircledImage(g2d, 654, 551, 50, build.character.getStatBuf(6).image,
                 0.8, build.minorSkills[6] ? dualFullPaint : dualPaint,
                 build.minorSkills[6] ? mainPaint : dualHalfPaint);
         g2d.setPaint(build.minorSkills[7] ? mainPaint : dualHalfPaint);
-        g2d.drawLine(604, 551, 663, 492);
-        drawCircledImage(g2d, 663, 442, 50, build.character.getStatBuf(7).image,
+        g2d.drawLine(704, 551, 763, 492);
+        drawCircledImage(g2d, 763, 442, 50, build.character.getStatBuf(7).image,
                 0.8, build.minorSkills[7] ? dualFullPaint : dualPaint,
                 build.minorSkills[7] ? mainPaint : dualHalfPaint);
-        drawCircledImage(g2d, 540, 665, 50, build.character.getSkill(5),
+        // Intro Skill
+        drawCircledImage(g2d, 660, 665, 50, build.character.getSkill(5),
                 0.8, dualFullPaint, mainPaint);
         g2d.dispose();
         return output;
