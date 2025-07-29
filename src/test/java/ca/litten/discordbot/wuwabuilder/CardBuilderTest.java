@@ -43,8 +43,8 @@ public class CardBuilderTest {
         // Compensate for my shit build
         Build build = BuildParser.parseBuild(ImageIO.read(new File("testData/zani.JPEG")));
         for (int i = 0; i < 8; i++) build.minorSkills[i] = false;
-        build.minorSkills[3] = true;
-        build.minorSkills[5] = true;
+        build.minorSkills[2] = true;
+        build.minorSkills[4] = true;
         BufferedImage card = lightModeCardBuilder.createCard(build);
         ImageIO.write(card, "png", new File("testOut/zani.png"));
     }

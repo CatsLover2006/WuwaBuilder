@@ -12,10 +12,12 @@ import java.util.HashMap;
 
 public class CardBuilder {
     private static final Paint mainLightModePaint = new GradientPaint(0, 0, new Color(0xf5f5f5), 1500, 750, new Color(0xcacccf));
-    private static final Paint dualLightModePaint = new GradientPaint(0, 0, new Color(0xc02a2c2e, true), 1500, 750, new Color(0xc0000000, true));
+    private static final Paint dualFullLightModePaint = new GradientPaint(0, 0, new Color(0x2a2c2e), 1500, 750, new Color(0x0a0c0e));
+    private static final Paint dualLightModePaint = new GradientPaint(0, 0, new Color(0xc02a2c2e, true), 1500, 750, new Color(0xc00a0c0e, true));
+    private static final Paint dualHalfLightModePaint = new GradientPaint(0, 0, new Color(0x602a2c2e, true), 1500, 750, new Color(0x600a0c0e, true));
     private static final Font font;
     
-    private final Paint mainPaint, dualPaint;
+    private final Paint mainPaint, dualFullPaint, dualPaint, dualHalfPaint;
     
     private static final HashMap<Stat, Image> cached40statIcons = new HashMap<>();
     private static final HashMap<Stat, Image> cached20statIcons = new HashMap<>();
@@ -38,7 +40,7 @@ public class CardBuilder {
         }
     }
     
-    private final boolean isLightMode;
+    public final boolean isLightMode;
     private final BufferedImage echoMask;
     
     private void initSonataCache() {
@@ -51,7 +53,9 @@ public class CardBuilder {
     public CardBuilder() {
         isLightMode = true;
         mainPaint = mainLightModePaint;
+        dualFullPaint = dualFullLightModePaint;
         dualPaint = dualLightModePaint;
+        dualHalfPaint = dualHalfLightModePaint;
         echoMask = new BufferedImage(120, 120, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g3d = echoMask.createGraphics();
         g3d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -69,7 +73,9 @@ public class CardBuilder {
     public CardBuilder(boolean isLightMode) {
         this.isLightMode = isLightMode;
         mainPaint = isLightMode ? mainLightModePaint : mainLightModePaint;
+        dualFullPaint = isLightMode ? dualFullLightModePaint : dualFullLightModePaint;
         dualPaint = isLightMode ? dualLightModePaint : dualLightModePaint;
+        dualHalfPaint = isLightMode ? dualHalfLightModePaint : dualHalfLightModePaint;
         echoMask = new BufferedImage(120, 120, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g3d = echoMask.createGraphics();
         g3d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -135,7 +141,7 @@ public class CardBuilder {
                 virtImage.setRGB(i, j, virtImage.getRGB(i, j) & ((echoMask.getRGB(i, j) & 0xff000000) | 0x00ffffff));
             }
         g2d.drawImage(virtImage, x + 10, y + 10, null);
-        g2d.setPaint(dualPaint);
+        g2d.setPaint(dualFullPaint);
         g2d.setFont(font.deriveFont(Font.PLAIN, 18));
         String weaponLevelString = build.weaponLevel.toString();
         switch (weaponLevelString.charAt(0)) {
@@ -164,8 +170,8 @@ public class CardBuilder {
         }
         weaponLevelString = "Lv. " + weaponLevelString.substring(1);
         g2d.drawString(weaponLevelString, x + 140, y + 68);
-        g2d.drawImage(tintImage(cached20statIcons.get(weapon.getMainStat()), dualPaint), x + 140, y + 71, null);
-        g2d.drawImage(tintImage(cached20statIcons.get(weapon.getSubStat()), dualPaint), x + 140, y + 91, null);
+        g2d.drawImage(tintImage(cached20statIcons.get(weapon.getMainStat()), dualPaint, x + 140, y + 71), x + 140, y + 71, null);
+        g2d.drawImage(tintImage(cached20statIcons.get(weapon.getSubStat()), dualPaint, x + 140, y + 91), x + 140, y + 91, null);
         g2d.drawString(getStatNumber(new StatPair(weapon.getMainStat(),
                 weapon.getMainStatForLevel(build.weaponLevel))), x + 164, y + 88);
         g2d.drawString(getStatNumber(new StatPair(weapon.getSubStat(),
@@ -206,6 +212,10 @@ public class CardBuilder {
         }
         g2d.drawString(line1.toString().trim(), x + 140, y + 28);
         g2d.drawString(line2.toString().trim(), x + 140, y + 48);
+        g2d.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        g2d.drawArc(x + 230, y + 66, 30, 30, 0, 360);
+        String rankText = String.valueOf(build.weaponRank + 1);
+        g2d.drawString(rankText, x + 245 - g2d.getFontMetrics().stringWidth(rankText)/2, y + 88);
     }
     
     private void drawEchoImage(Echo echo, Graphics2D g2d, int x, int y) {
@@ -230,16 +240,16 @@ public class CardBuilder {
             }
         g2d.drawImage(virtImage, x + 10, y + 10, null);
         g2d.drawImage(cached35sonataIcons.get(echo.sonataID), x + 90, y + 90, null);
-        g2d.setPaint(dualPaint);
+        g2d.setPaint(dualFullPaint);
         g2d.setFont(font.deriveFont(Font.PLAIN, 18));
-        g2d.drawImage(tintImage(cached20statIcons.get(echo.secondStat), dualPaint), x + 140, y + 19, null);
+        g2d.drawImage(tintImage(cached20statIcons.get(echo.secondStat), dualPaint, x + 140, y + 19), x + 140, y + 19, null);
         g2d.drawString(getStatNumber(new StatPair(echo.secondStat, echo.secondStatMagnitude)), x + 164, y + 35);
         g2d.setFont(font.deriveFont(Font.PLAIN, 12));
         Stat[] substats = echo.subStats.keySet().toArray(new Stat[0]);
-        g2d.drawImage(tintImage(cached14statIcons.get(echo.mainStat), dualPaint), x + 215, y + 20, null);
+        g2d.drawImage(tintImage(cached14statIcons.get(echo.mainStat), dualPaint, x + 215, y + 20), x + 215, y + 20, null);
         g2d.drawString(getStatNumber(new StatPair(echo.mainStat, echo.mainStatMagnitude)), x + 235, y + 32);
         for (int i = 0; i < substats.length; i++) {
-            g2d.drawImage(tintImage(cached14statIcons.get(substats[i]), dualPaint), x + 140, y + 41 + 16 * i, null);
+            g2d.drawImage(tintImage(cached14statIcons.get(substats[i]), dualPaint, x + 140, y + 41 + 16 * i), x + 140, y + 41 + 16 * i, null);
             g2d.drawString(getStatNumber(new StatPair(substats[i], echo.subStats.get(substats[i]))), x + 160, y + 52 + 16 * i);
         }
     }
@@ -251,21 +261,39 @@ public class CardBuilder {
     private static void drawCircledImage(Graphics2D g2d, int x, int y, int r, BufferedImage image, double relativeImageSize, Paint front, Paint back) {
         g2d.setPaint(back);
         g2d.fillArc(x, y, r, r, 0, 360);
+        int imageX = x + (int)Math.round(r * (1 - relativeImageSize) / 2);
+        int imageY = y + (int)Math.round(r * (1 - relativeImageSize) / 2);
         g2d.drawImage(tintImage(image.getScaledInstance((int) (r * relativeImageSize),
-                        (int) (r * relativeImageSize), Image.SCALE_SMOOTH), front),
-                x + (int) (r * (1 - relativeImageSize) / 2),
-                y + (int) (r * (1 - relativeImageSize) / 2), null);
+                        (int) (r * relativeImageSize), Image.SCALE_SMOOTH), front,
+                        imageX, imageY), imageX, imageY, null);
     }
     
-    private static BufferedImage tintImage(Image image, Paint color){
-        BufferedImage imageTint = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+    private static BufferedImage tintImage(Image image, Paint color) {
+        return tintImage(image, color, 0, 0);
+    }
+    
+    private static BufferedImage tintImage(Image image, Paint color, int x, int y) {
+        BufferedImage imageTint = new BufferedImage(image.getWidth(null) + x, image.getHeight(null) + y, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g3d = imageTint.createGraphics();
-        g3d.drawImage(image, 0, 0, null);
-        g3d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 1.0f));
+        g3d.drawImage(image, x, y, null);
+        g3d.dispose();
+        BufferedImage tintedImage = new BufferedImage(image.getWidth(null) + x, image.getHeight(null) + y, BufferedImage.TYPE_INT_ARGB);
+        g3d = tintedImage.createGraphics();
         g3d.setPaint(color);
         g3d.fillRect(0, 0, imageTint.getWidth(), imageTint.getHeight());
         g3d.dispose();
-        return imageTint;
+        // Multiply resulting image
+        for (int i = x; i < imageTint.getWidth(); i++)
+            for (int j = y; j < imageTint.getHeight(); j++) {
+                int col1 = imageTint.getRGB(i, j);
+                int col2 = tintedImage.getRGB(i, j);
+                int b = ((col1 & 0xFF) * (col2 & 0xFF)) / 255;
+                int g = (((col1 >> 8) & 0xFF) * ((col2 >> 8) & 0xFF)) / 255;
+                int r = (((col1 >> 16) & 0xFF) * ((col2 >> 16) & 0xFF)) / 255;
+                int a = (((col1 >> 24) & 0xFF) * ((col2 >> 24) & 0xFF)) / 255;
+                imageTint.setRGB (i, j, (b) | (g << 8) | (r << 16) | (a << 24));
+            }
+        return imageTint.getSubimage(x, y, image.getWidth(null), image.getHeight(null));
     }
     
     public BufferedImage createCard(Build build) {
@@ -276,9 +304,10 @@ public class CardBuilder {
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2d.setPaint(mainPaint);
         g2d.fillRect(0, 0, 1500, 750);
-        BufferedImage cachedImage = build.character.getImage();
-        g2d.drawImage(cachedImage.getScaledInstance(800,-1, Image.SCALE_SMOOTH), 0, -100, null);
+        g2d.drawImage(build.character.getImage().getScaledInstance(800,-1,
+                Image.SCALE_SMOOTH), 0, -100, null);
         g2d.setPaint(dualPaint);
+        g2d.fillRect(0, 400, 800, 350);
         g2d.fillRect(800, 0, 700, 750);
         int characterNameHeight = 90;
         int characterNameWidth = Integer.MAX_VALUE;
@@ -349,11 +378,9 @@ public class CardBuilder {
                 characterLevelHeightDiv10 * 2, 180, 90);
         g2d.setPaint(mainPaint);
         g2d.drawString(characterLevelText, characterPositionX, characterNameHeight + characterLevelHeight - characterLevelHeightDiv10 * 2);
-        for (int i = 0; i < 6; i++) {
-            drawCircledImage(g2d, 812, 65 * i + 12, 51, build.character.getChain(i), 0.9,
-                    new Color(0x80151617, !(build.chainLength > i)),
-                    new Color(0x40ffffff, !(build.chainLength > i)));
-        }
+        for (int i = 0; i < 6; i++)
+            drawCircledImage(g2d, 812, 65 * i + 12, 51, build.character.getChain(i), 0.8,
+                    build.chainLength > i ? dualFullPaint : dualPaint, build.chainLength > i ? mainPaint : dualHalfPaint);
         g2d.setPaint(mainPaint);
         g2d.setFont(font.deriveFont(Font.PLAIN, 38));
         ArrayList<StatPair> pickedStats = new ArrayList<>();
@@ -371,9 +398,9 @@ public class CardBuilder {
         for (int i = pickedStats.size() - 1; i >= 0; i--)
             if (pickedStats.get(i).value == 0) pickedStats.remove(i);
         pickedStats.sort((a, b) -> (int)(1000 * (b.value - a.value)));
-        g2d.drawImage(tintImage(cached40statIcons.get(Stat.flatHP), mainPaint), 1145, 10, null);
-        g2d.drawImage(tintImage(cached40statIcons.get(Stat.flatATK), mainPaint), 1145, 60, null);
-        g2d.drawImage(tintImage(cached40statIcons.get(Stat.flatDEF), mainPaint), 1145, 110, null);
+        g2d.drawImage(tintImage(cached40statIcons.get(Stat.flatHP), mainPaint, 1145, 10), 1145, 10, null);
+        g2d.drawImage(tintImage(cached40statIcons.get(Stat.flatATK), mainPaint, 1145, 60), 1145, 60, null);
+        g2d.drawImage(tintImage(cached40statIcons.get(Stat.flatDEF), mainPaint, 1145, 110), 1145, 110, null);
         String statText = getStatNumber(new StatPair(Stat.flatHP, statPage.HP));
         g2d.drawString(statText, 1135 - g2d.getFontMetrics().stringWidth(statText), 45);
         statText = getStatNumber(new StatPair(Stat.flatATK, statPage.ATK));
@@ -381,16 +408,16 @@ public class CardBuilder {
         statText = getStatNumber(new StatPair(Stat.flatDEF, statPage.DEF));
         g2d.drawString(statText, 1135 - g2d.getFontMetrics().stringWidth(statText), 145);
         if (pickedStats.size() < 3) {
-            g2d.drawImage(tintImage(cached40statIcons.get(Stat.energyRegen), mainPaint), 1145, 160, null);
+            g2d.drawImage(tintImage(cached40statIcons.get(Stat.energyRegen), mainPaint, 1145, 160), 1145, 160, null);
             statText = getStatNumber(new StatPair(Stat.energyRegen, statPage.energyRegen));
             g2d.drawString(statText, 1135 - g2d.getFontMetrics().stringWidth(statText), 195);
-            g2d.drawImage(tintImage(cached40statIcons.get(Stat.critRate), mainPaint), 1200, 10, null);
+            g2d.drawImage(tintImage(cached40statIcons.get(Stat.critRate), mainPaint, 1200, 10), 1200, 10, null);
             g2d.drawString(getStatNumber(new StatPair(Stat.critRate, statPage.critRate)), 1245, 45);
             pickedStats.add(0, new StatPair(Stat.critDMG, statPage.critDMG));
         } else {
-            g2d.drawImage(tintImage(cached40statIcons.get(Stat.critRate), mainPaint), 1145, 160, null);
-            g2d.drawImage(tintImage(cached40statIcons.get(Stat.critDMG), mainPaint), 1145, 210, null);
-            g2d.drawImage(tintImage(cached40statIcons.get(Stat.energyRegen), mainPaint), 1200, 10, null);
+            g2d.drawImage(tintImage(cached40statIcons.get(Stat.critRate), mainPaint, 1145, 160), 1145, 160, null);
+            g2d.drawImage(tintImage(cached40statIcons.get(Stat.critDMG), mainPaint, 1145, 210), 1145, 210, null);
+            g2d.drawImage(tintImage(cached40statIcons.get(Stat.energyRegen), mainPaint, 1200, 10), 1200, 10, null);
             statText = getStatNumber(new StatPair(Stat.critRate, statPage.critRate));
             g2d.drawString(statText, 1135 - g2d.getFontMetrics().stringWidth(statText), 195);
             statText = getStatNumber(new StatPair(Stat.critDMG, statPage.critDMG));
@@ -399,17 +426,77 @@ public class CardBuilder {
         }
         for (int i = 0; i < 4; i++)
             if (pickedStats.size() > i) {
-                g2d.drawImage(tintImage(cached40statIcons.get(pickedStats.get(i).stat), mainPaint),
-                        1200, 60 + 50 * i, null);
+                g2d.drawImage(tintImage(cached40statIcons.get(pickedStats.get(i).stat), mainPaint,
+                                1200, 60 + 50 * i), 1200, 60 + 50 * i, null);
                 g2d.drawString(getStatNumber(pickedStats.get(i)), 1250, 95 + 50 * i);
             }
-        // Availiable space for echoes: 280 x 150
         drawWeaponImage(build, g2d, 903, 270);
         drawEchoImage(build.echoes[0], g2d, 1202, 270);
         drawEchoImage(build.echoes[1], g2d, 903, 430);
         drawEchoImage(build.echoes[2], g2d, 1202, 430);
         drawEchoImage(build.echoes[3], g2d, 903, 590);
         drawEchoImage(build.echoes[4], g2d, 1202, 590);
+        // Available space for skills: 875x350
+        // Line offset large: 252
+        // Line offset half: 176
+        // Line offset small: 218
+        // Line offset shalf: 109
+        // Large size: 60
+        // Small size: 50
+        // Top Left, Bottom Left: 60x645
+        g2d.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        drawCircledImage(g2d, 40, 655, 60, build.character.getSkill(1),
+                0.8, dualFullPaint, mainPaint);
+        g2d.setPaint(build.minorSkills[0] ? mainPaint : dualHalfPaint);
+        g2d.drawLine(96, 659, 154, 601);
+        drawCircledImage(g2d, 154, 551, 50, build.character.getStatBuf(0).image,
+                0.8, build.minorSkills[0] ? dualFullPaint : dualPaint,
+                build.minorSkills[0] ? mainPaint : dualHalfPaint);
+        g2d.setPaint(build.minorSkills[1] ? mainPaint : dualHalfPaint);
+        g2d.drawLine(204, 551, 263, 492);
+        drawCircledImage(g2d, 263, 442, 50, build.character.getStatBuf(1).image,
+                0.8, build.minorSkills[1] ? dualFullPaint : dualPaint,
+                build.minorSkills[1] ? mainPaint : dualHalfPaint);
+        drawCircledImage(g2d, 140, 655, 60, build.character.getSkill(2),
+                0.8, dualFullPaint, mainPaint);
+        g2d.setPaint(build.minorSkills[2] ? mainPaint : dualHalfPaint);
+        g2d.drawLine(196, 659, 254, 601);
+        drawCircledImage(g2d, 254, 551, 50, build.character.getStatBuf(2).image,
+                0.8, build.minorSkills[2] ? dualFullPaint : dualPaint,
+                build.minorSkills[2] ? mainPaint : dualHalfPaint);
+        g2d.setPaint(build.minorSkills[3] ? mainPaint : dualHalfPaint);
+        g2d.drawLine(304, 551, 363, 492);
+        drawCircledImage(g2d, 363, 442, 50, build.character.getStatBuf(3).image,
+                0.8, build.minorSkills[3] ? dualFullPaint : dualPaint,
+                build.minorSkills[3] ? mainPaint : dualHalfPaint);
+        drawCircledImage(g2d, 240, 655, 60, build.character.getSkill(0),
+                0.8, dualFullPaint, mainPaint); // TODO: inherent skills
+        drawCircledImage(g2d, 340, 655, 60, build.character.getSkill(3),
+                0.8, dualFullPaint, mainPaint);
+        g2d.setPaint(build.minorSkills[4] ? mainPaint : dualHalfPaint);
+        g2d.drawLine(396, 659, 454, 601);
+        drawCircledImage(g2d, 454, 551, 50, build.character.getStatBuf(4).image,
+                0.8, build.minorSkills[4] ? dualFullPaint : dualPaint,
+                build.minorSkills[4] ? mainPaint : dualHalfPaint);
+        g2d.setPaint(build.minorSkills[5] ? mainPaint : dualHalfPaint);
+        g2d.drawLine(504, 551, 563, 492);
+        drawCircledImage(g2d, 563, 442, 50, build.character.getStatBuf(5).image,
+                0.8, build.minorSkills[5] ? dualFullPaint : dualPaint,
+                build.minorSkills[5] ? mainPaint : dualHalfPaint);
+        drawCircledImage(g2d, 440, 655, 60, build.character.getSkill(4),
+                0.8, dualFullPaint, mainPaint);
+        g2d.setPaint(build.minorSkills[6] ? mainPaint : dualHalfPaint);
+        g2d.drawLine(496, 659, 554, 601);
+        drawCircledImage(g2d, 554, 551, 50, build.character.getStatBuf(6).image,
+                0.8, build.minorSkills[6] ? dualFullPaint : dualPaint,
+                build.minorSkills[6] ? mainPaint : dualHalfPaint);
+        g2d.setPaint(build.minorSkills[7] ? mainPaint : dualHalfPaint);
+        g2d.drawLine(604, 551, 663, 492);
+        drawCircledImage(g2d, 663, 442, 50, build.character.getStatBuf(7).image,
+                0.8, build.minorSkills[7] ? dualFullPaint : dualPaint,
+                build.minorSkills[7] ? mainPaint : dualHalfPaint);
+        drawCircledImage(g2d, 540, 665, 50, build.character.getSkill(5),
+                0.8, dualFullPaint, mainPaint);
         g2d.dispose();
         return output;
     }
