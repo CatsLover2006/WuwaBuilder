@@ -42,6 +42,74 @@ public class StatPage {
         baseATK = build.character.getAtkForLevel(build.characterLevel);
         baseHP = build.character.getHpForLevel(build.characterLevel);
         baseDEF = build.character.getDefForLevel(build.characterLevel);
+        float statToAdd;
+        for (int i = 0; i < 8; i++) {
+            if (build.minorSkills[i]) {
+                statToAdd = build.character.getStatBuf(i).stat.value;
+                switch (build.character.getStatBuf(i).stat.stat) {
+                    case flatDEF:
+                        totalFlatDEF += statToAdd;
+                        break;
+                    case flatHP:
+                        totalFlatHP += statToAdd;
+                        break;
+                    case flatATK:
+                        totalFlatATK += statToAdd;
+                        break;
+                    case percentDEF:
+                        totalDEFpercent += statToAdd;
+                        break;
+                    case percentHP:
+                        totalHPpercent += statToAdd;
+                        break;
+                    case percentATK:
+                        totalATKpercent += statToAdd;
+                        break;
+                    case critDMG:
+                        totalCD += statToAdd;
+                        break;
+                    case critRate:
+                        totalCR += statToAdd;
+                        break;
+                    case energyRegen:
+                        totalER += statToAdd;
+                        break;
+                    case skillBonus:
+                        totalSkB += statToAdd;
+                        break;
+                    case ultBonus:
+                        totalUlB += statToAdd;
+                        break;
+                    case basicBonus:
+                        totalBaB += statToAdd;
+                        break;
+                    case havocBonus:
+                        totalHaB += statToAdd;
+                        break;
+                    case heavyBonus:
+                        totalHhB += statToAdd;
+                        break;
+                    case spectroBonus:
+                        totalSpB += statToAdd;
+                        break;
+                    case aeroBonus:
+                        totalAeB += statToAdd;
+                        break;
+                    case fusionBonus:
+                        totalFuB += statToAdd;
+                        break;
+                    case glacioBonus:
+                        totalGlB += statToAdd;
+                        break;
+                    case electroBonus:
+                        totalElB += statToAdd;
+                        break;
+                    case healingBonus:
+                        totalHeB += statToAdd;
+                        break;
+                }
+            }
+        }
         switch (build.weapon.getMainStat()) {
             case flatDEF:
                 baseDEF += build.weapon.getMainStatForLevel(build.weaponLevel);
@@ -53,7 +121,7 @@ public class StatPage {
                 baseATK += build.weapon.getMainStatForLevel(build.weaponLevel);
                 break;
         }
-        float statToAdd = build.weapon.getSubStatForLevel(build.weaponLevel);
+        statToAdd = build.weapon.getSubStatForLevel(build.weaponLevel);
         switch (build.weapon.getSubStat()) {
             case flatDEF:
                 totalFlatDEF += statToAdd;
@@ -384,73 +452,6 @@ public class StatPage {
             for (StatPair buff : sonataBuffs) {
                 statToAdd = buff.value;
                 switch (buff.stat) {
-                    case flatDEF:
-                        totalFlatDEF += statToAdd;
-                        break;
-                    case flatHP:
-                        totalFlatHP += statToAdd;
-                        break;
-                    case flatATK:
-                        totalFlatATK += statToAdd;
-                        break;
-                    case percentDEF:
-                        totalDEFpercent += statToAdd;
-                        break;
-                    case percentHP:
-                        totalHPpercent += statToAdd;
-                        break;
-                    case percentATK:
-                        totalATKpercent += statToAdd;
-                        break;
-                    case critDMG:
-                        totalCD += statToAdd;
-                        break;
-                    case critRate:
-                        totalCR += statToAdd;
-                        break;
-                    case energyRegen:
-                        totalER += statToAdd;
-                        break;
-                    case skillBonus:
-                        totalSkB += statToAdd;
-                        break;
-                    case ultBonus:
-                        totalUlB += statToAdd;
-                        break;
-                    case basicBonus:
-                        totalBaB += statToAdd;
-                        break;
-                    case havocBonus:
-                        totalHaB += statToAdd;
-                        break;
-                    case heavyBonus:
-                        totalHhB += statToAdd;
-                        break;
-                    case spectroBonus:
-                        totalSpB += statToAdd;
-                        break;
-                    case aeroBonus:
-                        totalAeB += statToAdd;
-                        break;
-                    case fusionBonus:
-                        totalFuB += statToAdd;
-                        break;
-                    case glacioBonus:
-                        totalGlB += statToAdd;
-                        break;
-                    case electroBonus:
-                        totalElB += statToAdd;
-                        break;
-                    case healingBonus:
-                        totalHeB += statToAdd;
-                        break;
-                }
-            }
-        }
-        for (int i = 0; i < 8; i++) {
-            if (build.minorSkills[i]) {
-                statToAdd = build.character.getStatBuf(i).stat.value;
-                switch (build.character.getStatBuf(i).stat.stat) {
                     case flatDEF:
                         totalFlatDEF += statToAdd;
                         break;

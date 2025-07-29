@@ -232,18 +232,21 @@ public class HakushinInterface {
             case "ATK":
                 if (json.getBoolean("IsPercent"))
                     return new StatPair(Stat.percentATK, json.getFloat("Value") / 100);
-                return new StatPair(json.getBoolean("IsRatio") ? Stat.percentATK : Stat.flatATK,
-                        json.getFloat("Value"));
+                if (json.getBoolean("IsRatio"))
+                    return new StatPair(Stat.percentATK, json.getFloat("Value") * 100);
+                return new StatPair(Stat.flatATK, json.getFloat("Value"));
             case "DEF":
                 if (json.getBoolean("IsPercent"))
                     return new StatPair(Stat.percentDEF, json.getFloat("Value") / 100);
-                return new StatPair(json.getBoolean("IsRatio") ? Stat.percentDEF : Stat.flatDEF,
-                        json.getFloat("Value"));
+                if (json.getBoolean("IsRatio"))
+                    return new StatPair(Stat.percentDEF, json.getFloat("Value") * 100);
+                return new StatPair(Stat.flatDEF, json.getFloat("Value"));
             case "HP":
                 if (json.getBoolean("IsPercent"))
                     return new StatPair(Stat.percentHP, json.getFloat("Value") / 100);
-                return new StatPair(json.getBoolean("IsRatio") ? Stat.percentHP : Stat.flatHP,
-                        json.getFloat("Value"));
+                if (json.getBoolean("IsRatio"))
+                    return new StatPair(Stat.percentHP, json.getFloat("Value") * 100);
+                return new StatPair(Stat.flatHP, json.getFloat("Value"));
         }
         return new StatPair(Stat.flatATK, 0); // Default
     }

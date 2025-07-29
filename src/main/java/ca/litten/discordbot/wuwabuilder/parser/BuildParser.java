@@ -36,6 +36,19 @@ public class BuildParser {
         return ocr.GetUTF8Text().getString(StandardCharsets.UTF_8).trim().replace("\n", " ");
     }
     
+    private static String ocrExec_hp(TessBaseAPI ocr, BufferedImage subsegment) {
+        byte[] OCRbytes = new byte[subsegment.getHeight() * subsegment.getWidth() * 3];
+        for (int y = 0; y < subsegment.getHeight(); y++)
+            for (int x = 0; x < subsegment.getWidth(); x++) {
+                int rgb = subsegment.getRGB(x, y);
+                OCRbytes[(x + y * subsegment.getWidth()) * 3] = (byte) ((rgb >> 16) & 0x080);
+                OCRbytes[(x + y * subsegment.getWidth()) * 3 + 1] = (byte) ((rgb >> 8) & 0x080);
+                OCRbytes[(x + y * subsegment.getWidth()) * 3 + 2] = (byte) (rgb & 0x080);
+            }
+        ocr.SetImage(OCRbytes, subsegment.getWidth(), subsegment.getHeight(), 3, 3 * subsegment.getWidth());
+        return ocr.GetUTF8Text().getString(StandardCharsets.UTF_8).trim().replace("\n", " ");
+    }
+    
     private static Level levelLookup(int level) {
         if (level > 80) return levelLookup(level, 6);
         if (level > 70) return levelLookup(level, 5);
@@ -180,6 +193,11 @@ public class BuildParser {
                 stat = ocrExec(ocr_name, OCRimage.getSubimage(20, 159 + 34 * s, 230, 34));
                 value = ocrExec(ocr_numbers, OCRimage.getSubimage(250, 157 + 34 * s, 88, 38));
                 subStat = readStat(stat, value);
+                if (subStat == null) {
+                    stat = ocrExec_hp(ocr_name, OCRimage.getSubimage(20, 159 + 34 * s, 230, 34));
+                    value = ocrExec_hp(ocr_numbers, OCRimage.getSubimage(250, 157 + 34 * s, 88, 38));
+                    subStat = readStat(stat, value);
+                }
                 if (subStat != null) {
                     subStats.put(subStat.stat, subStat.value);
                 }

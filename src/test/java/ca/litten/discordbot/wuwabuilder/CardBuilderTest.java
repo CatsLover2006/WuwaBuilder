@@ -18,11 +18,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Order(3)
 public class CardBuilderTest {
-    private static CardBuilder lightModeCardBuilder = new CardBuilder(true);
+    private static CardBuilder lightModeCardBuilder;
     
     @BeforeAll
     public static void Startup() {
         HakushinInterface.init(); // We need the images
+        lightModeCardBuilder = new CardBuilder(true);
     }
     
     @Test

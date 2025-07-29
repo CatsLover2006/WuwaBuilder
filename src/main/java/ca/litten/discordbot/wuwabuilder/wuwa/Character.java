@@ -136,7 +136,9 @@ public class Character {
                                         skillURL.lastIndexOf('.')) + ".webp"));
                         imageGrabberThread.start();
                         imageGrabberThreads.add(imageGrabberThread);
-                        statBuff.stat = BuildParser.readStat(skillObj.getString("Name").replace("+",""),
+                        statBuff.stat = BuildParser.readStat(skillObj.getString("Name")
+                                        .replace("+","")
+                                        .replace(" Up", ""),
                                 skillObj.getJSONArray("Param").getString(0));
                         StatBufPassalong passer = new StatBufPassalong();
                         passer.statBuff = statBuff;

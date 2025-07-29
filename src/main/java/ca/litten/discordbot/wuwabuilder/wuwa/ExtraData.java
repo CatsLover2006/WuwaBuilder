@@ -34,7 +34,7 @@ public class ExtraData {
     // Unconditional buffs
     public static final HashMap<Long, StatPair[][]> weaponPassiveBuffs = new HashMap<>();
     private static final HashMap<Sonata, StatPair[]> sonataBuffs = new HashMap<>();
-    private static final HashMap<Stat, BufferedImage> statLogos = new HashMap<>();
+    public static final HashMap<Stat, BufferedImage> statLogos = new HashMap<>();
     
     private static final StatPair[] noBuffs = new StatPair[0];
     

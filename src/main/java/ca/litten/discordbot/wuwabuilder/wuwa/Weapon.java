@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static ca.litten.discordbot.wuwabuilder.HakushinInterface.baseURL;
+import static ca.litten.discordbot.wuwabuilder.HakushinInterface.statValueConverter;
 
 public class Weapon {
     private static final Map<Long, Weapon> weapons = new HashMap<>();
@@ -61,10 +62,10 @@ public class Weapon {
             for (; ascensionCache.has(String.valueOf(j)); j++) {
                 Level level = Level.valueOf(levelLookup + String.valueOf(j));
                 JSONArray levelCache = ascensionCache.getJSONArray(String.valueOf(j));
-                statPair = HakushinInterface.statValueConverter(levelCache.getJSONObject(0));
+                statPair = statValueConverter(levelCache.getJSONObject(0));
                 weapon.mainStat = statPair.stat;
                 weapon.mainStatMagnitude.put(level, statPair.value);
-                statPair = HakushinInterface.statValueConverter(levelCache.getJSONObject(1));
+                statPair = statValueConverter(levelCache.getJSONObject(1));
                 weapon.subStat = statPair.stat;
                 weapon.subStatMagnitude.put(level, statPair.value);
             }
