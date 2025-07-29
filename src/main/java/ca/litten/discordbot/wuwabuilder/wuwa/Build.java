@@ -10,6 +10,7 @@ public class Build {
     public Echo[] echoes;
     public int[] skillLevels;
     public boolean[] minorSkills;
+    public short asensionPassive;
     
     public Build() {
         echoes = new Echo[5];
@@ -17,5 +18,6 @@ public class Build {
         for (int i = 0; i < 5; i++) skillLevels[i] = 1;
         minorSkills = new boolean[8];
         for (int i = 0; i < 8; i++) minorSkills[i] = false;
+        asensionPassive = 0;
     }
 }

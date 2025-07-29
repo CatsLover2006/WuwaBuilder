@@ -3,6 +3,9 @@ package ca.litten.discordbot.wuwabuilder;
 import static ca.litten.discordbot.wuwabuilder.HakushinInterface.StatPair;
 
 import ca.litten.discordbot.wuwabuilder.wuwa.*;
+import uk.org.okapibarcode.backend.QrCode;
+import uk.org.okapibarcode.output.Java2DRenderer;
+import uk.org.okapibarcode.util.EciMode;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -448,6 +451,10 @@ public class CardBuilder {
         // Skill Chain 1 (Basic)
         drawCircledImage(g2d, 40, 655, 60, build.character.getSkill(1),
                 0.8, dualFullPaint, mainPaint);
+        g2d.setFont(font.deriveFont(Font.PLAIN, 19));
+        g2d.setPaint(mainPaint);
+        String skillLevelText = build.skillLevels[1] + "/10";
+        g2d.drawString(skillLevelText, 70 - g2d.getFontMetrics().stringWidth(skillLevelText) / 2, 650);
         g2d.setPaint(build.minorSkills[0] ? mainPaint : dualHalfPaint);
         g2d.drawLine(96, 659, 154, 601);
         drawCircledImage(g2d, 154, 551, 50, build.character.getStatBuf(0).image,
@@ -461,6 +468,9 @@ public class CardBuilder {
         // Skill Chain 2 (Skill)
         drawCircledImage(g2d, 160, 655, 60, build.character.getSkill(2),
                 0.8, dualFullPaint, mainPaint);
+        g2d.setPaint(mainPaint);
+        skillLevelText = build.skillLevels[2] + "/10";
+        g2d.drawString(skillLevelText, 190 - g2d.getFontMetrics().stringWidth(skillLevelText) / 2, 650);
         g2d.setPaint(build.minorSkills[2] ? mainPaint : dualHalfPaint);
         g2d.drawLine(216, 659, 274, 601);
         drawCircledImage(g2d, 274, 551, 50, build.character.getStatBuf(2).image,
@@ -473,10 +483,26 @@ public class CardBuilder {
                 build.minorSkills[3] ? mainPaint : dualHalfPaint);
         // Skill Chain 3 (Forte)
         drawCircledImage(g2d, 290, 655, 60, build.character.getSkill(0),
-                0.8, dualFullPaint, mainPaint); // TODO: inherent skills
+                0.8, dualFullPaint, mainPaint);
+        g2d.setPaint(mainPaint);
+        skillLevelText = build.skillLevels[0] + "/10";
+        g2d.drawString(skillLevelText, 320 - g2d.getFontMetrics().stringWidth(skillLevelText) / 2, 650);
+        g2d.setPaint(build.asensionPassive > 0 ? mainPaint : dualHalfPaint);
+        g2d.drawLine(346, 659, 404, 601);
+        drawCircledImage(g2d, 404, 551, 50, build.character.getSkill(6),
+                0.8, build.asensionPassive > 0 ? dualFullPaint : dualPaint,
+                build.asensionPassive > 0 ? mainPaint : dualHalfPaint);
+        g2d.setPaint(build.asensionPassive > 1 ? mainPaint : dualHalfPaint);
+        g2d.drawLine(454, 551, 513, 492);
+        drawCircledImage(g2d, 513, 442, 50, build.character.getSkill(7),
+                0.8, build.asensionPassive > 1 ? dualFullPaint : dualPaint,
+                build.asensionPassive > 1 ? mainPaint : dualHalfPaint);
         // Skill Chain 4 (Ult)
         drawCircledImage(g2d, 420, 655, 60, build.character.getSkill(3),
                 0.8, dualFullPaint, mainPaint);
+        g2d.setPaint(mainPaint);
+        skillLevelText = build.skillLevels[3] + "/10";
+        g2d.drawString(skillLevelText, 450 - g2d.getFontMetrics().stringWidth(skillLevelText) / 2, 650);
         g2d.setPaint(build.minorSkills[4] ? mainPaint : dualHalfPaint);
         g2d.drawLine(476, 659, 534, 601);
         drawCircledImage(g2d, 534, 551, 50, build.character.getStatBuf(4).image,
@@ -490,6 +516,9 @@ public class CardBuilder {
         // Skill Chain 5 (Intro)
         drawCircledImage(g2d, 540, 655, 60, build.character.getSkill(4),
                 0.8, dualFullPaint, mainPaint);
+        g2d.setPaint(mainPaint);
+        skillLevelText = build.skillLevels[4] + "/10";
+        g2d.drawString(skillLevelText, 570 - g2d.getFontMetrics().stringWidth(skillLevelText) / 2, 650);
         g2d.setPaint(build.minorSkills[6] ? mainPaint : dualHalfPaint);
         g2d.drawLine(596, 659, 654, 601);
         drawCircledImage(g2d, 654, 551, 50, build.character.getStatBuf(6).image,
@@ -503,6 +532,41 @@ public class CardBuilder {
         // Intro Skill
         drawCircledImage(g2d, 660, 665, 50, build.character.getSkill(5),
                 0.8, dualFullPaint, mainPaint);
+        // Add QR Code
+        // 26x426
+        // 2x Scale
+        // 2px Border
+        QrCode qrCode = new QrCode();
+        qrCode.setContent("https://github.com/CatsLover2006/WuwaBuilder");
+        qrCode.setPreferredEccLevel(QrCode.EccLevel.L);
+        BufferedImage qrImage = new BufferedImage(qrCode.getWidth(), qrCode.getHeight(), BufferedImage.TYPE_INT_RGB);
+        Graphics2D qr2d = qrImage.createGraphics();
+        Java2DRenderer qrRenderer = new Java2DRenderer(qr2d);
+        qrRenderer.render(qrCode);
+        qr2d.dispose();
+        BufferedImage tempImage1 = new BufferedImage(30 + qrImage.getWidth() * 2,
+                430 + qrImage.getHeight() * 2, BufferedImage.TYPE_INT_RGB);
+        BufferedImage tempImage2 = new BufferedImage(30 + qrImage.getWidth() * 2,
+                430 + qrImage.getHeight() * 2, BufferedImage.TYPE_INT_RGB);
+        qr2d = tempImage1.createGraphics();
+        qr2d.setPaint(mainPaint);
+        qr2d.fillRect(0, 0, tempImage1.getWidth(), tempImage1.getHeight());
+        qr2d.dispose();
+        qr2d = tempImage2.createGraphics();
+        qr2d.setPaint(dualFullPaint);
+        qr2d.fillRect(0, 0, tempImage2.getWidth(), tempImage2.getHeight());
+        qr2d.dispose();
+        for (int x = 0; x < qrImage.getWidth(); x++)
+            for (int y = 0; y < qrImage.getHeight(); y++) {
+                if ((qrImage.getRGB(x, y) & 0x0ff) > 0x010) {
+                    tempImage1.setRGB(28 + x * 2, 428 + y * 2, tempImage2.getRGB(28 + x * 2, 428 + y * 2));
+                    tempImage1.setRGB(29 + x * 2, 428 + y * 2, tempImage2.getRGB(29 + x * 2, 428 + y * 2));
+                    tempImage1.setRGB(28 + x * 2, 429 + y * 2, tempImage2.getRGB(28 + x * 2, 429 + y * 2));
+                    tempImage1.setRGB(29 + x * 2, 429 + y * 2, tempImage2.getRGB(29 + x * 2, 429 + y * 2));
+                }
+            }
+        /*g2d.drawImage(tempImage1.getSubimage(26, 426, (qrImage.getWidth() + 2) * 2,
+                (qrImage.getHeight() + 2) * 2), 26, 426, null); //*/// IDK if this is the right position for the QR code
         g2d.dispose();
         return output;
     }

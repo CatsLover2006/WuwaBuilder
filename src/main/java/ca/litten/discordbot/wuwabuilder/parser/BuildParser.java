@@ -221,12 +221,14 @@ public class BuildParser {
             build.minorSkills[2] = true;
             build.minorSkills[4] = true;
             build.minorSkills[6] = true;
+            build.asensionPassive = 1;
         }
         if (build.characterLevel.toString().charAt(0) > 'd') {
             build.minorSkills[1] = true;
             build.minorSkills[3] = true;
             build.minorSkills[5] = true;
             build.minorSkills[7] = true;
+            build.asensionPassive = 2;
         }
         ocr_name.End();
         ocr_numbers.End();

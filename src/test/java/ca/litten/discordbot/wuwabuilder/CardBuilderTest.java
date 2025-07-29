@@ -45,6 +45,7 @@ public class CardBuilderTest {
         for (int i = 0; i < 8; i++) build.minorSkills[i] = false;
         build.minorSkills[2] = true;
         build.minorSkills[4] = true;
+        build.asensionPassive = 0;
         BufferedImage card = lightModeCardBuilder.createCard(build);
         ImageIO.write(card, "png", new File("testOut/zani.png"));
     }
