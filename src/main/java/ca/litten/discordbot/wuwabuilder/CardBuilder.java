@@ -310,8 +310,9 @@ public class CardBuilder {
         g2d.drawImage(build.character.getImage().getScaledInstance(800,-1,
                 Image.SCALE_SMOOTH), 0, -100, null);
         g2d.setPaint(dualPaint);
-        g2d.fillRect(0, 400, 800, 350);
+        g2d.fillRect(365, 513, 435, 237);
         g2d.fillRect(800, 0, 700, 750);
+        g2d.fillArc(128, 513, 474, 474, 180, -90);
         int characterNameHeight = 90;
         int characterNameWidth = Integer.MAX_VALUE;
         while (characterNameWidth > 500) {
@@ -439,115 +440,106 @@ public class CardBuilder {
         drawEchoImage(build.echoes[2], g2d, 1202, 430);
         drawEchoImage(build.echoes[3], g2d, 903, 590);
         drawEchoImage(build.echoes[4], g2d, 1202, 590);
-        // Available space for skills: 875x350
-        // Line offset large: 252
-        // Line offset half: 176
-        // Line offset small: 218
-        // Line offset shalf: 109
-        // Large size: 60
-        // Small size: 50
-        // Top Left, Bottom Left: 60x645
+        // Shift: 0x23
         g2d.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         // Skill Chain 1 (Basic)
-        drawCircledImage(g2d, 40, 655, 60, build.character.getSkill(1),
+        drawCircledImage(g2d, 151, 678, 60, build.character.getSkill(1),
                 0.8, dualFullPaint, mainPaint);
         g2d.setFont(font.deriveFont(Font.PLAIN, 19));
         g2d.setPaint(mainPaint);
         String skillLevelText = build.skillLevels[1] + "/10";
-        g2d.drawString(skillLevelText, 70 - g2d.getFontMetrics().stringWidth(skillLevelText) / 2, 650);
+        g2d.drawString(skillLevelText, 181 - g2d.getFontMetrics().stringWidth(skillLevelText) / 2, 673);
         g2d.setPaint(build.minorSkills[0] ? mainPaint : dualHalfPaint);
-        g2d.drawLine(96, 659, 154, 601);
-        drawCircledImage(g2d, 154, 551, 50, build.character.getStatBuf(0).image,
+        g2d.drawLine(207, 682, 235, 654);
+        drawCircledImage(g2d, 235, 604, 50, build.character.getStatBuf(0).image,
                 0.8, build.minorSkills[0] ? dualFullPaint : dualPaint,
                 build.minorSkills[0] ? mainPaint : dualHalfPaint);
         g2d.setPaint(build.minorSkills[1] ? mainPaint : dualHalfPaint);
-        g2d.drawLine(204, 551, 263, 492);
-        drawCircledImage(g2d, 263, 442, 50, build.character.getStatBuf(1).image,
+        g2d.drawLine(285, 604, 314, 575);
+        drawCircledImage(g2d, 314, 525, 50, build.character.getStatBuf(1).image,
                 0.8, build.minorSkills[1] ? dualFullPaint : dualPaint,
                 build.minorSkills[1] ? mainPaint : dualHalfPaint);
         // Skill Chain 2 (Skill)
-        drawCircledImage(g2d, 160, 655, 60, build.character.getSkill(2),
+        drawCircledImage(g2d, 271, 678, 60, build.character.getSkill(2),
                 0.8, dualFullPaint, mainPaint);
         g2d.setPaint(mainPaint);
         skillLevelText = build.skillLevels[2] + "/10";
-        g2d.drawString(skillLevelText, 190 - g2d.getFontMetrics().stringWidth(skillLevelText) / 2, 650);
+        g2d.drawString(skillLevelText, 301 - g2d.getFontMetrics().stringWidth(skillLevelText) / 2, 673);
         g2d.setPaint(build.minorSkills[2] ? mainPaint : dualHalfPaint);
-        g2d.drawLine(216, 659, 274, 601);
-        drawCircledImage(g2d, 274, 551, 50, build.character.getStatBuf(2).image,
+        g2d.drawLine(327, 682, 355, 654);
+        drawCircledImage(g2d, 355, 604, 50, build.character.getStatBuf(2).image,
                 0.8, build.minorSkills[2] ? dualFullPaint : dualPaint,
                 build.minorSkills[2] ? mainPaint : dualHalfPaint);
         g2d.setPaint(build.minorSkills[3] ? mainPaint : dualHalfPaint);
-        g2d.drawLine(324, 551, 383, 492);
-        drawCircledImage(g2d, 383, 442, 50, build.character.getStatBuf(3).image,
+        g2d.drawLine(405, 604, 434, 575);
+        drawCircledImage(g2d, 434, 525, 50, build.character.getStatBuf(3).image,
                 0.8, build.minorSkills[3] ? dualFullPaint : dualPaint,
                 build.minorSkills[3] ? mainPaint : dualHalfPaint);
         // Skill Chain 3 (Forte)
-        drawCircledImage(g2d, 290, 655, 60, build.character.getSkill(0),
+        drawCircledImage(g2d, 401, 678, 60, build.character.getSkill(0),
                 0.8, dualFullPaint, mainPaint);
         g2d.setPaint(mainPaint);
         skillLevelText = build.skillLevels[0] + "/10";
-        g2d.drawString(skillLevelText, 320 - g2d.getFontMetrics().stringWidth(skillLevelText) / 2, 650);
+        g2d.drawString(skillLevelText, 431 - g2d.getFontMetrics().stringWidth(skillLevelText) / 2, 673);
         g2d.setPaint(build.asensionPassive > 0 ? mainPaint : dualHalfPaint);
-        g2d.drawLine(346, 659, 404, 601);
-        drawCircledImage(g2d, 404, 551, 50, build.character.getSkill(6),
+        g2d.drawLine(457, 682, 485, 654);
+        drawCircledImage(g2d, 485, 604, 50, build.character.getSkill(6),
                 0.8, build.asensionPassive > 0 ? dualFullPaint : dualPaint,
                 build.asensionPassive > 0 ? mainPaint : dualHalfPaint);
         g2d.setPaint(build.asensionPassive > 1 ? mainPaint : dualHalfPaint);
-        g2d.drawLine(454, 551, 513, 492);
-        drawCircledImage(g2d, 513, 442, 50, build.character.getSkill(7),
+        g2d.drawLine(535, 604, 564, 575);
+        drawCircledImage(g2d, 564, 525, 50, build.character.getSkill(7),
                 0.8, build.asensionPassive > 1 ? dualFullPaint : dualPaint,
                 build.asensionPassive > 1 ? mainPaint : dualHalfPaint);
         // Skill Chain 4 (Ult)
-        drawCircledImage(g2d, 420, 655, 60, build.character.getSkill(3),
+        drawCircledImage(g2d, 531, 678, 60, build.character.getSkill(3),
                 0.8, dualFullPaint, mainPaint);
         g2d.setPaint(mainPaint);
         skillLevelText = build.skillLevels[3] + "/10";
-        g2d.drawString(skillLevelText, 450 - g2d.getFontMetrics().stringWidth(skillLevelText) / 2, 650);
+        g2d.drawString(skillLevelText, 561 - g2d.getFontMetrics().stringWidth(skillLevelText) / 2, 673);
         g2d.setPaint(build.minorSkills[4] ? mainPaint : dualHalfPaint);
-        g2d.drawLine(476, 659, 534, 601);
-        drawCircledImage(g2d, 534, 551, 50, build.character.getStatBuf(4).image,
+        g2d.drawLine(587, 682, 615, 654);
+        drawCircledImage(g2d, 615, 604, 50, build.character.getStatBuf(4).image,
                 0.8, build.minorSkills[4] ? dualFullPaint : dualPaint,
                 build.minorSkills[4] ? mainPaint : dualHalfPaint);
         g2d.setPaint(build.minorSkills[5] ? mainPaint : dualHalfPaint);
-        g2d.drawLine(584, 551, 643, 492);
-        drawCircledImage(g2d, 643, 442, 50, build.character.getStatBuf(5).image,
+        g2d.drawLine(665, 604, 694, 575);
+        drawCircledImage(g2d, 694, 525, 50, build.character.getStatBuf(5).image,
                 0.8, build.minorSkills[5] ? dualFullPaint : dualPaint,
                 build.minorSkills[5] ? mainPaint : dualHalfPaint);
         // Skill Chain 5 (Intro)
-        drawCircledImage(g2d, 540, 655, 60, build.character.getSkill(4),
+        drawCircledImage(g2d, 651, 678, 60, build.character.getSkill(4),
                 0.8, dualFullPaint, mainPaint);
         g2d.setPaint(mainPaint);
         skillLevelText = build.skillLevels[4] + "/10";
-        g2d.drawString(skillLevelText, 570 - g2d.getFontMetrics().stringWidth(skillLevelText) / 2, 650);
+        g2d.drawString(skillLevelText, 681 - g2d.getFontMetrics().stringWidth(skillLevelText) / 2, 673);
         g2d.setPaint(build.minorSkills[6] ? mainPaint : dualHalfPaint);
-        g2d.drawLine(596, 659, 654, 601);
-        drawCircledImage(g2d, 654, 551, 50, build.character.getStatBuf(6).image,
+        g2d.drawLine(707, 682, 735, 654);
+        drawCircledImage(g2d, 735, 604, 50, build.character.getStatBuf(6).image,
                 0.8, build.minorSkills[6] ? dualFullPaint : dualPaint,
                 build.minorSkills[6] ? mainPaint : dualHalfPaint);
         g2d.setPaint(build.minorSkills[7] ? mainPaint : dualHalfPaint);
-        g2d.drawLine(704, 551, 763, 492);
-        drawCircledImage(g2d, 763, 442, 50, build.character.getStatBuf(7).image,
+        g2d.drawLine(785, 604, 814, 575);
+        drawCircledImage(g2d, 814, 525, 50, build.character.getStatBuf(7).image,
                 0.8, build.minorSkills[7] ? dualFullPaint : dualPaint,
                 build.minorSkills[7] ? mainPaint : dualHalfPaint);
         // Intro Skill
-        drawCircledImage(g2d, 660, 665, 50, build.character.getSkill(5),
+        drawCircledImage(g2d, 771, 688, 50, build.character.getSkill(5),
                 0.8, dualFullPaint, mainPaint);
         // Add QR Code
-        // 26x426
-        // 2x Scale
-        // 2px Border
         QrCode qrCode = new QrCode();
         qrCode.setContent("https://github.com/CatsLover2006/WuwaBuilder");
         qrCode.setPreferredEccLevel(QrCode.EccLevel.L);
+        qrCode.setPreferredVersion(3);
         BufferedImage qrImage = new BufferedImage(qrCode.getWidth(), qrCode.getHeight(), BufferedImage.TYPE_INT_RGB);
         Graphics2D qr2d = qrImage.createGraphics();
         Java2DRenderer qrRenderer = new Java2DRenderer(qr2d);
         qrRenderer.render(qrCode);
         qr2d.dispose();
-        BufferedImage tempImage1 = new BufferedImage(30 + qrImage.getWidth() * 2,
-                430 + qrImage.getHeight() * 2, BufferedImage.TYPE_INT_RGB);
-        BufferedImage tempImage2 = new BufferedImage(30 + qrImage.getWidth() * 2,
-                430 + qrImage.getHeight() * 2, BufferedImage.TYPE_INT_RGB);
+        BufferedImage tempImage1 = new BufferedImage(825 + qrImage.getWidth() * 2,
+                429 + qrImage.getHeight() * 2, BufferedImage.TYPE_INT_RGB);
+        BufferedImage tempImage2 = new BufferedImage(825 + qrImage.getWidth() * 2,
+                429 + qrImage.getHeight() * 2, BufferedImage.TYPE_INT_RGB);
         qr2d = tempImage1.createGraphics();
         qr2d.setPaint(mainPaint);
         qr2d.fillRect(0, 0, tempImage1.getWidth(), tempImage1.getHeight());
@@ -559,14 +551,21 @@ public class CardBuilder {
         for (int x = 0; x < qrImage.getWidth(); x++)
             for (int y = 0; y < qrImage.getHeight(); y++) {
                 if ((qrImage.getRGB(x, y) & 0x0ff) > 0x010) {
-                    tempImage1.setRGB(28 + x * 2, 428 + y * 2, tempImage2.getRGB(28 + x * 2, 428 + y * 2));
-                    tempImage1.setRGB(29 + x * 2, 428 + y * 2, tempImage2.getRGB(29 + x * 2, 428 + y * 2));
-                    tempImage1.setRGB(28 + x * 2, 429 + y * 2, tempImage2.getRGB(28 + x * 2, 429 + y * 2));
-                    tempImage1.setRGB(29 + x * 2, 429 + y * 2, tempImage2.getRGB(29 + x * 2, 429 + y * 2));
+                    tempImage1.setRGB(823 + x * 2, 427 + y * 2, tempImage2.getRGB(823 + x * 2, 427 + y * 2));
+                    tempImage1.setRGB(824 + x * 2, 427 + y * 2, tempImage2.getRGB(824 + x * 2, 427 + y * 2));
+                    tempImage1.setRGB(823 + x * 2, 428 + y * 2, tempImage2.getRGB(823 + x * 2, 428 + y * 2));
+                    tempImage1.setRGB(824 + x * 2, 428 + y * 2, tempImage2.getRGB(824 + x * 2, 428 + y * 2));
                 }
             }
-        /*g2d.drawImage(tempImage1.getSubimage(26, 426, (qrImage.getWidth() + 2) * 2,
-                (qrImage.getHeight() + 2) * 2), 26, 426, null); //*/// IDK if this is the right position for the QR code
+        g2d.fillArc(819, 402, 62, 62, 180, -90);
+        g2d.fillArc(819, 448, 62, 62, 180, 90);
+        g2d.fillRect(850, 402, 26, 108);
+        g2d.fillRect(819, 432, 62, 47);
+        g2d.drawImage(tempImage1.getSubimage(821, 425, (qrImage.getWidth() + 2) * 2,
+                (qrImage.getHeight() + 2) * 2), 821, 425, null);
+        // GitHub Logo
+        g2d.drawImage(tintImage(ExtraData.githubLogo.getScaledInstance(20, 20, Image.SCALE_SMOOTH),
+                dualFullPaint, 845, 487), 845, 487, null);
         g2d.dispose();
         return output;
     }

@@ -35,6 +35,7 @@ public class ExtraData {
     public static final HashMap<Long, StatPair[][]> weaponPassiveBuffs = new HashMap<>();
     private static final HashMap<Sonata, StatPair[]> sonataBuffs = new HashMap<>();
     public static final HashMap<Stat, BufferedImage> statLogos = new HashMap<>();
+    public static final BufferedImage githubLogo;
     
     private static final StatPair[] noBuffs = new StatPair[0];
     
@@ -154,8 +155,10 @@ public class ExtraData {
             {basic12, heavy12},{basic15, heavy15},{basic18, heavy18},{basic21, heavy21},{basic24, heavy24}};
     
     static {
-        // Stat Logos
         try {
+            // Github Logo
+            githubLogo = ImageIO.read(new File("res/github.png"));
+            // Stat Logos
             BufferedImage atk = ImageIO.read(new File("res/attack.png"));
             BufferedImage def = ImageIO.read(new File("res/defense.png"));
             BufferedImage hp = ImageIO.read(new File("res/hp.png"));
