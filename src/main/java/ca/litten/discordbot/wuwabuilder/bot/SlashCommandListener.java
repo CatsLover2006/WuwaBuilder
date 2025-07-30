@@ -1,15 +1,11 @@
 package ca.litten.discordbot.wuwabuilder.bot;
 
-import ca.litten.discordbot.wuwabuilder.CardBuilder;
-import ca.litten.discordbot.wuwabuilder.HakushinInterface;
 import ca.litten.discordbot.wuwabuilder.parser.BuildParser;
 import ca.litten.discordbot.wuwabuilder.wuwa.Build;
-import ca.litten.discordbot.wuwabuilder.wuwa.Stat;
-import net.dv8tion.jda.api.components.Components;
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.components.buttons.Button;
-import net.dv8tion.jda.api.components.selections.SelectOption;
-import net.dv8tion.jda.api.components.selections.StringSelectMenu;
+import net.dv8tion.jda.api.components.textinput.TextInput;
+import net.dv8tion.jda.api.components.textinput.TextInputStyle;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -18,7 +14,7 @@ import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionE
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.modals.Modal;
-import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
+import net.dv8tion.jda.api.interactions.modals.ModalMapping;
 import net.dv8tion.jda.api.utils.FileUpload;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,28 +24,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import static ca.litten.discordbot.wuwabuilder.bot.Bot.*;
 
 public class SlashCommandListener extends ListenerAdapter {
-    HashMap<String, SlashCommandBuildTracker> buildMap = new HashMap<>();
-    
-    private static class SlashCommandBuildTracker {
-        public Build build;
-        public InteractionHook hook;
-        public ActionRow[] editableActionRow;
-        public long owner;
-        
-        public SlashCommandBuildTracker(Build build, InteractionHook hook, ActionRow[] editableActionRow, long owner) {
-            this.build = build;
-            this.hook = hook;
-            this.editableActionRow = editableActionRow;
-            this.owner = owner;
-        }
-    }
+    HashMap<String, BotCommandBuildTracker> buildMap = new HashMap<>();
     
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
@@ -71,8 +52,7 @@ public class SlashCommandListener extends ListenerAdapter {
                         urlConnection.connect(); // User Agent
                         card = ImageIO.read(urlConnection.getInputStream());
                     }
-                    ReplyCallbackAction replyCallback = event.deferReply();
-                    replyCallback.queue();
+                    event.deferReply().queue();
                     Build build = BuildParser.parseBuild(card);
                     card = cardBuilder.createCard(build);
                     ByteArrayOutputStream cardBytes = new ByteArrayOutputStream();
@@ -80,16 +60,18 @@ public class SlashCommandListener extends ListenerAdapter {
                     String name = event.getMember().getIdLong() + "." + build.character.getId() + "."
                             + event.getTimeCreated().toInstant().getEpochSecond();
                     ActionRow actionRow = ActionRow.of(Button.primary("edit.skill.minor$" + name, "Edit Stat Buffs & Inherent Skills"),
-                            Button.primary("edit.chain$" + name, "Edit Resonance Chain Length & Weapon Rank"));
+                            Button.primary("edit.chain$" + name, "Edit Resonance Chain Length & Weapon Rank"),
+                            Button.primary("edit.skill.main$" + name, "Edit Forte Levels"));
+                    // TODO: echo editing
                     ActionRow doneEditing = ActionRow.of(Button.danger("done$" + name, "Finished Editing"));
                     ActionRow[] t = new ActionRow[]{actionRow, doneEditing};
-                    buildMap.put(name, new SlashCommandBuildTracker(build, event.getHook(), t, event.getMember().getIdLong()));
+                    buildMap.put(name, new BotCommandBuildTracker(build, event.getHook(), t, event.getMember().getIdLong()));
                     event.getHook().sendFiles(FileUpload.fromData(cardBytes.toByteArray(), name + ".png"))
                             .setComponents(t).queue();
-                    new Thread(() -> { // Prevent editing after 3 minutes
+                    new Thread(() -> { // Prevent editing after 5 minutes
                         try {
-                            Thread.sleep(1000 * 60 * 3);
-                            SlashCommandBuildTracker bt = buildMap.get(name);
+                            Thread.sleep(1000 * 60 * 5);
+                            BotCommandBuildTracker bt = buildMap.get(name);
                             buildMap.remove(name);
                             InteractionHook hook = bt.hook;
                             bt.hook = null;
@@ -115,12 +97,15 @@ public class SlashCommandListener extends ListenerAdapter {
     public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
         System.out.println(event.getButton().getCustomId());
         String[] details = event.getButton().getCustomId().split("\\$");
-        SlashCommandBuildTracker buildTracker = buildMap.get(details[1]);
+        BotCommandBuildTracker buildTracker = buildMap.get(details[1]);
         if (event.getMember().getIdLong() != buildTracker.owner) {
             event.reply("This build card isn't yours, silly!").setEphemeral(true).queue();
             return;
         }
         switch (details[0]) {
+            case "edit.skill.main":
+                event.replyModal(getForteEditModal(buildTracker.build, details[1])).queue();
+                return;
             case "edit.skill.minor":
                 event.editComponents(getActionRowsForMinorSkills(buildTracker.build, details[1])).queue();
                 return;
@@ -145,12 +130,7 @@ public class SlashCommandListener extends ListenerAdapter {
             default: // OH SHIT SOMETHING BROKE
                 event.editComponents(buildTracker.editableActionRow).queue();
                 try { // Now we update the build card
-                    BufferedImage card = cardBuilder.createCard(buildTracker.build);
-                    ByteArrayOutputStream cardBytes = new ByteArrayOutputStream();
-                    ImageIO.write(card, "png", cardBytes);
-                    String name = event.getMember().getIdLong() + "." + buildTracker.build.character.getId() + "."
-                            + event.getTimeCreated().toInstant().getEpochSecond();
-                    buildTracker.hook.editOriginalAttachments(FileUpload.fromData(cardBytes.toByteArray(), name + ".png")).queue();
+                    updateBuildCard(buildTracker);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -161,7 +141,7 @@ public class SlashCommandListener extends ListenerAdapter {
     public void onStringSelectInteraction(@NotNull StringSelectInteractionEvent event) {
         System.out.println(event.getComponentId());
         String[] details = event.getComponentId().split("\\$");
-        SlashCommandBuildTracker buildTracker = buildMap.get(details[1]);
+        BotCommandBuildTracker buildTracker = buildMap.get(details[1]);
         if (event.getMember().getIdLong() != buildTracker.owner) {
             event.reply("This build card isn't yours, silly!").setEphemeral(true).queue();
             return;
@@ -175,6 +155,39 @@ public class SlashCommandListener extends ListenerAdapter {
                 buildTracker.build.weaponRank = Integer.parseInt(event.getValues().get(0));
                 event.editComponents(getActionRowsForChains(buildTracker.build, details[1])).queue();
                 return;
+        }
+    }
+    
+    @Override
+    public void onModalInteraction(@NotNull ModalInteractionEvent event) {
+        System.out.println(event.getModalId());
+        String[] details = event.getModalId().split("\\$");
+        BotCommandBuildTracker buildTracker = buildMap.get(details[1]);
+        if (event.getMember().getIdLong() != buildTracker.owner) {
+            event.reply("This build card isn't yours, silly!").setEphemeral(true).queue();
+            return;
+        }
+        switch (details[0]) {
+            case "edit.skill.main": {
+                String basic = event.getValue("basic").getAsString();
+                String skill = event.getValue("skill").getAsString();
+                String forte = event.getValue("forte").getAsString();
+                String ult = event.getValue("ult").getAsString();
+                String intro = event.getValue("intro").getAsString();
+                try {
+                    buildTracker.build.skillLevels[1] = Integer.parseInt(basic);
+                    buildTracker.build.skillLevels[2] = Integer.parseInt(skill);
+                    buildTracker.build.skillLevels[0] = Integer.parseInt(forte);
+                    buildTracker.build.skillLevels[3] = Integer.parseInt(ult);
+                    buildTracker.build.skillLevels[4] = Integer.parseInt(intro);
+                    event.deferReply().setEphemeral(true).queue();
+                    updateBuildCard(buildTracker);
+                } catch (NumberFormatException e) {
+                    event.reply("You can only input integers, silly!").setEphemeral(true).queue();
+                } catch (Exception e) {
+                    event.reply("Something went wrong.").setEphemeral(true).queue();;
+                }
+            }
         }
     }
 }

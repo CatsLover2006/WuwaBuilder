@@ -9,19 +9,30 @@ import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.components.selections.SelectOption;
 import net.dv8tion.jda.api.components.selections.StringSelectMenu;
+import net.dv8tion.jda.api.components.textinput.TextInput;
+import net.dv8tion.jda.api.components.textinput.TextInputStyle;
+import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
+import net.dv8tion.jda.api.utils.FileUpload;
 import org.json.JSONObject;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 public class Bot {
     public static CardBuilder cardBuilder;
@@ -55,6 +66,28 @@ public class Bot {
                         .addOption(OptionType.ATTACHMENT, "image", "Official Bot Image", true)
         );
         commands.queue();
+    }
+    
+    protected static class BotCommandBuildTracker {
+        public Build build;
+        public InteractionHook hook;
+        public ActionRow[] editableActionRow;
+        public long owner;
+        
+        public BotCommandBuildTracker(Build build, InteractionHook hook, ActionRow[] editableActionRow, long owner) {
+            this.build = build;
+            this.hook = hook;
+            this.editableActionRow = editableActionRow;
+            this.owner = owner;
+        }
+    }
+    
+    protected static void updateBuildCard(BotCommandBuildTracker buildTracker) throws IOException {
+        BufferedImage card = cardBuilder.createCard(buildTracker.build);
+        ByteArrayOutputStream cardBytes = new ByteArrayOutputStream();
+        ImageIO.write(card, "png", cardBytes);
+        String name = buildTracker.owner + "." + buildTracker.build.character.getId() + "." + Instant.now().getEpochSecond();
+        buildTracker.hook.editOriginalAttachments(FileUpload.fromData(cardBytes.toByteArray(), name + ".png")).queue();
     }
     
     protected static String generateMinorSkillText(Stat stat) {
@@ -138,5 +171,31 @@ public class Bot {
                 .addOptions(selectOptions).build());
         actionRows[2] = ActionRow.of(Button.success("main$" + identifier, "Back"));
         return actionRows;
+    }
+    
+    protected static Modal getForteEditModal(Build build, String identifier) {
+        TextInput basic = TextInput.create("basic",
+                        build.character.getSkillName(1), TextInputStyle.SHORT)
+                .setPlaceholder("1 ~ 10").setRequiredRange(1, 2)
+                .setValue(String.valueOf(build.skillLevels[1])).build();
+        TextInput skill = TextInput.create("skill",
+                        build.character.getSkillName(2), TextInputStyle.SHORT)
+                .setPlaceholder("1 ~ 10").setRequiredRange(1, 2)
+                .setValue(String.valueOf(build.skillLevels[2])).build();
+        TextInput forte = TextInput.create("forte",
+                        build.character.getSkillName(0), TextInputStyle.SHORT)
+                .setPlaceholder("1 ~ 10").setRequiredRange(1, 2)
+                .setValue(String.valueOf(build.skillLevels[0])).build();
+        TextInput ult = TextInput.create("ult",
+                        build.character.getSkillName(3), TextInputStyle.SHORT)
+                .setPlaceholder("1 ~ 10").setRequiredRange(1, 2)
+                .setValue(String.valueOf(build.skillLevels[3])).build();
+        TextInput intro = TextInput.create("intro",
+                        build.character.getSkillName(4), TextInputStyle.SHORT)
+                .setPlaceholder("1 ~ 10").setRequiredRange(1, 2)
+                .setValue(String.valueOf(build.skillLevels[4])).build();
+        return Modal.create("edit.skill.main$" + identifier, build.character.getName())
+                .addComponents(ActionRow.of(basic), ActionRow.of(skill), ActionRow.of(forte),
+                        ActionRow.of(ult), ActionRow.of(intro)).build();
     }
 }
