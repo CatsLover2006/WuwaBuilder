@@ -143,26 +143,24 @@ public class SlashCommandListener extends ListenerAdapter {
                 // We overflow since now we just ensure the build card is updated
             case "main":
             default: // OH SHIT SOMETHING BROKE
-                event.deferEdit().queue();
-                try {
+                event.editComponents(buildTracker.editableActionRow).queue();
+                try { // Now we update the build card
                     BufferedImage card = cardBuilder.createCard(buildTracker.build);
                     ByteArrayOutputStream cardBytes = new ByteArrayOutputStream();
                     ImageIO.write(card, "png", cardBytes);
                     String name = event.getMember().getIdLong() + "." + buildTracker.build.character.getId() + "."
                             + event.getTimeCreated().toInstant().getEpochSecond();
                     buildTracker.hook.editOriginalAttachments(FileUpload.fromData(cardBytes.toByteArray(), name + ".png")).queue();
-                    buildTracker.hook.editOriginalComponents(buildTracker.editableActionRow).queue();
                 } catch (IOException e) {
-                    event.reply("An error occurred!").setEphemeral(true).queue();
+                    throw new RuntimeException(e);
                 }
-                return;
         }
     }
     
     @Override
     public void onStringSelectInteraction(@NotNull StringSelectInteractionEvent event) {
         System.out.println(event.getComponentId());
-        String[] details = event.getId().split("\\$");
+        String[] details = event.getComponentId().split("\\$");
         SlashCommandBuildTracker buildTracker = buildMap.get(details[1]);
         if (event.getMember().getIdLong() != buildTracker.owner) {
             event.reply("This build card isn't yours, silly!").setEphemeral(true).queue();
