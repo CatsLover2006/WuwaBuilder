@@ -233,15 +233,23 @@ public class BuildParserTest {
     @Order(1)
     public void RecognitionTest() throws IOException {
         Build fspectrover = BuildParser.parseBuild(ImageIO.read(new File("testData/spectrover.JPEG")));
+        Build mhavocrover = BuildParser.parseBuild(ImageIO.read(new File("testData/malerover.JPEG")));
+        Build maerover = BuildParser.parseBuild(ImageIO.read(new File("testData/aerover.JPEG")));
         Build sanhua = BuildParser.parseBuild(ImageIO.read(new File("testData/sanhua.JPEG")));
         Build verina = BuildParser.parseBuild(ImageIO.read(new File("testData/verina.JPEG")));
         assertEquals(Character.getCharacterByID(1502), fspectrover.character);
+        assertEquals(Character.getCharacterByID(1605), mhavocrover.character);
+        assertEquals(Character.getCharacterByID(1406), maerover.character);
         assertEquals(Character.getCharacterByID(1102), sanhua.character);
         assertEquals(Character.getCharacterByID(1503), verina.character);
         assertEquals(Weapon.getWeaponByID(21020064), fspectrover.weapon);
+        assertEquals(Weapon.getWeaponByID(21020064), mhavocrover.weapon);
+        assertEquals(Weapon.getWeaponByID(21020064), maerover.weapon);
         assertEquals(Weapon.getWeaponByID(21020015), sanhua.weapon);
         assertEquals(Weapon.getWeaponByID(21050024), verina.weapon);
         assertEquals(3, fspectrover.chainLength);
+        assertEquals(4, mhavocrover.chainLength);
+        assertEquals(3, maerover.chainLength);
         assertEquals(6, sanhua.chainLength);
         assertEquals(1, verina.chainLength);
     }

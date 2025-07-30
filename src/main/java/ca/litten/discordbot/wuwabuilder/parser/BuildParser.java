@@ -23,6 +23,8 @@ public class BuildParser {
     private static int[] skillX = {1172, 1053, 820, 1256, 912};
     private static int[] skillY = {588, 185, 341, 341, 588};
     
+    private static int[] roverColors = {0x7b6b4d, 0x822f6a, 0x678682};
+    
     private static String ocrExec(TessBaseAPI ocr, BufferedImage subsegment) {
         byte[] OCRbytes = new byte[subsegment.getHeight() * subsegment.getWidth() * 3];
         for (int y = 0; y < subsegment.getHeight(); y++)
@@ -149,13 +151,6 @@ public class BuildParser {
             if (columnGood) break;
         }
         String value = ocrExec(ocr_name, image.getSubimage(68, 23, x-4, 65));
-        if (value.equals("Rover")) {
-            // TODO: male/female Rover
-            // TODO: Rover Element
-            value = "FRover: Spectro";
-        }
-        System.out.println();
-        build.character = Character.getCharacterByName(value);
         BufferedImage charaLevelSubimage;
         try {
             charaLevelSubimage = charaLevel.getSubimage(x, 0, 55, charaLevel.getHeight());
@@ -164,6 +159,51 @@ public class BuildParser {
         }
         build.characterLevel = levelLookup(Integer.parseInt(
                 ocrExec(ocr_digits, charaLevelSubimage).replace(".", "")));
+        if (value.equals("Rover")) {
+            // TODO: rover element detection
+            int totalRed = 0, totalGreen = 0, totalBlue = 0;
+            for (x = 0; x < 42; x++)
+                for (y = 0; y < 42; y++) {
+                    rgb = image.getRGB(x + 20, y + 29);
+                    totalRed += (rgb >> 16) & 0x0ff;
+                    totalGreen += (rgb >> 8) & 0x0ff;
+                    totalBlue += rgb & 0x0ff;
+                }
+            totalRed /= 42 * 42;
+            totalGreen /= 42 * 42;
+            totalBlue /= 42 * 42;
+            int closestDif = 255 * 3;
+            int closestIndex = 0;
+            int colorDif;
+            for (int i = 0; i < roverColors.length; i++) {
+                colorDif = Math.abs(((roverColors[i] >> 16) & 0x0ff) - totalRed)
+                        + Math.abs(((roverColors[i] >> 8) & 0x0ff) - totalGreen)
+                        + Math.abs((roverColors[i] & 0x0ff) - totalBlue);
+                if (closestDif > colorDif) {
+                    closestIndex = i;
+                    closestDif = colorDif;
+                }
+            }
+            switch (closestIndex) {
+                case 2:
+                    value = "Rover: Aero";
+                    break;
+                case 1:
+                    value = "Rover: Havoc";
+                    break;
+                case 0:
+                default: // IDK WHAT'S GOING ON
+                    value = "Rover: Spectro";
+            }
+        }
+        if (value.contains("Rover:")) {
+            // 384x312
+            if (((image.getRGB(384, 312) >> 16) & 0x0ff) > 0xC0)
+                value = "F" + value;
+            else value = "M" + value;
+        }
+        System.out.println();
+        build.character = Character.getCharacterByName(value);
         build.weapon = Weapon.getWeaponByName(ocrExec(ocr_weap, image.getSubimage(1602, 455, 275, 24)));
         // IDK if this even is on the thing, R1 for 5 stars, R5 otherwise
         build.weaponRank = build.weapon.getStarCount() == 5 ? 0 : 4;

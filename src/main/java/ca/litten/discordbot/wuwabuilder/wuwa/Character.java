@@ -252,6 +252,7 @@ public class Character {
     }
     
     public String getName() {
+        if (name.contains("Rover:")) return name.substring(1);
         return name;
     }
     
