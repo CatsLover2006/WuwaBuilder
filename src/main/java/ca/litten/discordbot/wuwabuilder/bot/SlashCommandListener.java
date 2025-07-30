@@ -89,7 +89,8 @@ public class SlashCommandListener extends ListenerAdapter {
             event.getHook().editOriginal("An error occurred while processing the command!").queue();
             new Thread(() -> {
                 try {
-                    Thread.sleep(1000 * 10);
+                    long piSecondsAsNanos = (long) (1000000000L * Math.PI);
+                    Thread.sleep(piSecondsAsNanos / 1000000, (int) (piSecondsAsNanos % 1000000));
                 } catch (InterruptedException ex) {
                     ex.printStackTrace();
                 }
