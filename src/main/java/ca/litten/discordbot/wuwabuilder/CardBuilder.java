@@ -320,22 +320,17 @@ public class CardBuilder {
             g2d.setFont(font.deriveFont(Font.PLAIN, (int)(characterNameHeight * 0.9)));
             characterNameWidth = g2d.getFontMetrics().stringWidth(build.character.getName());
         }
-        int characterPositionX = 400 - characterNameWidth/2;
         int characterNameHeightDiv10 = characterNameHeight/10;
-        g2d.fillRect(characterPositionX, 0, characterNameWidth, characterNameHeight);
-        g2d.fillRect(characterPositionX + characterNameWidth, 0,
+        g2d.fillRect(characterNameHeightDiv10, 0, characterNameWidth, characterNameHeight);
+        g2d.fillRect(characterNameHeightDiv10 + characterNameWidth, 0,
                 characterNameHeightDiv10, characterNameHeight - characterNameHeightDiv10);
-        g2d.fillRect(characterPositionX - characterNameHeightDiv10, 0,
-                characterNameHeightDiv10, characterNameHeight - characterNameHeightDiv10);
-        g2d.fillArc(characterPositionX + characterNameWidth - characterNameHeightDiv10,
+        g2d.fillRect(0, 0, characterNameHeightDiv10, characterNameHeight);
+        g2d.fillArc(characterNameHeightDiv10 + characterNameWidth - characterNameHeightDiv10,
                 characterNameHeight - characterNameHeightDiv10 * 2, characterNameHeightDiv10 * 2,
                 characterNameHeightDiv10 * 2, 0, -90);
-        g2d.fillArc(characterPositionX - characterNameHeightDiv10,
-                characterNameHeight - characterNameHeightDiv10 * 2, characterNameHeightDiv10 * 2,
-                characterNameHeightDiv10 * 2, 180, 90);
         g2d.setPaint(mainPaint);
         g2d.fillRect(875, 0, 10, 750);
-        g2d.drawString(build.character.getName(), characterPositionX,
+        g2d.drawString(build.character.getName(), characterNameHeightDiv10,
                 characterNameHeight - characterNameHeightDiv10 * 2);
         int characterLevelHeight = 35;
         int characterLevelHeightDiv10 = characterLevelHeight/10;
@@ -367,21 +362,16 @@ public class CardBuilder {
         }
         characterLevelText = "Lv. " + characterLevelText.substring(1);
         int characterLevelWidth = g2d.getFontMetrics().stringWidth(characterLevelText);
-        characterPositionX = 400 - characterLevelWidth/2;
         g2d.setPaint(dualPaint);
-        g2d.fillRect(characterPositionX, characterNameHeight, characterLevelWidth, characterLevelHeight);
-        g2d.fillRect(characterPositionX + characterLevelWidth, characterNameHeight,
-                characterLevelHeightDiv10, characterLevelHeight - characterLevelHeightDiv10);
-        g2d.fillRect(characterPositionX - characterLevelHeightDiv10, characterNameHeight,
-                characterLevelHeightDiv10, characterLevelHeight - characterLevelHeightDiv10);
-        g2d.fillArc(characterPositionX + characterLevelWidth - characterLevelHeightDiv10,
-                characterNameHeight + characterLevelHeight - characterLevelHeightDiv10 * 2, characterLevelHeightDiv10 * 2,
-                characterLevelHeightDiv10 * 2, 0, -90);
-        g2d.fillArc(characterPositionX - characterLevelHeightDiv10,
-                characterNameHeight + characterLevelHeight - characterLevelHeightDiv10 * 2, characterLevelHeightDiv10 * 2,
-                characterLevelHeightDiv10 * 2, 180, 90);
+        g2d.fillRect(characterNameHeightDiv10, characterNameHeight, characterLevelWidth, characterLevelHeight);
+        g2d.fillRect(characterNameHeightDiv10 + characterLevelWidth, characterNameHeight,
+                characterNameHeightDiv10, characterLevelHeight - characterNameHeightDiv10);
+        g2d.fillRect(0, characterNameHeight, characterNameHeightDiv10, characterLevelHeight);
+        g2d.fillArc(characterLevelWidth,
+                characterNameHeight + characterLevelHeight - characterNameHeightDiv10 * 2,
+                characterNameHeightDiv10 * 2, characterNameHeightDiv10 * 2, 0, -90);
         g2d.setPaint(mainPaint);
-        g2d.drawString(characterLevelText, characterPositionX, characterNameHeight + characterLevelHeight - characterLevelHeightDiv10 * 2);
+        g2d.drawString(characterLevelText, characterNameHeightDiv10, characterNameHeight + characterLevelHeight - characterLevelHeightDiv10 * 3);
         for (int i = 0; i < 6; i++)
             drawCircledImage(g2d, 812, 65 * i + 12, 51, build.character.getChain(i), 0.8,
                     build.chainLength > i ? dualFullPaint : dualPaint, build.chainLength > i ? mainPaint : dualHalfPaint);
