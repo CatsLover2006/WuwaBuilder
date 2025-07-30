@@ -85,11 +85,16 @@ public class SlashCommandListener extends ListenerAdapter {
                     event.reply("Invalid command.").queue();
             }
         } catch (Throwable e) {
-            StringBuilder stackTrace = new StringBuilder();
-            for (StackTraceElement traceElement : e.getStackTrace())
-                stackTrace.append(traceElement.toString()).append("\n");
-            event.reply("An error occurred while processing the command!\n" +
-                    "Here's the stack trace:\n" + stackTrace).queue();
+            e.printStackTrace();
+            event.getHook().editOriginal("An error occurred while processing the command!").queue();
+            new Thread(() -> {
+                try {
+                    Thread.sleep(1000 * 10);
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
+                event.getHook().deleteOriginal().queue();
+            }).start();
         }
     }
     
