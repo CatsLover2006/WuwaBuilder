@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
-import static ca.litten.discordbot.wuwabuilder.bot.Bot.cardBuilder;
+import static ca.litten.discordbot.wuwabuilder.bot.Bot.*;
 
 public class SlashCommandListener extends ListenerAdapter {
     HashMap<String, SlashCommandBuildTracker> buildMap = new HashMap<>();
@@ -40,12 +40,14 @@ public class SlashCommandListener extends ListenerAdapter {
     private static class SlashCommandBuildTracker {
         public Build build;
         public InteractionHook hook;
-        public ActionRow editableActionRow;
+        public ActionRow[] editableActionRow;
+        public long owner;
         
-        public SlashCommandBuildTracker(Build build, InteractionHook hook, ActionRow editableActionRow) {
+        public SlashCommandBuildTracker(Build build, InteractionHook hook, ActionRow[] editableActionRow, long owner) {
             this.build = build;
             this.hook = hook;
             this.editableActionRow = editableActionRow;
+            this.owner = owner;
         }
     }
     
@@ -77,10 +79,13 @@ public class SlashCommandListener extends ListenerAdapter {
                     ImageIO.write(card, "png", cardBytes);
                     String name = event.getMember().getIdLong() + "." + build.character.getId() + "."
                             + event.getTimeCreated().toInstant().getEpochSecond();
-                    ActionRow actionRow = ActionRow.of(Button.primary("edit.skill.minor$" + name, "Edit Skills"));
-                    buildMap.put(name, new SlashCommandBuildTracker(build, event.getHook(), actionRow));
+                    ActionRow actionRow = ActionRow.of(Button.primary("edit.skill.minor$" + name, "Edit Stat Buffs & Inherent Skills"),
+                            Button.primary("edit.chain$" + name, "Edit Resonance Chain Length & Weapon Rank"));
+                    ActionRow doneEditing = ActionRow.of(Button.danger("done$" + name, "Finished Editing"));
+                    ActionRow[] t = new ActionRow[]{actionRow, doneEditing};
+                    buildMap.put(name, new SlashCommandBuildTracker(build, event.getHook(), t, event.getMember().getIdLong()));
                     event.getHook().sendFiles(FileUpload.fromData(cardBytes.toByteArray(), name + ".png"))
-                            .setComponents(actionRow).queue();
+                            .setComponents(t).queue();
                     new Thread(() -> { // Prevent editing after 3 minutes
                         try {
                             Thread.sleep(1000 * 60 * 3);
@@ -106,78 +111,20 @@ public class SlashCommandListener extends ListenerAdapter {
         }
     }
     
-    private String generateMinorSkillText(Stat stat) {
-        switch (stat) {
-            case flatATK:
-            case percentATK:
-                return "ATK+";
-            case flatDEF:
-            case percentDEF:
-                return "DEF+";
-            case flatHP:
-            case percentHP:
-                return "HP+";
-            case critRate:
-                return "Crit. Rate+";
-            case critDMG:
-                return "Crit. DMG+";
-            case basicBonus:
-                return "Basic Attack DMG Bonus+";
-            case heavyBonus:
-                return "Heavy Attack DMG Bonus+";
-            case skillBonus:
-                return "Resonance Skill DMG Bonus+";
-            case ultBonus:
-                return "Resonance Liberation DMG Bonus+";
-            case healingBonus:
-                return "Outgoing Healing Bonus +";
-            default:
-                String elementName = stat.name().replace("Bonus", "");
-                return elementName.substring(0, 1).toUpperCase() // Capitalize first letter
-                        + elementName.substring(1).toLowerCase()
-                        + " DMG Bonus+";
-        }
-    }
-    
-    private ActionRow[] getActionRowsForMinorSkills (Build build, String identifier) {
-        ActionRow[] actionRows = new ActionRow[3];
-        for (int row = 0; row < 2; row++) {
-            ArrayList<Button> buttons = new ArrayList<>();
-            for (int i = 0; i < 4; i++) {
-                Button button;
-                int idx = 1 + i * 2 - row;
-                if (build.minorSkills[idx])
-                    button = Button.primary("edit.skill.minor.edit$" + identifier + "$" + idx,
-                            generateMinorSkillText(build.character.getStatBuf(idx).stat.stat));
-                else
-                    button = Button.secondary("edit.skill.minor.edit$" + identifier + "$" + idx,
-                            generateMinorSkillText(build.character.getStatBuf(idx).stat.stat));
-                buttons.add(button);
-            }
-            if (build.asensionPassive > 1 - row)
-                buttons.add(2, Button.primary("edit.skill.minor.edit$" + identifier + "$a" + (2 - row),
-                        build.character.getSkillName(7 - row)));
-            else
-                buttons.add(2, Button.secondary("edit.skill.minor.edit$" + identifier + "$a" + (2 - row),
-                        build.character.getSkillName(7 - row)));
-            actionRows[row] = ActionRow.of(buttons);
-        }
-        actionRows[2] = ActionRow.of(Button.success("main$" + identifier, "Back"));
-        return actionRows;
-    }
-    
     @Override
     public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
         System.out.println(event.getButton().getCustomId());
         String[] details = event.getButton().getCustomId().split("\\$");
-        SlashCommandBuildTracker buildTracker;
+        SlashCommandBuildTracker buildTracker = buildMap.get(details[1]);
+        if (event.getMember().getIdLong() != buildTracker.owner) {
+            event.reply("This build card isn't yours, silly!").setEphemeral(true).queue();
+            return;
+        }
         switch (details[0]) {
             case "edit.skill.minor":
-                buildTracker = buildMap.get(details[1]);
                 event.editComponents(getActionRowsForMinorSkills(buildTracker.build, details[1])).queue();
                 return;
             case "edit.skill.minor.edit":
-                buildTracker = buildMap.get(details[1]);
                 if (details[2].startsWith("a")) { // Ascension Passive
                     if (details[2].equals("a1") && buildTracker.build.asensionPassive == 1)
                         buildTracker.build.asensionPassive = 0;
@@ -188,10 +135,15 @@ public class SlashCommandListener extends ListenerAdapter {
                 }
                 event.editComponents(getActionRowsForMinorSkills(buildTracker.build, details[1])).queue();
                 return;
+            case "edit.chain":
+                event.editComponents(getActionRowsForChains(buildTracker.build, details[1])).queue();
+                return;
+            case "done":
+                buildTracker.editableActionRow = new ActionRow[]{};
+                // We overflow since now we just ensure the build card is updated
             case "main":
             default: // OH SHIT SOMETHING BROKE
                 event.deferEdit().queue();
-                buildTracker = buildMap.get(details[1]);
                 try {
                     BufferedImage card = cardBuilder.createCard(buildTracker.build);
                     ByteArrayOutputStream cardBytes = new ByteArrayOutputStream();
@@ -203,6 +155,27 @@ public class SlashCommandListener extends ListenerAdapter {
                 } catch (IOException e) {
                     event.reply("An error occurred!").setEphemeral(true).queue();
                 }
+                return;
+        }
+    }
+    
+    @Override
+    public void onStringSelectInteraction(@NotNull StringSelectInteractionEvent event) {
+        System.out.println(event.getComponentId());
+        String[] details = event.getId().split("\\$");
+        SlashCommandBuildTracker buildTracker = buildMap.get(details[1]);
+        if (event.getMember().getIdLong() != buildTracker.owner) {
+            event.reply("This build card isn't yours, silly!").setEphemeral(true).queue();
+            return;
+        }
+        switch (details[0]) {
+            case "edit.chain.chain":
+                buildTracker.build.chainLength = Integer.parseInt(event.getValues().get(0));
+                event.editComponents(getActionRowsForChains(buildTracker.build, details[1])).queue();
+                return;
+            case "edit.chain.rank":
+                buildTracker.build.weaponRank = Integer.parseInt(event.getValues().get(0));
+                event.editComponents(getActionRowsForChains(buildTracker.build, details[1])).queue();
                 return;
         }
     }
