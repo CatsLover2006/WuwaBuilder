@@ -24,7 +24,9 @@ public class Character {
     private final Map <Level, Float> defMagnitude;
     private BufferedImage image;
     private final BufferedImage[] chains;
+    private final String[] chainNames;
     private final BufferedImage[] skills;
+    private final String[] skillNames;
     private final MinorStatBuff[] minorStatBuffs;
     private String name;
     private int starCount;
@@ -45,7 +47,9 @@ public class Character {
         hpMagnitude = new HashMap<>();
         defMagnitude = new HashMap<>();
         chains = new BufferedImage[6];
+        chainNames = new String[6];
         skills = new BufferedImage[8];
+        skillNames = new String[8];
         minorStatBuffs = new MinorStatBuff[8];
     };
     
@@ -78,6 +82,8 @@ public class Character {
                                 chainURL.lastIndexOf('.')) + ".webp"));
                 imageGrabberThread.start();
                 imageGrabberThreads.add(imageGrabberThread);
+                character.chainNames[i] = chainCache.getJSONObject(String.valueOf(i + 1))
+                        .getString("Name");
             }
             JSONObject skillTreeCache = hakushinJSON.getJSONObject("SkillTrees");
             Set<String> skillTreeCacheKeys = skillTreeCache.keySet();
@@ -94,6 +100,7 @@ public class Character {
                                         skillURL.lastIndexOf('.')) + ".webp"));
                         imageGrabberThread.start();
                         imageGrabberThreads.add(imageGrabberThread);
+                        character.skillNames[0] = skillObject.getJSONObject("Skill").getString("Name");
                         break;
                     }
                     case 2: {
@@ -109,6 +116,8 @@ public class Character {
                                         skillURL.lastIndexOf('.')) + ".webp"));
                         imageGrabberThread.start();
                         imageGrabberThreads.add(imageGrabberThread);
+                        character.skillNames[skillObject.getInt("Coordinate")] =
+                                skillObject.getJSONObject("Skill").getString("Name");
                         info[Integer.parseInt(key) - 1] = skillObject.getInt("Coordinate");
                         break;
                     }
@@ -124,6 +133,8 @@ public class Character {
                                         skillURL.lastIndexOf('.')) + ".webp"));
                         imageGrabberThread.start();
                         imageGrabberThreads.add(imageGrabberThread);
+                        character.skillNames[skillObject.getInt("Coordinate") + 4] =
+                                skillObject.getJSONObject("Skill").getString("Name");
                         break;
                     }
                     case 4: {
@@ -236,6 +247,10 @@ public class Character {
         return image;
     }
     
+    public long getId() {
+        return id;
+    }
+    
     public String getName() {
         return name;
     }
@@ -258,6 +273,14 @@ public class Character {
     
     public BufferedImage getSkill(int index) {
         return skills[index];
+    }
+    
+    public String getChainName(int index) {
+        return chainNames[index];
+    }
+    
+    public String getSkillName(int index) {
+        return skillNames[index];
     }
     
     public MinorStatBuff getStatBuf(int index) {

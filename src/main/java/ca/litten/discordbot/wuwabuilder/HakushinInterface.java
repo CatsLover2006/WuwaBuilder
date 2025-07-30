@@ -63,7 +63,7 @@ public class HakushinInterface {
                         callback.callback(ImageIO.read(url));
                     } catch (IOException e) {
                         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                        urlConnection.setRequestProperty("User-Agent", "I_AM_A_DISCORD_BOT");
+                        urlConnection.setRequestProperty("User-Agent", "WuwaBot/0.0.1a");
                         urlConnection.connect(); // User Agent
                         callback.callback(ImageIO.read(urlConnection.getInputStream()));
                     }
