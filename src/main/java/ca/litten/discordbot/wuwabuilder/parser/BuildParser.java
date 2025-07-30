@@ -202,7 +202,6 @@ public class BuildParser {
                 value = "F" + value;
             else value = "M" + value;
         }
-        System.out.println();
         build.character = Character.getCharacterByName(value);
         build.weapon = Weapon.getWeaponByName(ocrExec(ocr_weap, image.getSubimage(1602, 455, 275, 24)));
         // IDK if this even is on the thing, R1 for 5 stars, R5 otherwise

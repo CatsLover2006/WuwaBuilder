@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.components.selections.SelectOption;
 import net.dv8tion.jda.api.components.selections.StringSelectMenu;
 import net.dv8tion.jda.api.components.textinput.TextInput;
 import net.dv8tion.jda.api.components.textinput.TextInputStyle;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
@@ -32,7 +33,7 @@ import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.List;
 
 public class Bot {
     public static CardBuilder cardBuilder;
@@ -57,8 +58,9 @@ public class Bot {
         JSONObject config = loadConfig();
         cardBuilder = new CardBuilder(true);
         HakushinInterface.init(new URL(config.getString("hakushin")));
+        // TODO: set up webhook
         JDA jda = JDABuilder.createLight(config.getString("token"), Collections.emptyList())
-                .addEventListeners(new SlashCommandListener()).build();
+                .addEventListeners(new GenerationCommandListener()).build();
         
         CommandListUpdateAction commands = jda.updateCommands();
         commands.addCommands(

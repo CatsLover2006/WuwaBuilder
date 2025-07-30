@@ -4,8 +4,6 @@ import ca.litten.discordbot.wuwabuilder.parser.BuildParser;
 import ca.litten.discordbot.wuwabuilder.wuwa.Build;
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.components.buttons.Button;
-import net.dv8tion.jda.api.components.textinput.TextInput;
-import net.dv8tion.jda.api.components.textinput.TextInputStyle;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -13,8 +11,6 @@ import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.InteractionHook;
-import net.dv8tion.jda.api.interactions.modals.Modal;
-import net.dv8tion.jda.api.interactions.modals.ModalMapping;
 import net.dv8tion.jda.api.utils.FileUpload;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,11 +21,10 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.List;
 
 import static ca.litten.discordbot.wuwabuilder.bot.Bot.*;
 
-public class SlashCommandListener extends ListenerAdapter {
+public class GenerationCommandListener extends ListenerAdapter {
     HashMap<String, BotCommandBuildTracker> buildMap = new HashMap<>();
     
     @Override
@@ -57,7 +52,11 @@ public class SlashCommandListener extends ListenerAdapter {
                     card = cardBuilder.createCard(build);
                     ByteArrayOutputStream cardBytes = new ByteArrayOutputStream();
                     ImageIO.write(card, "png", cardBytes);
-                    String name = event.getMember().getIdLong() + "." + build.character.getId() + "."
+                    String name;
+                    if (event.getMember() == null) {
+                        name = event.getChannelId() + "." + build.character.getId() + "."
+                                + event.getTimeCreated().toInstant().getEpochSecond();
+                    } else name = event.getMember().getIdLong() + "." + build.character.getId() + "."
                             + event.getTimeCreated().toInstant().getEpochSecond();
                     ActionRow actionRow = ActionRow.of(Button.primary("edit.skill.minor$" + name, "Edit Stat Buffs & Inherent Skills"),
                             Button.primary("edit.chain$" + name, "Edit Resonance Chain Length & Weapon Rank"),
@@ -104,7 +103,7 @@ public class SlashCommandListener extends ListenerAdapter {
         System.out.println(event.getButton().getCustomId());
         String[] details = event.getButton().getCustomId().split("\\$");
         BotCommandBuildTracker buildTracker = buildMap.get(details[1]);
-        if (event.getMember().getIdLong() != buildTracker.owner) {
+        if (event.getMember() != null && event.getMember().getIdLong() != buildTracker.owner) {
             event.reply("This build card isn't yours, silly!").setEphemeral(true).queue();
             return;
         }
@@ -148,7 +147,7 @@ public class SlashCommandListener extends ListenerAdapter {
         System.out.println(event.getComponentId());
         String[] details = event.getComponentId().split("\\$");
         BotCommandBuildTracker buildTracker = buildMap.get(details[1]);
-        if (event.getMember().getIdLong() != buildTracker.owner) {
+        if (event.getMember() != null && event.getMember().getIdLong() != buildTracker.owner) {
             event.reply("This build card isn't yours, silly!").setEphemeral(true).queue();
             return;
         }
@@ -169,7 +168,7 @@ public class SlashCommandListener extends ListenerAdapter {
         System.out.println(event.getModalId());
         String[] details = event.getModalId().split("\\$");
         BotCommandBuildTracker buildTracker = buildMap.get(details[1]);
-        if (event.getMember().getIdLong() != buildTracker.owner) {
+        if (event.getMember() != null && event.getMember().getIdLong() != buildTracker.owner) {
             event.reply("This build card isn't yours, silly!").setEphemeral(true).queue();
             return;
         }
