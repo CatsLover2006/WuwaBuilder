@@ -54,14 +54,15 @@ public class Bot {
         }
     }
     
-    public static void main(String[] args) throws MalformedURLException {
+    public static void main(String[] args) throws Exception {
         JSONObject config = loadConfig();
         HakushinInterface.init(new URL(config.getString("hakushin")));
         cardBuilder = new CardBuilder(true);
-        // TODO: set up webhook
         JDA jda = JDABuilder.createLight(config.getString("token"), Collections.emptyList())
                 .addEventListeners(new GenerationCommandListener()).build();
-        
+        WebhookHander webhookHander = new WebhookHander(jda,
+                config.getString("appid"), config.getInt("webhookPort"),
+                config.getString("pubKey"));
         CommandListUpdateAction commands = jda.updateCommands();
         commands.addCommands(
                 Commands.slash("generate", "Generate build")
