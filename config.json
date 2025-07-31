@@ -1,4 +1,6 @@
 {
   "hakushin": "https://api.hakush.in/",
-  "token": ""
+  "token": "",
+  "webhook": "",
+  "appid": 0
 }
