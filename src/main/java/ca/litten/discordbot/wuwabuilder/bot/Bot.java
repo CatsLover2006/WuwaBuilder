@@ -11,7 +11,6 @@ import net.dv8tion.jda.api.components.selections.SelectOption;
 import net.dv8tion.jda.api.components.selections.StringSelectMenu;
 import net.dv8tion.jda.api.components.textinput.TextInput;
 import net.dv8tion.jda.api.components.textinput.TextInputStyle;
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
@@ -25,7 +24,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -33,7 +31,6 @@ import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 public class Bot {
     public static CardBuilder cardBuilder;
@@ -60,7 +57,7 @@ public class Bot {
         cardBuilder = new CardBuilder(true);
         JDA jda = JDABuilder.createLight(config.getString("token"), Collections.emptyList())
                 .addEventListeners(new GenerationCommandListener()).build();
-        WebhookHander webhookHander = new WebhookHander(jda,
+        WebhookHandler webhookHandler = new WebhookHandler(jda,
                 config.getString("appid"), config.getInt("webhookPort"),
                 config.getString("pubKey"));
         CommandListUpdateAction commands = jda.updateCommands();

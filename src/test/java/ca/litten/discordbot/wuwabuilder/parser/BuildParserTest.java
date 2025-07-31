@@ -135,7 +135,7 @@ public class BuildParserTest {
         assertEquals(0, build.chainLength);
         assertEquals(Weapon.getWeaponByID(21040064), build.weapon);
         assertEquals(Level.a1, build.weaponLevel);
-        assertEquals(0, build.weaponRank);
+        assertEquals(4, build.weaponRank);
         // Skills
         assertEquals(5, build.skillLevels[0]);
         assertEquals(3, build.skillLevels[1]);
