@@ -150,7 +150,7 @@ public class BuildParser {
             }
             if (columnGood) break;
         }
-        String value = ocrExec(ocr_name, image.getSubimage(68, 23, x-4, 65));
+        String value = ocrExec(ocr_name, image.getSubimage(68, 23, x - 4, 65));
         BufferedImage charaLevelSubimage;
         try {
             charaLevelSubimage = charaLevel.getSubimage(x, 0, 55, charaLevel.getHeight());
@@ -251,23 +251,27 @@ public class BuildParser {
             int dot = value.indexOf('.');
             int slash = value.lastIndexOf('/');
             if (dot == -1) dot = 0;
-            value = value.substring(dot < slash ? dot : 0, slash).replace(".","");
+            value = value.substring(dot < slash ? dot : 0, slash).replace(".", "");
             build.skillLevels[i] = Integer.parseInt(value);
         }
         // Minors (for stat page math)
-        if (build.characterLevel.toString().charAt(0) > 'b') {
-            build.minorSkills[0] = true;
-            build.minorSkills[2] = true;
-            build.minorSkills[4] = true;
-            build.minorSkills[6] = true;
-            build.asensionPassive = 1;
-        }
-        if (build.characterLevel.toString().charAt(0) > 'd') {
-            build.minorSkills[1] = true;
-            build.minorSkills[3] = true;
-            build.minorSkills[5] = true;
-            build.minorSkills[7] = true;
-            build.asensionPassive = 2;
+        build.asensionPassive = 0;
+        switch (build.characterLevel.toString().charAt(0)) {
+            case 'g': // A6
+            case 'f': // A5
+                build.minorSkills[1] = true;
+                build.minorSkills[7] = true;
+            case 'e': // A4
+                build.minorSkills[3] = true;
+                build.minorSkills[5] = true;
+                build.asensionPassive = 1;
+            case 'd': // A3
+                build.minorSkills[0] = true;
+                build.minorSkills[6] = true;
+            case 'c': // A2
+                build.minorSkills[2] = true;
+                build.minorSkills[4] = true;
+                build.asensionPassive++;
         }
         ocr_name.End();
         ocr_numbers.End();

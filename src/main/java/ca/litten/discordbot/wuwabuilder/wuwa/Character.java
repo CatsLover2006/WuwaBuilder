@@ -31,6 +31,7 @@ public class Character {
     private String name;
     private int starCount;
     private long id;
+    private Element element;
     
     public static class MinorStatBuff {
         public HakushinInterface.StatPair stat;
@@ -61,6 +62,12 @@ public class Character {
         if (character.name.contains("Rover:")) {
             character.name = hakushinJSON.getJSONObject("CharaInfo").getString("Sex").substring(0, 1)
                     + character.name;
+        }
+        for (Element element : Element.values()) {
+            if (element.index == hakushinJSON.getInt("Element")) {
+                character.element = element;
+                break;
+            }
         }
         character.starCount = hakushinJSON.getInt("Rarity");
         ArrayList<Thread> imageGrabberThreads = new ArrayList<>();
@@ -238,7 +245,7 @@ public class Character {
     
     public static Character getCharacterByName(@NotNull String name) {
         for (Character character : characters.values()) {
-            if (character.name.equals(name)) return character;
+            if (character.name.equalsIgnoreCase(name)) return character;
         }
         return null;
     }

@@ -1,9 +1,12 @@
 package ca.litten.discordbot.wuwabuilder.bot;
 
 import ca.litten.discordbot.wuwabuilder.parser.BuildParser;
-import ca.litten.discordbot.wuwabuilder.wuwa.Build;
+import ca.litten.discordbot.wuwabuilder.wuwa.*;
+import ca.litten.discordbot.wuwabuilder.wuwa.Character;
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.components.buttons.Button;
+import net.dv8tion.jda.api.components.selections.SelectOption;
+import net.dv8tion.jda.api.components.selections.StringSelectMenu;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -20,7 +23,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
 import static ca.litten.discordbot.wuwabuilder.bot.Bot.*;
 
@@ -60,7 +66,8 @@ public class GenerationCommandListener extends ListenerAdapter {
                             + event.getTimeCreated().toInstant().getEpochSecond();
                     ActionRow actionRow = ActionRow.of(Button.primary("edit.skill.minor$" + name, "Edit Stat Buffs & Inherent Skills"),
                             Button.primary("edit.chain$" + name, "Edit Resonance Chain Length & Weapon Rank"),
-                            Button.primary("edit.skill.main$" + name, "Edit Forte Levels"));
+                            Button.primary("edit.skill.main$" + name, "Edit Forte Levels"),
+                            Button.primary("edit.chara.level$" + name, "Edit Character & Weapon"));
                     // TODO: echo editing
                     ActionRow doneEditing = ActionRow.of(Button.danger("done$" + name, "Finished Editing"));
                     ActionRow[] t = new ActionRow[]{actionRow, doneEditing};
@@ -128,6 +135,12 @@ public class GenerationCommandListener extends ListenerAdapter {
             case "edit.chain":
                 event.editComponents(getActionRowsForChains(buildTracker.build, details[1])).queue();
                 return;
+            case "edit.chara.level":
+                event.editComponents(getActionRowsForCharacterLevels(buildTracker.build, details[1])).queue();
+                return;
+            case "edit.chara.main":
+                event.replyModal(getCharacterEditModal(buildTracker.build, details[1])).queue();
+                return;
             case "done":
                 buildTracker.editableActionRow = new ActionRow[]{};
                 // We overflow since now we just ensure the build card is updated
@@ -160,6 +173,55 @@ public class GenerationCommandListener extends ListenerAdapter {
                 buildTracker.build.weaponRank = Integer.parseInt(event.getValues().get(0));
                 event.editComponents(getActionRowsForChains(buildTracker.build, details[1])).queue();
                 return;
+            case "edit.chara.level.chara.asc":
+                if (Arrays.stream(Level.values()).filter(level ->
+                        level.toString().contains(event.getValues().get(0))).anyMatch(level ->
+                        buildTracker.build.characterLevel.toString().substring(1)
+                                .equals(level.toString().substring(1))))
+                    buildTracker.build.characterLevel = Level.valueOf(event.getValues().get(0)
+                            + buildTracker.build.characterLevel.toString().substring(1));
+                event.editComponents(getActionRowsForCharacterLevels(buildTracker.build, details[1],
+                        event.getValues().get(0).charAt(0),
+                        buildTracker.build.weaponLevel.toString().charAt(0))).queue();
+                return;
+            case "edit.chara.level.weap.asc":
+                if (Arrays.stream(Level.values()).filter(level ->
+                        level.toString().contains(event.getValues().get(0))).anyMatch(level ->
+                        buildTracker.build.weaponLevel.toString().substring(1)
+                                .equals(level.toString().substring(1))))
+                    buildTracker.build.weaponLevel = Level.valueOf(event.getValues().get(0)
+                            + buildTracker.build.weaponLevel.toString().substring(1));
+                event.editComponents(getActionRowsForCharacterLevels(buildTracker.build, details[1],
+                        buildTracker.build.characterLevel.toString().charAt(0),
+                        event.getValues().get(0).charAt(0))).queue();
+                return;
+            case "edit.chara.level.chara":
+                buildTracker.build.characterLevel = Level.valueOf(event.getValues().get(0));
+                event.editComponents(getActionRowsForCharacterLevels(buildTracker.build, details[1])).queue();
+                return;
+            case "edit.chara.level.weap":
+                buildTracker.build.weaponLevel = Level.valueOf(event.getValues().get(0));
+                event.editComponents(getActionRowsForCharacterLevels(buildTracker.build, details[1])).queue();
+                return;
+            case "edit.chara.rover":
+                try {
+                    String chara = event.getValues().get(0);
+                    String weap = details[2];
+                    Character character = Character.getCharacterByName(chara);
+                    Weapon weapon = Weapon.getWeaponByName(weap);
+                    if (character == null)
+                        throw new NullPointerException();
+                    if (weapon == null)
+                        throw new NullPointerException();
+                    buildTracker.build.character = character;
+                    buildTracker.build.weapon = weapon;
+                    event.deferEdit().queue();
+                    event.getHook().deleteOriginal().queue();
+                    updateBuildCard(buildTracker);
+                } catch (Exception e) {
+                    event.reply("Something went wrong.").setEphemeral(true).queue();
+                }
+                return;
         }
     }
     
@@ -185,14 +247,63 @@ public class GenerationCommandListener extends ListenerAdapter {
                     buildTracker.build.skillLevels[0] = Integer.parseInt(forte);
                     buildTracker.build.skillLevels[3] = Integer.parseInt(ult);
                     buildTracker.build.skillLevels[4] = Integer.parseInt(intro);
-                    event.deferReply().setEphemeral(true).queue();
+                    event.deferEdit().queue();
                     updateBuildCard(buildTracker);
                 } catch (NumberFormatException e) {
                     event.reply("You can only input integers, silly!").setEphemeral(true).queue();
                 } catch (Exception e) {
+                    event.reply("Something went wrong.").setEphemeral(true).queue();
+                }
+            }
+            case "edit.chara.main": {
+                try {
+                    String chara = event.getValue("chara").getAsString().trim();
+                    String weap = event.getValue("weap").getAsString().trim();
+                    if (chara.toLowerCase().contains("rover")) {
+                        Weapon weapon = Weapon.getWeaponByName(weap);
+                        if (weapon == null) {
+                            event.reply("Make sure you've spelled the weapon name properly.")
+                                    .setEphemeral(true).queue();
+                            return;
+                        }
+                        ArrayList<SelectOption> rovers = new ArrayList<>();
+                        for (Element element : Element.values()) {
+                            if (element == Element.Glacio) continue;
+                            if (element == Element.Electro) continue;
+                            if (element == Element.Fusion) continue;
+                            rovers.add(SelectOption.of("Female " + element + " Rover",
+                                    "FRover: " + element));
+                            rovers.add(SelectOption.of("Male " + element + " Rover",
+                                    "MRover: " + element));
+                        }
+                        event.reply("Which Rover are you referring to?")
+                                .setEphemeral(true).addComponents(ActionRow.of(
+                                        StringSelectMenu.create("edit.chara.rover$"  + details[1]
+                                                        + "$" + weap).addOptions(rovers).build())).queue();
+                    } else {
+                        Character character = Character.getCharacterByName(chara);
+                        if (character == null) {
+                            event.reply("Make sure you've spelled the character's name properly.")
+                                    .setEphemeral(true).queue();
+                            return;
+                        }
+                        Weapon weapon = Weapon.getWeaponByName(weap);
+                        if (weapon == null) {
+                            event.reply("Make sure you've spelled the weapon name properly.")
+                                    .setEphemeral(true).queue();
+                            return;
+                        }
+                        buildTracker.build.character = character;
+                        buildTracker.build.weapon = weapon;
+                        event.deferEdit().queue();
+                        updateBuildCard(buildTracker);
+                    }
+                } catch (Exception e) {
                     event.reply("Something went wrong.").setEphemeral(true).queue();;
                 }
             }
+            default:
+                event.reply("Idk how you did it but something died").setEphemeral(true).queue();
         }
     }
 }

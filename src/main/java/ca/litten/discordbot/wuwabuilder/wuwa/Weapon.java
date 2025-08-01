@@ -86,7 +86,7 @@ public class Weapon {
     
     public static Weapon getWeaponByName(@NotNull String name) {
         for (Weapon weapon : weapons.values()) {
-            if (weapon.name.equals(name)) return weapon;
+            if (weapon.name.equalsIgnoreCase(name)) return weapon;
         }
         return null;
     }
