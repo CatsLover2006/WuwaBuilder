@@ -232,7 +232,7 @@ public class BuildParser {
                 stat = ocrExec(ocr_name, OCRimage.getSubimage(20, 159 + 34 * s, 230, 34));
                 value = ocrExec(ocr_numbers, OCRimage.getSubimage(250, 157 + 34 * s, 88, 38));
                 subStat = readStat(stat, value);
-                if (subStat == null) {
+                if (subStat == null || subStat.value < 5) {
                     stat = ocrExec_hp(ocr_name, OCRimage.getSubimage(20, 159 + 34 * s, 230, 34));
                     value = ocrExec_hp(ocr_numbers, OCRimage.getSubimage(250, 157 + 34 * s, 88, 38));
                     subStat = readStat(stat, value);

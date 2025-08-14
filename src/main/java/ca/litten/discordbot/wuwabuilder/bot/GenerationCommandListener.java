@@ -60,10 +60,12 @@ public class GenerationCommandListener extends ListenerAdapter {
                     ImageIO.write(card, "png", cardBytes);
                     String name;
                     if (event.getMember() == null) {
-                        name = event.getChannelId() + "." + build.character.getId() + "."
-                                + event.getTimeCreated().toInstant().getEpochSecond();
-                    } else name = event.getMember().getIdLong() + "." + build.character.getId() + "."
-                            + event.getTimeCreated().toInstant().getEpochSecond();
+                        name = String.format("%xl", event.getChannelIdLong()) + "."
+                                + String.format("%xl", build.character.getId()) + "."
+                                + String.format("%xl", event.getTimeCreated().toInstant().getEpochSecond());
+                    } else name = String.format("%xl", event.getMember().getIdLong()) +
+                            "." + String.format("%xl", build.character.getId()) + "."
+                            + String.format("%xl", event.getTimeCreated().toInstant().getEpochSecond());
                     ActionRow actionRow = ActionRow.of(Button.primary("edit.skill.minor$" + name, "Edit Stat Buffs & Inherent Skills"),
                             Button.primary("edit.chain$" + name, "Edit Resonance Chain Length & Weapon Rank"),
                             Button.primary("edit.skill.main$" + name, "Edit Forte Levels"),
