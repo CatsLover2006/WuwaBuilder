@@ -40,7 +40,7 @@ public class GenerationCommandListener extends ListenerAdapter {
                 case "generate":
                     Message.Attachment content = event.getOption("image").getAsAttachment();
                     if (!content.isImage()) {
-                        event.reply("That's not an image!").queue();
+                        event.reply("That's not an image!").setEphemeral(true).queue();
                         return;
                     }
                     BufferedImage card;
@@ -66,10 +66,10 @@ public class GenerationCommandListener extends ListenerAdapter {
                     } else name = String.format("%xl", event.getMember().getIdLong()) +
                             "." + String.format("%xl", build.character.getId()) + "."
                             + String.format("%xl", event.getTimeCreated().toInstant().getEpochSecond());
-                    ActionRow actionRow = ActionRow.of(Button.primary("edit.skill.minor$" + name, "Edit Stat Buffs & Inherent Skills"),
-                            Button.primary("edit.chain$" + name, "Edit Resonance Chain Length & Weapon Rank"),
-                            Button.primary("edit.skill.main$" + name, "Edit Forte Levels"),
-                            Button.primary("edit.chara.level$" + name, "Edit Character & Weapon"));
+                    ActionRow actionRow = ActionRow.of(Button.primary("chara$" + name, "Edit Resonator"),
+                            Button.primary("weap$" + name, "Edit Weapon"),
+                            Button.primary("echo$" + name, "Edit Echoes"),
+                            Button.primary("skill$" + name, "Edit Fortes"));
                     // TODO: echo editing
                     ActionRow doneEditing = ActionRow.of(Button.danger("done$" + name, "Finished Editing"));
                     ActionRow[] t = new ActionRow[]{actionRow, doneEditing};
@@ -117,31 +117,35 @@ public class GenerationCommandListener extends ListenerAdapter {
             return;
         }
         switch (details[0]) {
-            case "edit.skill.main":
+            case "skill.modal":
                 event.replyModal(getForteEditModal(buildTracker.build, details[1])).queue();
                 return;
-            case "edit.skill.minor":
-                event.editComponents(getActionRowsForMinorSkills(buildTracker.build, details[1])).queue();
+            case "skill":
+                event.editComponents(getActionRowsForSkills(buildTracker.build, details[1])).queue();
                 return;
-            case "edit.skill.minor.edit":
+            case "skill.minor":
                 if (details[2].startsWith("a")) { // Ascension Passive
-                    if (details[2].equals("a1") && buildTracker.build.asensionPassive == 1)
-                        buildTracker.build.asensionPassive = 0;
-                    else buildTracker.build.asensionPassive = Short.parseShort(details[2].substring(1));
+                    short passiveLen = Short.parseShort(details[2].substring(1));
+                    if (buildTracker.build.asensionPassive == passiveLen)
+                        buildTracker.build.asensionPassive = (short)(passiveLen - 1); // Why do I need to cast this
+                    else buildTracker.build.asensionPassive = passiveLen;
                 } else {
                     buildTracker.build.minorSkills[Integer.parseInt(details[2])] =
                             !buildTracker.build.minorSkills[Integer.parseInt(details[2])];
                 }
-                event.editComponents(getActionRowsForMinorSkills(buildTracker.build, details[1])).queue();
+                event.editComponents(getActionRowsForSkills(buildTracker.build, details[1])).queue();
                 return;
-            case "edit.chain":
-                event.editComponents(getActionRowsForChains(buildTracker.build, details[1])).queue();
+            case "chara":
+                event.editComponents(getActionRowsForCharacter(buildTracker.build, details[1])).queue();
                 return;
-            case "edit.chara.level":
-                event.editComponents(getActionRowsForCharacterLevels(buildTracker.build, details[1])).queue();
-                return;
-            case "edit.chara.main":
+            case "chara.modal":
                 event.replyModal(getCharacterEditModal(buildTracker.build, details[1])).queue();
+                return;
+            case "weap":
+                event.editComponents(getActionRowsForWeapon(buildTracker.build, details[1])).queue();
+                return;
+            case "weap.modal":
+                event.replyModal(getWeaponEditModal(buildTracker.build, details[1])).queue();
                 return;
             case "done":
                 buildTracker.editableActionRow = new ActionRow[]{};
@@ -167,56 +171,49 @@ public class GenerationCommandListener extends ListenerAdapter {
             return;
         }
         switch (details[0]) {
-            case "edit.chain.chain":
+            case "chara.chain":
                 buildTracker.build.chainLength = Integer.parseInt(event.getValues().get(0));
-                event.editComponents(getActionRowsForChains(buildTracker.build, details[1])).queue();
+                event.editComponents(getActionRowsForCharacter(buildTracker.build, details[1])).queue();
                 return;
-            case "edit.chain.rank":
+            case "weap.rank":
                 buildTracker.build.weaponRank = Integer.parseInt(event.getValues().get(0));
-                event.editComponents(getActionRowsForChains(buildTracker.build, details[1])).queue();
+                event.editComponents(getActionRowsForWeapon(buildTracker.build, details[1])).queue();
                 return;
-            case "edit.chara.level.chara.asc":
+            case "chara.asc":
                 if (Arrays.stream(Level.values()).filter(level ->
                         level.toString().contains(event.getValues().get(0))).anyMatch(level ->
                         buildTracker.build.characterLevel.toString().substring(1)
                                 .equals(level.toString().substring(1))))
                     buildTracker.build.characterLevel = Level.valueOf(event.getValues().get(0)
                             + buildTracker.build.characterLevel.toString().substring(1));
-                event.editComponents(getActionRowsForCharacterLevels(buildTracker.build, details[1],
-                        event.getValues().get(0).charAt(0),
-                        buildTracker.build.weaponLevel.toString().charAt(0))).queue();
+                event.editComponents(getActionRowsForCharacter(buildTracker.build, details[1],
+                        event.getValues().get(0).charAt(0))).queue();
                 return;
-            case "edit.chara.level.weap.asc":
+            case "weap.asc":
                 if (Arrays.stream(Level.values()).filter(level ->
                         level.toString().contains(event.getValues().get(0))).anyMatch(level ->
                         buildTracker.build.weaponLevel.toString().substring(1)
                                 .equals(level.toString().substring(1))))
                     buildTracker.build.weaponLevel = Level.valueOf(event.getValues().get(0)
                             + buildTracker.build.weaponLevel.toString().substring(1));
-                event.editComponents(getActionRowsForCharacterLevels(buildTracker.build, details[1],
-                        buildTracker.build.characterLevel.toString().charAt(0),
+                event.editComponents(getActionRowsForWeapon(buildTracker.build, details[1],
                         event.getValues().get(0).charAt(0))).queue();
                 return;
-            case "edit.chara.level.chara":
+            case "chara.level":
                 buildTracker.build.characterLevel = Level.valueOf(event.getValues().get(0));
-                event.editComponents(getActionRowsForCharacterLevels(buildTracker.build, details[1])).queue();
+                event.editComponents(getActionRowsForCharacter(buildTracker.build, details[1])).queue();
                 return;
-            case "edit.chara.level.weap":
+            case "weap.level":
                 buildTracker.build.weaponLevel = Level.valueOf(event.getValues().get(0));
-                event.editComponents(getActionRowsForCharacterLevels(buildTracker.build, details[1])).queue();
+                event.editComponents(getActionRowsForWeapon(buildTracker.build, details[1])).queue();
                 return;
-            case "edit.chara.rover":
+            case "chara.rover":
                 try {
                     String chara = event.getValues().get(0);
-                    String weap = details[2];
                     Character character = Character.getCharacterByName(chara);
-                    Weapon weapon = Weapon.getWeaponByName(weap);
                     if (character == null)
                         throw new NullPointerException();
-                    if (weapon == null)
-                        throw new NullPointerException();
                     buildTracker.build.character = character;
-                    buildTracker.build.weapon = weapon;
                     event.deferEdit().queue();
                     event.getHook().deleteOriginal().queue();
                     updateBuildCard(buildTracker);
@@ -237,7 +234,7 @@ public class GenerationCommandListener extends ListenerAdapter {
             return;
         }
         switch (details[0]) {
-            case "edit.skill.main": {
+            case "skill.main": {
                 String basic = event.getValue("basic").getAsString();
                 String skill = event.getValue("skill").getAsString();
                 String forte = event.getValue("forte").getAsString();
@@ -257,17 +254,10 @@ public class GenerationCommandListener extends ListenerAdapter {
                     event.reply("Something went wrong.").setEphemeral(true).queue();
                 }
             }
-            case "edit.chara.main": {
+            case "chara.main": {
                 try {
                     String chara = event.getValue("chara").getAsString().trim();
-                    String weap = event.getValue("weap").getAsString().trim();
                     if (chara.toLowerCase().contains("rover")) {
-                        Weapon weapon = Weapon.getWeaponByName(weap);
-                        if (weapon == null) {
-                            event.reply("Make sure you've spelled the weapon name properly.")
-                                    .setEphemeral(true).queue();
-                            return;
-                        }
                         ArrayList<SelectOption> rovers = new ArrayList<>();
                         for (Element element : Element.values()) {
                             if (element == Element.Glacio) continue;
@@ -280,8 +270,8 @@ public class GenerationCommandListener extends ListenerAdapter {
                         }
                         event.reply("Which Rover are you referring to?")
                                 .setEphemeral(true).addComponents(ActionRow.of(
-                                        StringSelectMenu.create("edit.chara.rover$"  + details[1]
-                                                        + "$" + weap).addOptions(rovers).build())).queue();
+                                        StringSelectMenu.create("chara.rover$" + details[1])
+                                                .addOptions(rovers).build())).queue();
                     } else {
                         Character character = Character.getCharacterByName(chara);
                         if (character == null) {
@@ -289,20 +279,25 @@ public class GenerationCommandListener extends ListenerAdapter {
                                     .setEphemeral(true).queue();
                             return;
                         }
-                        Weapon weapon = Weapon.getWeaponByName(weap);
-                        if (weapon == null) {
-                            event.reply("Make sure you've spelled the weapon name properly.")
-                                    .setEphemeral(true).queue();
-                            return;
-                        }
                         buildTracker.build.character = character;
-                        buildTracker.build.weapon = weapon;
                         event.deferEdit().queue();
                         updateBuildCard(buildTracker);
                     }
                 } catch (Exception e) {
-                    event.reply("Something went wrong.").setEphemeral(true).queue();;
+                    event.reply("Something went wrong.").setEphemeral(true).queue();
+                    ;
                 }
+            }
+            case "weap.main": {
+                String weap = event.getValue("weap").getAsString().trim();
+                Weapon weapon = Weapon.getWeaponByName(weap);
+                if (weapon == null) {
+                    event.reply("Make sure you've spelled the weapon name properly.")
+                            .setEphemeral(true).queue();
+                    return;
+                }
+                buildTracker.build.weapon = weapon;
+                return;
             }
             default:
                 event.reply("Idk how you did it but something died").setEphemeral(true).queue();

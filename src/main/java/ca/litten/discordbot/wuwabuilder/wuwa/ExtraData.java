@@ -207,6 +207,9 @@ public class ExtraData {
         sonataBuffs.put(new Sonata(17, 2), new StatPair[]{aero10});
         sonataBuffs.put(new Sonata(18, 2), new StatPair[]{fusion10});
         // 19: Dream of the Lost; No unconditional bonuses
+        // 20: Crown of Valor; No unconditional bonuses
+        // 21: Law of Harmony; No unconditional bonuses
+        // 22: Flamewing's Shadow; No unconditional bonuses
         // Weapon buffs
         weaponPassiveBuffs.put(21010011L, oneStar); // Training Broadblade
         weaponPassiveBuffs.put(21010012L, twoStar); // Tyro Broadblade
@@ -214,6 +217,7 @@ public class ExtraData {
         weaponPassiveBuffs.put(21010016L, attibuteBonus5star); // Verdant Summit
         weaponPassiveBuffs.put(21010026L, attibuteBonus5star); // Ages of Harvest
         weaponPassiveBuffs.put(21010036L, atk5star); // Wildfire Mark
+        weaponPassiveBuffs.put(21010046L, atk5star); // Thunderflare Dominion
         weaponPassiveBuffs.put(21010053L, basicHeavy3star); // Guardian Broadblade
         weaponPassiveBuffs.put(21020011L, oneStar); // Training Sword
         weaponPassiveBuffs.put(21020012L, twoStar); // Tyro Sword
@@ -222,11 +226,13 @@ public class ExtraData {
         weaponPassiveBuffs.put(21020036L, cr5star); // Unflickering Valor
         weaponPassiveBuffs.put(21020053L, skill3star); // Guardian Sword
         weaponPassiveBuffs.put(21020056L, hp5star); // Defier's Thorn
+        weaponPassiveBuffs.put(21020066L, atk5star); // Emerald Sentence
         weaponPassiveBuffs.put(21030011L, oneStar); // Training Pistols
         weaponPassiveBuffs.put(21030012L, twoStar); // Tyro Pistols
         weaponPassiveBuffs.put(21030015L, er5star); // Static Mist
         weaponPassiveBuffs.put(21030016L, atk5star); // The Last Dance
         weaponPassiveBuffs.put(21030026L, atk5star); // Woodland Aria
+        weaponPassiveBuffs.put(21030036L, atk5star); // Lux & Umbra
         weaponPassiveBuffs.put(21030053L, skill3star); // Guardian Pistols
         weaponPassiveBuffs.put(21040011L, oneStar); // Training Gauntlets
         weaponPassiveBuffs.put(21040012L, twoStar); // Tyro Gauntlets
@@ -234,6 +240,7 @@ public class ExtraData {
         weaponPassiveBuffs.put(21040016L, attibuteBonus5star); // Verity's Handle
         weaponPassiveBuffs.put(21040026L, atk5star); // Tragicomedy
         weaponPassiveBuffs.put(21040036L, atk5star); // Blazing Justice
+        weaponPassiveBuffs.put(21040046L, atk5star); // Moongazer's Sigil
         weaponPassiveBuffs.put(21040053L, new StatPair[][]{{ult12},{ult15},{ult18},{ult21},{ult24}}); // Guardian Gauntlets
         weaponPassiveBuffs.put(21050011L, oneStar); // Training Rectifier
         weaponPassiveBuffs.put(21050012L, twoStar); // Tyro Rectifier

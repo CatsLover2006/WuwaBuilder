@@ -116,7 +116,6 @@ public class HakushinInterface {
         ArrayList<ImageGrabberThread> imageGrabberThreads = new ArrayList<>();
         ImageGrabberThread imageGrabberThread;
         for (String echo : echoCacheObject.keySet()) {
-            //System.out.println("Caching echo " + echo + "...");
             try {
                 cacheData = connect(new URL(baseURL, "ww/data/en/echo/" + echo + ".json"));
             } catch (IOException e) {
@@ -126,6 +125,7 @@ public class HakushinInterface {
                     new InputStreamReader(cacheData.inputStream, StandardCharsets.UTF_8))
                     .lines().collect(Collectors.joining("\n")));
             echoNameCacheMutable.put(echoObject.getLong("Id"), echoObject.getString("Name"));
+            System.out.println("Echo " + echoObject.getLong("Id") + ": " + echoObject.getString("Name"));
             try {
                 String iconSubURL = echoObject.getString("Icon").replace("/Game/Aki", "");
                 imageGrabberThread = new ImageGrabberThread(image -> {
@@ -157,6 +157,7 @@ public class HakushinInterface {
                 sonataEcho.add(echoObject.getLong("Id"));
                 sonataEchoCacheMutable.put(sonataJSON.getLong("Id"), sonataEcho);
                 sonataNameCacheMutable.put(sonataJSON.getLong("Id"), sonataJSON.getString("Name"));
+                System.out.println("Sonata " + sonataJSON.getLong("Id") + ": " + sonataJSON.getString("Name"));
             }
         }
         System.out.println("Caching weapon names, images, and stats...");
@@ -170,7 +171,6 @@ public class HakushinInterface {
                 .lines().collect(Collectors.joining("\n")));
         cacheData.urlConnection.disconnect();
         for (String weapon : weaponCacheObject.keySet()) {
-            //System.out.println("Caching weapon " + weapon + "...");
             try {
                 cacheData = connect(new URL(baseURL, "ww/data/en/weapon/" + weapon + ".json"));
             } catch (IOException e) {
@@ -179,6 +179,10 @@ public class HakushinInterface {
             Weapon.createWeapon(new JSONObject(new BufferedReader(
                     new InputStreamReader(cacheData.inputStream, StandardCharsets.UTF_8))
                     .lines().collect(Collectors.joining("\n"))));
+            System.out.print(weapon + ": ");
+            Weapon weap = Weapon.getWeaponByID(Long.parseLong(weapon));
+            if (weap == null) System.out.println("Skin (Skipped)");
+            else System.out.println(weap.getName());
         }//*/
         System.out.println("Caching character names, images, and stats...");
         try {
@@ -191,7 +195,6 @@ public class HakushinInterface {
                 .lines().collect(Collectors.joining("\n")));
         cacheData.urlConnection.disconnect();
         for (String character : characterCacheObject.keySet()) {
-            //System.out.println("Caching character " + character + "...");
             try {
                 cacheData = connect(new URL(baseURL, "ww/data/en/character/" + character + ".json"));
             } catch (IOException e) {
@@ -200,6 +203,10 @@ public class HakushinInterface {
             Character.createCharacter(new JSONObject(new BufferedReader(
                     new InputStreamReader(cacheData.inputStream, StandardCharsets.UTF_8))
                     .lines().collect(Collectors.joining("\n"))));
+            System.out.print(character + ": ");
+            Character chara = Character.getCharacterByID(Long.parseLong(character));
+            if (chara == null) System.out.println("Skin (Skipped)");
+            else System.out.println(chara.getName());
         }
         for (Thread thread : imageGrabberThreads) {
             try {

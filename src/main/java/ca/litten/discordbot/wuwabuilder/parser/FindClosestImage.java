@@ -85,6 +85,7 @@ public class FindClosestImage {
                 closestID = id;
             }
         }
+        if (biggestDif > 1000000000 && sonata != -1) return findClosestEcho(echoImage, -1);
         return closestID;
     }
 }
