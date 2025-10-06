@@ -107,6 +107,11 @@ public class Weapon {
         return name;
     }
     
+    @Override
+    public String toString() {
+        return getName();
+    }
+    
     public float getMainStatForLevel(Level level) {
         return mainStatMagnitude.get(level);
     }

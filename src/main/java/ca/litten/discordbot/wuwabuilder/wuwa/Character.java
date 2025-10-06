@@ -263,6 +263,11 @@ public class Character {
         return name;
     }
     
+    @Override
+    public String toString() {
+        return getName();
+    }
+    
     public float getAtkForLevel(Level level) {
         return atkMagnitude.get(level);
     }

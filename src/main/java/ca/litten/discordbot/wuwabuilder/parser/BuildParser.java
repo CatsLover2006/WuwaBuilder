@@ -214,6 +214,7 @@ public class BuildParser {
             value = nameConvert(value, image);
             build.character = Character.getCharacterByName(value);
         }
+        System.out.println(build.character + ": " + build.characterLevel);
         subimage = image.getSubimage(1602, 455, 275, 24);
         build.weapon = Weapon.getWeaponByName(ocrExec(ocr_weap, subimage));
         if (build.weapon == null)
@@ -233,6 +234,7 @@ public class BuildParser {
             value = ocrExec_hp(ocr_digits, subimage);
             build.weaponLevel = levelLookup(Integer.parseInt(value.substring(value.lastIndexOf('.') + 1)), ascension);
         }
+        System.out.println(build.weapon + ": " + build.weaponLevel);
         // Echoes
         String stat;
         for (int i = 0; i < 5; i++) {
