@@ -283,21 +283,29 @@ public class GenerationCommandListener extends ListenerAdapter {
                         event.deferEdit().queue();
                         updateBuildCard(buildTracker);
                     }
+                    return;
                 } catch (Exception e) {
                     event.reply("Something went wrong.").setEphemeral(true).queue();
-                    ;
+                    return;
                 }
             }
             case "weap.main": {
-                String weap = event.getValue("weap").getAsString().trim();
-                Weapon weapon = Weapon.getWeaponByName(weap);
-                if (weapon == null) {
-                    event.reply("Make sure you've spelled the weapon name properly.")
-                            .setEphemeral(true).queue();
+                try {
+                    String weap = event.getValue("weap").getAsString().trim();
+                    Weapon weapon = Weapon.getWeaponByName(weap);
+                    if (weapon == null) {
+                        event.reply("Make sure you've spelled the weapon name properly.")
+                                .setEphemeral(true).queue();
+                        return;
+                    }
+                    buildTracker.build.weapon = weapon;
+                    event.deferEdit().queue();
+                    updateBuildCard(buildTracker);
+                    return;
+                } catch (Exception e) {
+                    event.reply("Something went wrong.").setEphemeral(true).queue();
                     return;
                 }
-                buildTracker.build.weapon = weapon;
-                return;
             }
             default:
                 event.reply("Idk how you did it but something died").setEphemeral(true).queue();

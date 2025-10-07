@@ -132,18 +132,18 @@ public class Bot {
                 Button button;
                 int idx = 1 + i * 2 - row;
                 if (build.minorSkills[idx])
-                    button = Button.primary("skill.minor.edit$" + identifier + "$" + idx,
+                    button = Button.primary("skill.minor$" + identifier + "$" + idx,
                             generateMinorSkillText(build.character.getStatBuf(idx).stat.stat));
                 else
-                    button = Button.secondary("skill.minor.edit$" + identifier + "$" + idx,
+                    button = Button.secondary("skill.minor$" + identifier + "$" + idx,
                             generateMinorSkillText(build.character.getStatBuf(idx).stat.stat));
                 buttons.add(button);
             }
             if (build.asensionPassive > 1 - row)
-                buttons.add(2, Button.primary("skill.minor.edit$" + identifier + "$a" + (2 - row),
+                buttons.add(2, Button.primary("skill.minor$" + identifier + "$a" + (2 - row),
                         build.character.getSkillName(7 - row)));
             else
-                buttons.add(2, Button.secondary("skill.minor.edit$" + identifier + "$a" + (2 - row),
+                buttons.add(2, Button.secondary("skill.minor$" + identifier + "$a" + (2 - row),
                         build.character.getSkillName(7 - row)));
             actionRows[row] = ActionRow.of(buttons);
         }
