@@ -147,7 +147,7 @@ public class Bot {
                         build.character.getSkillName(7 - row)));
             actionRows[row] = ActionRow.of(buttons);
         }
-        actionRows[2] = ActionRow.of(Button.primary("skill.modal" + identifier, "Edit Forte Levels"),
+        actionRows[2] = ActionRow.of(Button.primary("skill.modal$" + identifier, "Edit Forte Levels"),
                 Button.success("main$" + identifier, "Back"));
         return actionRows;
     }
