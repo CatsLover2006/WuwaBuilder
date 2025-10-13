@@ -14,7 +14,6 @@ import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.InteractionHook;
-import net.dv8tion.jda.api.utils.FileUpload;
 import org.jetbrains.annotations.NotNull;
 
 import javax.imageio.ImageIO;
@@ -32,6 +31,32 @@ import static ca.litten.discordbot.wuwabuilder.bot.Bot.*;
 
 public class GenerationCommandListener extends ListenerAdapter {
     HashMap<String, BotCommandBuildTracker> buildMap = new HashMap<>();
+    
+    private class BuildCardUpdater extends Thread {
+        private BotCommandBuildTracker buildTracker;
+        private ActionRow[] rows;
+        
+        public BuildCardUpdater(BotCommandBuildTracker buildTracker) {
+            this.buildTracker = buildTracker;
+            this.rows = new ActionRow[0];
+        }
+        
+        public BuildCardUpdater(BotCommandBuildTracker buildTracker, ActionRow[] rows) {
+            this.buildTracker = buildTracker;
+            this.rows = rows;
+        }
+        
+        @Override
+        public void run() {
+            try { // Now we update the build card
+                updateBuildCard(buildTracker);
+                if (rows.length != 0)
+                    buildTracker.hook.editOriginalComponents(rows).queue();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
     
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
@@ -55,9 +80,6 @@ public class GenerationCommandListener extends ListenerAdapter {
                     }
                     event.deferReply().queue();
                     Build build = BuildParser.parseBuild(card);
-                    card = cardBuilder.createCard(build);
-                    ByteArrayOutputStream cardBytes = new ByteArrayOutputStream();
-                    ImageIO.write(card, "png", cardBytes);
                     String name;
                     if (event.getMember() == null) {
                         name = String.format("%xl", event.getChannelIdLong()) + "."
@@ -73,9 +95,9 @@ public class GenerationCommandListener extends ListenerAdapter {
                     // TODO: echo editing
                     ActionRow doneEditing = ActionRow.of(Button.danger("done$" + name, "Finished Editing"));
                     ActionRow[] t = new ActionRow[]{actionRow, doneEditing};
-                    buildMap.put(name, new BotCommandBuildTracker(build, event.getHook(), t, event.getMember().getIdLong()));
-                    event.getHook().sendFiles(FileUpload.fromData(cardBytes.toByteArray(), name + ".png"))
-                            .setComponents(t).queue();
+                    BotCommandBuildTracker buildTracker = new BotCommandBuildTracker(build, event.getHook(), t, event.getMember().getIdLong());
+                    buildMap.put(name, buildTracker);
+                    new BuildCardUpdater(buildTracker, t).start();
                     new Thread(() -> { // Prevent editing after 5 minutes
                         try {
                             Thread.sleep(1000 * 60 * 5);
@@ -147,17 +169,24 @@ public class GenerationCommandListener extends ListenerAdapter {
             case "weap.modal":
                 event.replyModal(getWeaponEditModal(buildTracker.build, details[1])).queue();
                 return;
+            case "echo":
+                event.editComponents(getActionRowsForEchoMenu(buildTracker.build, details[1])).queue();
+                return;
+            case "echo.edit":
+                event.editComponents(getActionRowsForEcho(buildTracker.build,
+                        details[1], Short.parseShort(details[2]))).queue();
+                return;
+            case "echo.statModal":
+                event.replyModal(getEchoStatEditModal(buildTracker.build,
+                        details[1], Short.parseShort(details[2]))).queue();
+                return;
             case "done":
                 buildTracker.editableActionRow = new ActionRow[]{};
                 // We overflow since now we just ensure the build card is updated
             case "main":
             default: // OH SHIT SOMETHING BROKE
                 event.editComponents(buildTracker.editableActionRow).queue();
-                try { // Now we update the build card
-                    updateBuildCard(buildTracker);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+                new BuildCardUpdater(buildTracker).start();
         }
     }
     
@@ -174,10 +203,12 @@ public class GenerationCommandListener extends ListenerAdapter {
             case "chara.chain":
                 buildTracker.build.chainLength = Integer.parseInt(event.getValues().get(0));
                 event.editComponents(getActionRowsForCharacter(buildTracker.build, details[1])).queue();
+                new BuildCardUpdater(buildTracker).start();
                 return;
             case "weap.rank":
                 buildTracker.build.weaponRank = Integer.parseInt(event.getValues().get(0));
                 event.editComponents(getActionRowsForWeapon(buildTracker.build, details[1])).queue();
+                new BuildCardUpdater(buildTracker).start();
                 return;
             case "chara.asc":
                 if (Arrays.stream(Level.values()).filter(level ->
@@ -188,6 +219,7 @@ public class GenerationCommandListener extends ListenerAdapter {
                             + buildTracker.build.characterLevel.toString().substring(1));
                 event.editComponents(getActionRowsForCharacter(buildTracker.build, details[1],
                         event.getValues().get(0).charAt(0))).queue();
+                new BuildCardUpdater(buildTracker).start();
                 return;
             case "weap.asc":
                 if (Arrays.stream(Level.values()).filter(level ->
@@ -198,15 +230,49 @@ public class GenerationCommandListener extends ListenerAdapter {
                             + buildTracker.build.weaponLevel.toString().substring(1));
                 event.editComponents(getActionRowsForWeapon(buildTracker.build, details[1],
                         event.getValues().get(0).charAt(0))).queue();
+                new BuildCardUpdater(buildTracker).start();
                 return;
             case "chara.level":
                 buildTracker.build.characterLevel = Level.valueOf(event.getValues().get(0));
                 event.editComponents(getActionRowsForCharacter(buildTracker.build, details[1])).queue();
+                new BuildCardUpdater(buildTracker).start();
                 return;
             case "weap.level":
                 buildTracker.build.weaponLevel = Level.valueOf(event.getValues().get(0));
                 event.editComponents(getActionRowsForWeapon(buildTracker.build, details[1])).queue();
+                new BuildCardUpdater(buildTracker).start();
                 return;
+            case "echo.mainStat": {
+                short echoID = Short.parseShort(details[2]);
+                buildTracker.build.echoes[echoID].mainStat
+                        = Stat.valueOf(event.getValues().get(0));
+                event.editComponents(getActionRowsForEcho(buildTracker.build,
+                        details[1], echoID)).queue();
+                new BuildCardUpdater(buildTracker).start();
+                return;
+            }
+            case "echo.stat2": {
+                short echoID = Short.parseShort(details[2]);
+                buildTracker.build.echoes[echoID].secondStat
+                        = Stat.valueOf(event.getValues().get(0));
+                event.editComponents(getActionRowsForEcho(buildTracker.build,
+                        details[1], echoID)).queue();
+                new BuildCardUpdater(buildTracker).start();
+                return;
+            }
+            case "echo.subStat": {
+                short echoID = Short.parseShort(details[2]);
+                Echo echo = buildTracker.build.echoes[echoID];
+                for (Stat stat : Stat.values()) // Just go through all of them
+                    if (event.getValues().contains(stat.toString())) {
+                        if (!echo.subStats.containsKey(stat))
+                            echo.subStats.put(stat, 0.0f);
+                    } else echo.subStats.remove(stat);
+                event.editComponents(getActionRowsForEcho(buildTracker.build,
+                        details[1], echoID)).queue();
+                new BuildCardUpdater(buildTracker).start();
+                return;
+            }
             case "chara.rover":
                 try {
                     String chara = event.getValues().get(0);
@@ -216,7 +282,7 @@ public class GenerationCommandListener extends ListenerAdapter {
                     buildTracker.build.character = character;
                     event.deferEdit().queue();
                     event.getHook().deleteOriginal().queue();
-                    updateBuildCard(buildTracker);
+                    new BuildCardUpdater(buildTracker).start();
                 } catch (Exception e) {
                     event.reply("Something went wrong.").setEphemeral(true).queue();
                 }
@@ -247,7 +313,7 @@ public class GenerationCommandListener extends ListenerAdapter {
                     buildTracker.build.skillLevels[3] = Integer.parseInt(ult);
                     buildTracker.build.skillLevels[4] = Integer.parseInt(intro);
                     event.deferEdit().queue();
-                    updateBuildCard(buildTracker);
+                    new BuildCardUpdater(buildTracker).start();
                 } catch (NumberFormatException e) {
                     event.reply("You can only input integers, silly!").setEphemeral(true).queue();
                 } catch (Exception e) {
@@ -281,7 +347,7 @@ public class GenerationCommandListener extends ListenerAdapter {
                         }
                         buildTracker.build.character = character;
                         event.deferEdit().queue();
-                        updateBuildCard(buildTracker);
+                        new BuildCardUpdater(buildTracker).start();
                     }
                     return;
                 } catch (Exception e) {
@@ -300,7 +366,25 @@ public class GenerationCommandListener extends ListenerAdapter {
                     }
                     buildTracker.build.weapon = weapon;
                     event.deferEdit().queue();
-                    updateBuildCard(buildTracker);
+                    new BuildCardUpdater(buildTracker).start();
+                    return;
+                } catch (Exception e) {
+                    event.reply("Something went wrong.").setEphemeral(true).queue();
+                    return;
+                }
+            }
+            case "echo.stat": {
+                try {
+                    Echo echo = buildTracker.build.echoes[Short.parseShort(details[2])];
+                    /*
+                    echo.mainStatMagnitude = Float.parseFloat(event.getValue("mainStat").getAsString());
+                    echo.secondStatMagnitude = Float.parseFloat(event.getValue("secondStat").getAsString()); */
+                    for (Stat stat : echo.subStats.keySet()) {
+                        echo.subStats.put(stat, Float.parseFloat(event
+                                .getValue("substat$" + stat.toString()).getAsString()));
+                    }
+                    event.deferEdit().queue();
+                    new BuildCardUpdater(buildTracker).start();
                     return;
                 } catch (Exception e) {
                     event.reply("Something went wrong.").setEphemeral(true).queue();

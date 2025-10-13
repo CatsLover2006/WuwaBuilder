@@ -3,6 +3,7 @@ package ca.litten.discordbot.wuwabuilder.bot;
 import ca.litten.discordbot.wuwabuilder.CardBuilder;
 import ca.litten.discordbot.wuwabuilder.HakushinInterface;
 import ca.litten.discordbot.wuwabuilder.wuwa.Build;
+import ca.litten.discordbot.wuwabuilder.wuwa.Echo;
 import ca.litten.discordbot.wuwabuilder.wuwa.Stat;
 import net.dv8tion.jda.api.*;
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
@@ -102,25 +103,8 @@ public class Bot {
             case flatHP:
             case percentHP:
                 return "HP+";
-            case critRate:
-                return "Crit. Rate+";
-            case critDMG:
-                return "Crit. DMG+";
-            case basicBonus:
-                return "Basic Attack DMG Bonus+";
-            case heavyBonus:
-                return "Heavy Attack DMG Bonus+";
-            case skillBonus:
-                return "Resonance Skill DMG Bonus+";
-            case ultBonus:
-                return "Resonance Liberation DMG Bonus+";
-            case healingBonus:
-                return "Healing Bonus+";
             default:
-                String elementName = stat.name().replace("Bonus", "");
-                return elementName.substring(0, 1).toUpperCase() // Capitalize first letter
-                        + elementName.substring(1).toLowerCase()
-                        + " DMG Bonus+";
+                return stat.string + "+";
         }
     }
     
@@ -149,6 +133,92 @@ public class Bot {
         }
         actionRows[2] = ActionRow.of(Button.primary("skill.modal$" + identifier, "Edit Forte Levels"),
                 Button.success("main$" + identifier, "Back"));
+        return actionRows;
+    }
+    
+    protected static ActionRow[] getActionRowsForEchoMenu (Build build, String identifier) {
+        ActionRow[] actionRows = new ActionRow[2];
+        actionRows[0] = ActionRow.of(Button.primary("echo.edit$" + identifier + "$0", "Edit Echo 1"),
+                Button.primary("echo.edit$" + identifier + "$1", "Edit Echo 2"),
+                Button.primary("echo.edit$" + identifier + "$2", "Edit Echo 3"),
+                Button.primary("echo.edit$" + identifier + "$3", "Edit Echo 4"),
+                Button.primary("echo.edit$" + identifier + "$4", "Edit Echo 5"));
+        actionRows[1] = ActionRow.of(Button.success("main$" + identifier, "Back"));
+        return actionRows;
+    }
+    
+    protected static ActionRow[] getActionRowsForEcho(Build build, String identifier, short echoID) {
+        ActionRow[] actionRows = new ActionRow[5];
+        Echo echo = build.echoes[echoID];
+        SelectOption[] mainStats = new SelectOption[2];
+        mainStats[0] = SelectOption.of(Stat.flatATK.string, "flatATK")
+                .withDefault(echo.mainStat == Stat.flatATK);
+        mainStats[1] = SelectOption.of(Stat.flatHP.string, "flatHP")
+                .withDefault(echo.mainStat == Stat.flatHP);
+        actionRows[0] = ActionRow.of(StringSelectMenu.create("echo.mainStat$" + identifier + "$" + echoID)
+                .addOptions(mainStats).build());
+        SelectOption[] secondaryStats = new SelectOption[13];
+        secondaryStats[0] = SelectOption.of(Stat.percentATK.string, "percentATK")
+                .withDefault(echo.secondStat == Stat.percentATK);
+        secondaryStats[1] = SelectOption.of(Stat.percentHP.string, "percentHP")
+                .withDefault(echo.secondStat == Stat.percentHP);
+        secondaryStats[2] = SelectOption.of(Stat.percentDEF.string, "percentDEF")
+                .withDefault(echo.secondStat == Stat.percentDEF);
+        secondaryStats[3] = SelectOption.of(Stat.critDMG.string, "critDMG")
+                .withDefault(echo.secondStat == Stat.critDMG);
+        secondaryStats[4] = SelectOption.of(Stat.critRate.string, "critRate")
+                .withDefault(echo.secondStat == Stat.critRate);
+        secondaryStats[5] = SelectOption.of(Stat.energyRegen.string, "energyRegen")
+                .withDefault(echo.secondStat == Stat.energyRegen);
+        secondaryStats[6] = SelectOption.of(Stat.aeroBonus.string, "aeroBonus")
+                .withDefault(echo.secondStat == Stat.aeroBonus);
+        secondaryStats[7] = SelectOption.of(Stat.glacioBonus.string, "glacioBonus")
+                .withDefault(echo.secondStat == Stat.glacioBonus);
+        secondaryStats[8] = SelectOption.of(Stat.fusionBonus.string, "fusionBonus")
+                .withDefault(echo.secondStat == Stat.fusionBonus);
+        secondaryStats[9] = SelectOption.of(Stat.electroBonus.string, "electroBonus")
+                .withDefault(echo.secondStat == Stat.electroBonus);
+        secondaryStats[10] = SelectOption.of(Stat.havocBonus.string, "havocBonus")
+                .withDefault(echo.secondStat == Stat.havocBonus);
+        secondaryStats[11] = SelectOption.of(Stat.spectroBonus.string, "spectroBonus")
+                .withDefault(echo.secondStat == Stat.spectroBonus);
+        secondaryStats[12] = SelectOption.of(Stat.healingBonus.string, "healingBonus")
+                .withDefault(echo.secondStat == Stat.healingBonus);
+        actionRows[1] = ActionRow.of(StringSelectMenu.create("echo.stat2$" + identifier + "$" + echoID)
+                .addOptions(secondaryStats).build());
+        SelectOption[] subStats = new SelectOption[13];
+        subStats[0] = SelectOption.of(Stat.flatATK.string, "flatATK")
+                .withDefault(echo.subStats.containsKey(Stat.flatATK));
+        subStats[1] = SelectOption.of(Stat.flatHP.string, "flatHP")
+                .withDefault(echo.subStats.containsKey(Stat.flatHP));
+        subStats[2] = SelectOption.of(Stat.flatDEF.string, "flatDEF")
+                .withDefault(echo.subStats.containsKey(Stat.flatDEF));
+        subStats[3] = SelectOption.of(Stat.percentATK.string, "percentATK")
+                .withDefault(echo.subStats.containsKey(Stat.percentATK));
+        subStats[4] = SelectOption.of(Stat.percentHP.string, "percentHP")
+                .withDefault(echo.subStats.containsKey(Stat.percentHP));
+        subStats[5] = SelectOption.of(Stat.percentDEF.string, "percentDEF")
+                .withDefault(echo.subStats.containsKey(Stat.percentDEF));
+        subStats[6] = SelectOption.of(Stat.critDMG.string, "critDMG")
+                .withDefault(echo.subStats.containsKey(Stat.critDMG));
+        subStats[7] = SelectOption.of(Stat.critRate.string, "critRate")
+                .withDefault(echo.subStats.containsKey(Stat.critRate));
+        subStats[8] = SelectOption.of(Stat.energyRegen.string, "energyRegen")
+                .withDefault(echo.subStats.containsKey(Stat.energyRegen));
+        subStats[9] = SelectOption.of(Stat.basicBonus.string, "basicBonus")
+                .withDefault(echo.subStats.containsKey(Stat.basicBonus));
+        subStats[10] = SelectOption.of(Stat.heavyBonus.string, "heavyBonus")
+                .withDefault(echo.subStats.containsKey(Stat.heavyBonus));
+        subStats[11] = SelectOption.of(Stat.skillBonus.string, "skillBonus")
+                .withDefault(echo.subStats.containsKey(Stat.skillBonus));
+        subStats[12] = SelectOption.of(Stat.ultBonus.string, "ultBonus")
+                .withDefault(echo.subStats.containsKey(Stat.ultBonus));
+        actionRows[2] = ActionRow.of(StringSelectMenu.create("echo.subStat$" + identifier + "$" + echoID)
+                .setMaxValues(5).addOptions(subStats).build());
+        actionRows[3] = ActionRow.of(Button.danger("echo.edit$" + identifier + "$" + echoID + "$a", "Sonata Selector (TODO)"));
+        actionRows[4] = ActionRow.of(Button.danger("echo.edit$" + identifier + "$" + echoID + "$b", "Edit Echo and Main Stat Values (TODO)"),
+                Button.primary("echo.statModal$" + identifier + "$" + echoID, "Edit Substat Values"),
+                Button.success("echo$" + identifier, "Back"));
         return actionRows;
     }
     
@@ -332,6 +402,28 @@ public class Bot {
                         Label.of(build.character.getSkillName(0), forte),
                         Label.of(build.character.getSkillName(3), ult),
                         Label.of(build.character.getSkillName(4), intro)).build();
+    }
+    
+    protected static Modal getEchoStatEditModal(Build build, String identifier, short echoID) {
+        Echo echo = build.echoes[echoID];
+        Label[] inputs = new Label[echo.subStats.size()];
+        /* // TODO: MOVE THESE TO MAIN ECHO EDIT MODAL
+        inputs[0] = Label.of(echo.mainStat.string,
+                TextInput.create("mainStat", TextInputStyle.SHORT)
+                .setValue(String.valueOf(build.echoes[echoID].mainStatMagnitude)).build());
+        inputs[1] = Label.of(echo.secondStat.string,
+                TextInput.create("secondStat", TextInputStyle.SHORT)
+                        .setValue(String.valueOf(build.echoes[echoID].secondStatMagnitude)).build());*/
+        int i = 0;
+        for (Stat stat : Stat.values())
+            if (echo.subStats.containsKey(stat)) {
+                inputs[i] = Label.of(stat.string,
+                        TextInput.create("substat$" + stat, TextInputStyle.SHORT)
+                                .setValue(String.valueOf(build.echoes[echoID].subStats.get(stat))).build());
+                i++;
+            }
+        return Modal.create("echo.stat$" + identifier + "$" + echoID, build.character.getName())
+                .addComponents(inputs).build();
     }
     
     protected static Modal getCharacterEditModal(Build build, String identifier) {
