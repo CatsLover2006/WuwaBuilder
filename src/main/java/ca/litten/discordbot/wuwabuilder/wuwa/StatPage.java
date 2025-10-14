@@ -1,6 +1,6 @@
 package ca.litten.discordbot.wuwabuilder.wuwa;
 
-import static ca.litten.discordbot.wuwabuilder.WuwaDatabaseLoader.StatPair;
+import static ca.litten.discordbot.wuwabuilder.WuwaDatabase.StatPair;
 
 import java.util.HashMap;
 import java.util.HashSet;

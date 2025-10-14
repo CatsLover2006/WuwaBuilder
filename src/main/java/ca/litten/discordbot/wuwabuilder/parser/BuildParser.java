@@ -1,7 +1,7 @@
 package ca.litten.discordbot.wuwabuilder.parser;
 
 
-import static ca.litten.discordbot.wuwabuilder.WuwaDatabaseLoader.StatPair;
+import static ca.litten.discordbot.wuwabuilder.WuwaDatabase.StatPair;
 
 import ca.litten.discordbot.wuwabuilder.wuwa.*;
 

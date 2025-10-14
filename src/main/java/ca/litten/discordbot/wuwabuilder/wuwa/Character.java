@@ -1,22 +1,31 @@
 package ca.litten.discordbot.wuwabuilder.wuwa;
 
-import ca.litten.discordbot.wuwabuilder.WuwaDatabaseLoader;
+import ca.litten.discordbot.wuwabuilder.OfflineImageManager;
+import ca.litten.discordbot.wuwabuilder.WuwaDatabase;
 import ca.litten.discordbot.wuwabuilder.parser.BuildParser;
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import static ca.litten.discordbot.wuwabuilder.WuwaDatabaseLoader.baseURL;
+import static ca.litten.discordbot.wuwabuilder.WuwaDatabase.baseURL;
 
 public class Character {
     private static final Map<Long, Character> characters = new HashMap<>();
+    
+    public static Set<Long> characterIds() {
+        return characters.keySet();
+    }
     
     private final Map <Level, Float> atkMagnitude;
     private final Map <Level, Float> hpMagnitude;
@@ -33,7 +42,7 @@ public class Character {
     private Element element;
     
     public static class MinorStatBuff {
-        public WuwaDatabaseLoader.StatPair stat;
+        public WuwaDatabase.StatPair stat;
         public BufferedImage image;
     }
     
@@ -72,8 +81,8 @@ public class Character {
         ArrayList<Thread> imageGrabberThreads = new ArrayList<>();
         try {
             String iconSubURL = hakushinJSON.getString("Background").replace("/Game/Aki", "");
-            WuwaDatabaseLoader.ImageGrabberThread imageGrabberThread =
-                    new WuwaDatabaseLoader.ImageGrabberThread(image -> character.image = image,
+            WuwaDatabase.ImageGrabberThread imageGrabberThread =
+                    new WuwaDatabase.ImageGrabberThread(image -> character.image = image,
                             new URL(baseURL, "ww" + iconSubURL.substring(0,
                                     iconSubURL.lastIndexOf('.')) + ".webp"));
             imageGrabberThread.start();
@@ -83,7 +92,7 @@ public class Character {
                 String chainURL = chainCache.getJSONObject(String.valueOf(i + 1))
                         .getString("Icon").replace("/Game/Aki", "");
                 int finalI = i;
-                imageGrabberThread = new WuwaDatabaseLoader.ImageGrabberThread(image -> character.chains[finalI] = image,
+                imageGrabberThread = new WuwaDatabase.ImageGrabberThread(image -> character.chains[finalI] = image,
                         new URL(baseURL, "ww" + chainURL.substring(0,
                                 chainURL.lastIndexOf('.')) + ".webp"));
                 imageGrabberThread.start();
@@ -101,7 +110,7 @@ public class Character {
                     case 1: { // Forte
                         String skillURL = skillObject.getJSONObject("Skill").getString("Icon")
                                 .replace("/Game/Aki", "");
-                        imageGrabberThread = new WuwaDatabaseLoader.ImageGrabberThread(image -> character.skills[0] = image,
+                        imageGrabberThread = new WuwaDatabase.ImageGrabberThread(image -> character.skills[0] = image,
                                 new URL(baseURL, "ww" + skillURL.substring(0,
                                         skillURL.lastIndexOf('.')) + ".webp"));
                         imageGrabberThread.start();
@@ -116,7 +125,7 @@ public class Character {
                         // 4: Intro
                         String skillURL = skillObject.getJSONObject("Skill").getString("Icon")
                                 .replace("/Game/Aki", "");
-                        imageGrabberThread = new WuwaDatabaseLoader.ImageGrabberThread(image ->
+                        imageGrabberThread = new WuwaDatabase.ImageGrabberThread(image ->
                                 character.skills[skillObject.getInt("Coordinate")] = image,
                                 new URL(baseURL, "ww" + skillURL.substring(0,
                                         skillURL.lastIndexOf('.')) + ".webp"));
@@ -133,7 +142,7 @@ public class Character {
                         // 3: Inherent 2
                         String skillURL = skillObject.getJSONObject("Skill").getString("Icon")
                                 .replace("/Game/Aki", "");
-                        imageGrabberThread = new WuwaDatabaseLoader.ImageGrabberThread(image ->
+                        imageGrabberThread = new WuwaDatabase.ImageGrabberThread(image ->
                                 character.skills[skillObject.getInt("Coordinate") + 4] = image,
                                 new URL(baseURL, "ww" + skillURL.substring(0,
                                         skillURL.lastIndexOf('.')) + ".webp"));
@@ -147,7 +156,7 @@ public class Character {
                         MinorStatBuff statBuff = new MinorStatBuff();
                         JSONObject skillObj = skillObject.getJSONObject("Skill");
                         String skillURL = skillObj.getString("Icon").replace("/Game/Aki", "");
-                        imageGrabberThread = new WuwaDatabaseLoader.ImageGrabberThread(image ->
+                        imageGrabberThread = new WuwaDatabase.ImageGrabberThread(image ->
                                 statBuff.image = image,
                                 new URL(baseURL, "ww" + skillURL.substring(0,
                                         skillURL.lastIndexOf('.')) + ".webp"));
@@ -215,7 +224,7 @@ public class Character {
         JSONObject statCache = hakushinJSON.getJSONObject("Stats");
         JSONObject ascensionCache;
         char levelLookup;
-        WuwaDatabaseLoader.StatPair statPair;
+        WuwaDatabase.StatPair statPair;
         int j = 1;
         for (int i = 0; statCache.has(String.valueOf(i)); i++) {
             ascensionCache = statCache.getJSONObject(String.valueOf(i));
@@ -237,6 +246,45 @@ public class Character {
             }
         }
     }
+    public static void createCharacterFromOfflineDB(JSONObject json) {
+        Character character = new Character();
+        characters.put(json.getLong("character"), character);
+        character.id = json.getLong("character");
+        character.name = json.getString("name");
+        character.starCount = json.getInt("stars");
+        character.element = Element.valueOf(json.getString("element"));
+        int i = 0;
+        JSONArray jsonArray = json.getJSONArray("stats");
+        for (Level level : Level.values()) {
+            JSONArray stat = jsonArray.getJSONArray(i);
+            i++;
+            character.atkMagnitude.put(level, stat.getFloat(0));
+            character.hpMagnitude.put(level, stat.getFloat(1));
+            character.defMagnitude.put(level, stat.getFloat(2));
+        }
+        jsonArray = json.getJSONArray("chainNames");
+        for (i = 0; i < 6; i++) {
+            character.chainNames[i] = jsonArray.getString(i);
+        }
+        jsonArray = json.getJSONArray("skillNames");
+        for (i = 0; i < 8; i++) {
+            character.skillNames[i] = jsonArray.getString(i);
+        }
+        jsonArray = json.getJSONArray("minorStats");
+        for (i = 0; i < 8; i++) {
+            JSONObject statObj = jsonArray.getJSONObject(i);
+            MinorStatBuff statBuff = new MinorStatBuff();
+            statBuff.stat = new WuwaDatabase.StatPair(
+                    Stat.valueOf(statObj.getString("stat")), statObj.getFloat("mag"));
+            try {
+                statBuff.image = ImageIO.read(new File("res/" + statObj.getString("img")));
+            } catch (Exception e) {
+                e.printStackTrace();
+                statBuff.image = null;
+            }
+            character.minorStatBuffs[i] = statBuff;
+        }
+    }
     
     public static Character getCharacterByID(long id) {
         return characters.get(id);
@@ -249,8 +297,17 @@ public class Character {
         return null;
     }
     
+    public int getStarCount() {
+        return starCount;
+    }
+    
     public BufferedImage getImage() {
-        return image;
+        if (image != null) return image;
+        return OfflineImageManager.getImage(String.format("c%d", id));
+    }
+    
+    public Element getElement() {
+        return element;
     }
     
     public long getId() {
@@ -280,11 +337,13 @@ public class Character {
     }
     
     public BufferedImage getChain(int index) {
-        return chains[index];
+        if (chains[index] != null) return chains[index];
+        return OfflineImageManager.getImage(String.format("c%dc%d", id, index));
     }
     
     public BufferedImage getSkill(int index) {
-        return skills[index];
+        if (skills[index] != null) return skills[index];
+        return OfflineImageManager.getImage(String.format("c%ds%d", id, index));
     }
     
     public String getChainName(int index) {

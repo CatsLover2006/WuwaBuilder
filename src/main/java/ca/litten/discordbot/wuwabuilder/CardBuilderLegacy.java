@@ -1,6 +1,6 @@
 package ca.litten.discordbot.wuwabuilder;
 
-import static ca.litten.discordbot.wuwabuilder.WuwaDatabaseLoader.StatPair;
+import static ca.litten.discordbot.wuwabuilder.WuwaDatabase.StatPair;
 
 import ca.litten.discordbot.wuwabuilder.wuwa.*;
 import uk.org.okapibarcode.backend.QrCode;
@@ -12,7 +12,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class CardBuilder {
+public class CardBuilderLegacy {
     private static final Paint mainLightModePaint = new GradientPaint(0, 0, new Color(0xf5f5f5), 1500, 750, new Color(0xcacccf));
     private static final Paint dualFullLightModePaint = new GradientPaint(0, 0, new Color(0x2a2c2e), 1500, 750, new Color(0x0a0c0e));
     private static final Paint dualLightModePaint = new GradientPaint(0, 0, new Color(0xc02a2c2e, true), 1500, 750, new Color(0xc00a0c0e, true));
@@ -46,13 +46,13 @@ public class CardBuilder {
     private final BufferedImage echoMask;
     
     private void initSonataCache() {
-        for (long sonata : WuwaDatabaseLoader.sonataImageCache.keySet()) {
-            cached35sonataIcons.put(sonata, WuwaDatabaseLoader.sonataImageCache.get(sonata)
+        for (long sonata : WuwaDatabase.sonataImageCache.keySet()) {
+            cached35sonataIcons.put(sonata, WuwaDatabase.sonataImageCache.get(sonata)
                     .getScaledInstance(35, 35, Image.SCALE_SMOOTH));
         }
     }
     
-    public CardBuilder() {
+    public CardBuilderLegacy() {
         isLightMode = true;
         mainPaint = mainLightModePaint;
         dualFullPaint = dualFullLightModePaint;
@@ -72,7 +72,7 @@ public class CardBuilder {
         initSonataCache();
     }
     
-    public CardBuilder(boolean isLightMode) {
+    public CardBuilderLegacy(boolean isLightMode) {
         this.isLightMode = isLightMode;
         mainPaint = isLightMode ? mainLightModePaint : mainLightModePaint;
         dualFullPaint = isLightMode ? dualFullLightModePaint : dualFullLightModePaint;
@@ -233,7 +233,7 @@ public class CardBuilder {
         Graphics2D g3d = virtImage.createGraphics();
         g3d.setPaint(new Color(0x7e7e7e));
         g3d.fillRect(0, 0, echoMask.getWidth(), echoMask.getHeight());
-        g3d.drawImage(WuwaDatabaseLoader.echoImageCache.get(echo.echoID).getScaledInstance(echoMask.getWidth(),
+        g3d.drawImage(WuwaDatabase.echoImageCache.get(echo.echoID).getScaledInstance(echoMask.getWidth(),
                         echoMask.getHeight(), Image.SCALE_SMOOTH), 0, 0, null);
         g3d.dispose();
         for (int i = 0; i < echoMask.getHeight(); i++)

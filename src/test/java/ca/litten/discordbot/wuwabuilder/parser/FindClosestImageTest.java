@@ -1,6 +1,6 @@
 package ca.litten.discordbot.wuwabuilder.parser;
 
-import ca.litten.discordbot.wuwabuilder.WuwaDatabaseLoader;
+import ca.litten.discordbot.wuwabuilder.WuwaDatabase;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -13,7 +13,7 @@ import java.io.IOException;
 public class FindClosestImageTest {
     @BeforeAll
     public static void Startup() {
-        WuwaDatabaseLoader.initFromHakushin(); // We need the images
+        WuwaDatabase.initFromHakushin(); // We need the images
     }
     
     @Test

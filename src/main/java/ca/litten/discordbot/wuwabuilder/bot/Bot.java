@@ -1,7 +1,7 @@
 package ca.litten.discordbot.wuwabuilder.bot;
 
-import ca.litten.discordbot.wuwabuilder.CardBuilder;
-import ca.litten.discordbot.wuwabuilder.WuwaDatabaseLoader;
+import ca.litten.discordbot.wuwabuilder.CardBuilderLegacy;
+import ca.litten.discordbot.wuwabuilder.WuwaDatabase;
 import ca.litten.discordbot.wuwabuilder.wuwa.Build;
 import ca.litten.discordbot.wuwabuilder.wuwa.Echo;
 import ca.litten.discordbot.wuwabuilder.wuwa.Stat;
@@ -24,6 +24,7 @@ import org.json.JSONObject;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -35,7 +36,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class Bot {
-    public static CardBuilder cardBuilder;
+    public static CardBuilderLegacy cardBuilder;
     
     private static JSONObject loadConfig() {
         try {
@@ -55,8 +56,8 @@ public class Bot {
     
     public static void main(String[] args) throws Exception {
         JSONObject config = loadConfig();
-        WuwaDatabaseLoader.initFromHakushin(new URL(config.getString("hakushin")));
-        cardBuilder = new CardBuilder(true);
+        WuwaDatabase.initFromOfflineDB(new File("res/db.json"));
+        cardBuilder = new CardBuilderLegacy(true);
         JDA jda = JDABuilder.createLight(config.getString("token"), Collections.emptyList())
                 .addEventListeners(new GenerationCommandListener()).build();
         WebhookHandler webhookHandler = new WebhookHandler(jda,

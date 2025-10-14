@@ -16,12 +16,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Order(3)
 public class CardBuilderTest {
-    private static CardBuilder lightModeCardBuilder;
+    private static CardBuilderLegacy lightModeCardBuilder;
     
     @BeforeAll
     public static void Startup() {
-        WuwaDatabaseLoader.initFromHakushin(); // We need the images
-        lightModeCardBuilder = new CardBuilder(true);
+        WuwaDatabase.initFromHakushin(); // We need the images
+        lightModeCardBuilder = new CardBuilderLegacy(true);
     }
     
     @Test

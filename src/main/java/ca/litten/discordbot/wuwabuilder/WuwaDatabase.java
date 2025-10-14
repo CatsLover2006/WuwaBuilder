@@ -1,37 +1,36 @@
 package ca.litten.discordbot.wuwabuilder;
 
 import ca.litten.discordbot.wuwabuilder.wuwa.Character;
+import ca.litten.discordbot.wuwabuilder.wuwa.ExtraData;
 import ca.litten.discordbot.wuwabuilder.wuwa.Stat;
 import ca.litten.discordbot.wuwabuilder.wuwa.Weapon;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.imageio.ImageIO;
+import java.io.*;
 import java.net.HttpURLConnection;
 
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class WuwaDatabaseLoader {
+public class WuwaDatabase {
     private static final Map<Long, BufferedImage> sonataImageCacheMutable = new HashMap<>();
     private static final Map<Long, BufferedImage> echoImageCacheMutable = new HashMap<>();
     private static final Map<Long, String> sonataNameCacheMutable = new HashMap<>();
     private static final Map<Long, String> echoNameCacheMutable = new HashMap<>();
-    private static final Map<Long, ArrayList<Long>> sonataEchoCacheMutable = new HashMap<>();
+    private static final Map<Long, List<Long>> sonataEchoCacheMutable = new HashMap<>();
     
     
     public static final Map<Long, BufferedImage> sonataImageCache = Collections.unmodifiableMap(sonataImageCacheMutable);
     public static final Map<Long, BufferedImage> echoImageCache = Collections.unmodifiableMap(echoImageCacheMutable);
     public static final Map<Long, String> sonataNameCache = Collections.unmodifiableMap(sonataNameCacheMutable);
     public static final Map<Long, String> echoNameCache = Collections.unmodifiableMap(echoNameCacheMutable);
-    public static final Map<Long, ArrayList<Long>> sonataEchoCache = Collections.unmodifiableMap(sonataEchoCacheMutable);
+    public static final Map<Long, List<Long>> sonataEchoCache = Collections.unmodifiableMap(sonataEchoCacheMutable);
     
     public static URL baseURL;
     
@@ -99,7 +98,7 @@ public class WuwaDatabaseLoader {
     }
     
     public static void initFromHakushin(URL baseURL) {
-        WuwaDatabaseLoader.baseURL = baseURL;
+        WuwaDatabase.baseURL = baseURL;
         if (initialized) return; // Leave before we fuck shit up
         initialized = true;
         UrlInputStreamReturnValue cacheData;
@@ -214,6 +213,49 @@ public class WuwaDatabaseLoader {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+        }
+    }
+    
+    public static void initFromOfflineDB(File file) {
+        try {
+            FileInputStream fileInputStream = new FileInputStream(file);
+            byte[] bytes = new byte[Math.toIntExact(file.length())];
+            fileInputStream.read(bytes);
+            JSONObject baseObject = new JSONObject(new String(bytes, StandardCharsets.UTF_8));
+            new Thread(() -> OfflineImageManager.init(baseObject)).start();
+            for (Object character : baseObject.getJSONArray("character")) {
+                new Thread(() -> Character.createCharacterFromOfflineDB((JSONObject) character)).start();
+            }
+            for (Object weapon : baseObject.getJSONArray("weapon")) {
+                new Thread(() -> Weapon.createWeaponFromOfflineDB((JSONObject) weapon)).start();
+            }
+            for (Object sonataJVM : baseObject.getJSONArray("sonata")) {
+                JSONObject sonata = (JSONObject) sonataJVM;
+                long sonataID = sonata.getLong("sonata");
+                sonataImageCacheMutable.put(sonataID,
+                        ImageIO.read(new File("res/" + sonata.getString("imageLoc"))));
+                sonataNameCacheMutable.put(sonataID, sonata.getString("name"));
+                sonataEchoCacheMutable.put(sonataID, sonata.getJSONArray("echoes")
+                        .toList().stream().map(obj -> Long.parseLong(obj.toString())).collect(Collectors.toList()));
+                for (Object buffJVM : sonata.getJSONArray("buffs")) {
+                    JSONObject buff = (JSONObject) buffJVM;
+                    ArrayList<StatPair> buffs = new ArrayList<>();
+                    for (String key : buff.keySet()) {
+                        if (key.equals("count")) continue;
+                        buffs.add(new StatPair(Stat.valueOf(key), buff.getFloat(key)));
+                    }
+                    ExtraData.sonataBuffs.put(new ExtraData.Sonata(sonataID, buff.getInt("count")),
+                            buffs.toArray(new StatPair[]{}));
+                }
+            }
+            for (Object echoJVM : baseObject.getJSONArray("echo")) {
+                JSONObject echo = (JSONObject) echoJVM;
+                echoImageCacheMutable.put(echo.getLong("echo"),
+                        ImageIO.read(new File("res/" + echo.getString("imageLoc"))));
+                echoNameCacheMutable.put(echo.getLong("echo"), echo.getString("name"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
     
