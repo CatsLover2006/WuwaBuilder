@@ -1,6 +1,6 @@
 package ca.litten.discordbot.wuwabuilder.parser;
 
-import ca.litten.discordbot.wuwabuilder.HakushinInterface;
+import ca.litten.discordbot.wuwabuilder.WuwaDatabaseLoader;
 import ca.litten.discordbot.wuwabuilder.wuwa.*;
 import ca.litten.discordbot.wuwabuilder.wuwa.Character;
 import org.junit.jupiter.api.*;
@@ -16,7 +16,7 @@ import java.io.IOException;
 public class BuildParserTest {
     @BeforeAll
     public static void Startup() {
-        HakushinInterface.init(); // We need the images
+        WuwaDatabaseLoader.initFromHakushin(); // We need the images
     }
     
     Build phrolova;

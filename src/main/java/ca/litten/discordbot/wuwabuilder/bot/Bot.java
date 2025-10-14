@@ -1,7 +1,7 @@
 package ca.litten.discordbot.wuwabuilder.bot;
 
 import ca.litten.discordbot.wuwabuilder.CardBuilder;
-import ca.litten.discordbot.wuwabuilder.HakushinInterface;
+import ca.litten.discordbot.wuwabuilder.WuwaDatabaseLoader;
 import ca.litten.discordbot.wuwabuilder.wuwa.Build;
 import ca.litten.discordbot.wuwabuilder.wuwa.Echo;
 import ca.litten.discordbot.wuwabuilder.wuwa.Stat;
@@ -55,7 +55,7 @@ public class Bot {
     
     public static void main(String[] args) throws Exception {
         JSONObject config = loadConfig();
-        HakushinInterface.init(new URL(config.getString("hakushin")));
+        WuwaDatabaseLoader.initFromHakushin(new URL(config.getString("hakushin")));
         cardBuilder = new CardBuilder(true);
         JDA jda = JDABuilder.createLight(config.getString("token"), Collections.emptyList())
                 .addEventListeners(new GenerationCommandListener()).build();

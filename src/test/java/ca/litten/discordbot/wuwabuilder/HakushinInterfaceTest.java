@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class HakushinInterfaceTest {
     @BeforeAll
     public static void Startup() {
-        HakushinInterface.init();
+        WuwaDatabaseLoader.initFromHakushin();
     }
     
     @Test

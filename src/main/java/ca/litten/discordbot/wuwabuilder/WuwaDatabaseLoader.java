@@ -19,7 +19,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class HakushinInterface {
+public class WuwaDatabaseLoader {
     private static final Map<Long, BufferedImage> sonataImageCacheMutable = new HashMap<>();
     private static final Map<Long, BufferedImage> echoImageCacheMutable = new HashMap<>();
     private static final Map<Long, String> sonataNameCacheMutable = new HashMap<>();
@@ -90,16 +90,16 @@ public class HakushinInterface {
         return urlInputStreamReturnValue;
     }
     
-    public static void init() {
+    public static void initFromHakushin() {
         try { // Default URL
-            init(new URL("https://api.hakush.in/"));
+            initFromHakushin(new URL("https://api.hakush.in/"));
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
     }
     
-    public static void init(URL baseURL) {
-        HakushinInterface.baseURL = baseURL;
+    public static void initFromHakushin(URL baseURL) {
+        WuwaDatabaseLoader.baseURL = baseURL;
         if (initialized) return; // Leave before we fuck shit up
         initialized = true;
         UrlInputStreamReturnValue cacheData;
@@ -176,7 +176,7 @@ public class HakushinInterface {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            Weapon.createWeapon(new JSONObject(new BufferedReader(
+            Weapon.createWeaponFromHakushin(new JSONObject(new BufferedReader(
                     new InputStreamReader(cacheData.inputStream, StandardCharsets.UTF_8))
                     .lines().collect(Collectors.joining("\n"))));
             System.out.print(weapon + ": ");
@@ -200,7 +200,7 @@ public class HakushinInterface {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            Character.createCharacter(new JSONObject(new BufferedReader(
+            Character.createCharacterFromHakushin(new JSONObject(new BufferedReader(
                     new InputStreamReader(cacheData.inputStream, StandardCharsets.UTF_8))
                     .lines().collect(Collectors.joining("\n"))));
             System.out.print(character + ": ");

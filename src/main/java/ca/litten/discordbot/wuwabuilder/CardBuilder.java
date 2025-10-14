@@ -1,11 +1,10 @@
 package ca.litten.discordbot.wuwabuilder;
 
-import static ca.litten.discordbot.wuwabuilder.HakushinInterface.StatPair;
+import static ca.litten.discordbot.wuwabuilder.WuwaDatabaseLoader.StatPair;
 
 import ca.litten.discordbot.wuwabuilder.wuwa.*;
 import uk.org.okapibarcode.backend.QrCode;
 import uk.org.okapibarcode.output.Java2DRenderer;
-import uk.org.okapibarcode.util.EciMode;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -47,8 +46,8 @@ public class CardBuilder {
     private final BufferedImage echoMask;
     
     private void initSonataCache() {
-        for (long sonata : HakushinInterface.sonataImageCache.keySet()) {
-            cached35sonataIcons.put(sonata, HakushinInterface.sonataImageCache.get(sonata)
+        for (long sonata : WuwaDatabaseLoader.sonataImageCache.keySet()) {
+            cached35sonataIcons.put(sonata, WuwaDatabaseLoader.sonataImageCache.get(sonata)
                     .getScaledInstance(35, 35, Image.SCALE_SMOOTH));
         }
     }
@@ -234,7 +233,7 @@ public class CardBuilder {
         Graphics2D g3d = virtImage.createGraphics();
         g3d.setPaint(new Color(0x7e7e7e));
         g3d.fillRect(0, 0, echoMask.getWidth(), echoMask.getHeight());
-        g3d.drawImage(HakushinInterface.echoImageCache.get(echo.echoID).getScaledInstance(echoMask.getWidth(),
+        g3d.drawImage(WuwaDatabaseLoader.echoImageCache.get(echo.echoID).getScaledInstance(echoMask.getWidth(),
                         echoMask.getHeight(), Image.SCALE_SMOOTH), 0, 0, null);
         g3d.dispose();
         for (int i = 0; i < echoMask.getHeight(); i++)

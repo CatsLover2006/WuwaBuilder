@@ -1,6 +1,6 @@
 package ca.litten.discordbot.wuwabuilder.wuwa;
 
-import ca.litten.discordbot.wuwabuilder.HakushinInterface;
+import ca.litten.discordbot.wuwabuilder.WuwaDatabaseLoader;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -12,8 +12,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import static ca.litten.discordbot.wuwabuilder.HakushinInterface.baseURL;
-import static ca.litten.discordbot.wuwabuilder.HakushinInterface.statValueConverter;
+import static ca.litten.discordbot.wuwabuilder.WuwaDatabaseLoader.baseURL;
+import static ca.litten.discordbot.wuwabuilder.WuwaDatabaseLoader.statValueConverter;
 
 public class Weapon {
     private static final Map<Long, Weapon> weapons = new HashMap<>();
@@ -32,7 +32,7 @@ public class Weapon {
         subStatMagnitude = new HashMap<>();
     };
     
-    public static void createWeapon(JSONObject hakushinJSON) {
+    public static void createWeaponFromHakushin(JSONObject hakushinJSON) {
         if (hakushinJSON.has("Skin") && hakushinJSON.getBoolean("Skin")) return;
         Weapon weapon = new Weapon();
         weapons.put(hakushinJSON.getLong("Id"), weapon);
@@ -42,8 +42,8 @@ public class Weapon {
         ArrayList<Thread> imageGrabberThreads = new ArrayList<>();
         String iconSubURL = hakushinJSON.getString("Icon").replace("/Game/Aki", "");
         try {
-            HakushinInterface.ImageGrabberThread imageGrabberThread =
-                    new HakushinInterface.ImageGrabberThread(image -> weapon.image = image,
+            WuwaDatabaseLoader.ImageGrabberThread imageGrabberThread =
+                    new WuwaDatabaseLoader.ImageGrabberThread(image -> weapon.image = image,
                             new URL(baseURL, "ww" + iconSubURL.substring(0,
                                     iconSubURL.lastIndexOf('.')) + ".webp"));
             imageGrabberThread.start();
@@ -54,7 +54,7 @@ public class Weapon {
         JSONObject statCache = hakushinJSON.getJSONObject("Stats");
         JSONObject ascensionCache;
         char levelLookup;
-        HakushinInterface.StatPair statPair;
+        WuwaDatabaseLoader.StatPair statPair;
         int j = 1;
         for (int i = 0; statCache.has(String.valueOf(i)); i++) {
             ascensionCache = statCache.getJSONObject(String.valueOf(i));
@@ -120,8 +120,8 @@ public class Weapon {
         return subStatMagnitude.get(level);
     }
     
-    public HakushinInterface.StatPair[] getUnconditionalBuffs(int rank) {
-        return ExtraData.weaponPassiveBuffs.getOrDefault(id, new HakushinInterface.StatPair[5][0])[rank];
+    public WuwaDatabaseLoader.StatPair[] getUnconditionalBuffs(int rank) {
+        return ExtraData.weaponPassiveBuffs.getOrDefault(id, new WuwaDatabaseLoader.StatPair[5][0])[rank];
     }
     
     public int getStarCount() {

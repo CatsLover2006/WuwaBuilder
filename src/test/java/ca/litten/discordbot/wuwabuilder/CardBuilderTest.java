@@ -2,8 +2,6 @@ package ca.litten.discordbot.wuwabuilder;
 
 import ca.litten.discordbot.wuwabuilder.parser.BuildParser;
 import ca.litten.discordbot.wuwabuilder.wuwa.Build;
-import ca.litten.discordbot.wuwabuilder.wuwa.ExtraData;
-import ca.litten.discordbot.wuwabuilder.wuwa.StatPage;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -22,7 +20,7 @@ public class CardBuilderTest {
     
     @BeforeAll
     public static void Startup() {
-        HakushinInterface.init(); // We need the images
+        WuwaDatabaseLoader.initFromHakushin(); // We need the images
         lightModeCardBuilder = new CardBuilder(true);
     }
     

@@ -1,11 +1,9 @@
 package ca.litten.discordbot.wuwabuilder.parser;
 
-import ca.litten.discordbot.wuwabuilder.HakushinInterface;
-import org.jetbrains.annotations.Nullable;
+import ca.litten.discordbot.wuwabuilder.WuwaDatabaseLoader;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.PixelGrabber;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,7 +11,7 @@ public class FindClosestImage {
     public static long findClosestSonata(BufferedImage sonataImage) {
         long biggestDif = Long.MAX_VALUE;
         long closestSonata = -1;
-        Set<Long> toCheck = HakushinInterface.sonataImageCache.keySet();
+        Set<Long> toCheck = WuwaDatabaseLoader.sonataImageCache.keySet();
         int dim = Math.max(sonataImage.getHeight(), sonataImage.getWidth());
         int heightMod = (dim - sonataImage.getHeight()) / 2;
         int widthMod = (dim - sonataImage.getWidth()) / 2;
@@ -24,7 +22,7 @@ public class FindClosestImage {
             Graphics2D g2d = bufferedCheckImage.createGraphics();
             g2d.setColor(bgColor);
             g2d.fillRect(0, 0, dim, dim);
-            g2d.drawImage(HakushinInterface.sonataImageCache.get(sonata)
+            g2d.drawImage(WuwaDatabaseLoader.sonataImageCache.get(sonata)
                     .getScaledInstance(dim, dim, Image.SCALE_SMOOTH), 0, 0, null);
             g2d.dispose();
             for (int x = 0; x < sonataImage.getWidth(); x++)
@@ -61,8 +59,8 @@ public class FindClosestImage {
         long biggestDif = Long.MAX_VALUE;
         long closestID = -1;
         Set<Long> toCheck;
-        if (sonata == -1) toCheck = HakushinInterface.echoImageCache.keySet();
-        else toCheck = new HashSet<>(HakushinInterface.sonataEchoCache.get(sonata));
+        if (sonata == -1) toCheck = WuwaDatabaseLoader.echoImageCache.keySet();
+        else toCheck = new HashSet<>(WuwaDatabaseLoader.sonataEchoCache.get(sonata));
         int dim = Math.max(echoImage.getHeight(), echoImage.getWidth());
         int heightMod = (dim - echoImage.getHeight()) / 2;
         int widthMod = (dim - echoImage.getWidth()) / 2;
@@ -73,7 +71,7 @@ public class FindClosestImage {
             Graphics2D g2d = bufferedCheckImage.createGraphics();
             g2d.setColor(bgColor);
             g2d.fillRect(0, 0, dim, dim);
-            g2d.drawImage(HakushinInterface.echoImageCache.get(id)
+            g2d.drawImage(WuwaDatabaseLoader.echoImageCache.get(id)
                     .getScaledInstance(dim, dim, Image.SCALE_SMOOTH), 0, 0, null);
             g2d.dispose();
             for (int x = 0; x < echoImage.getWidth(); x++)

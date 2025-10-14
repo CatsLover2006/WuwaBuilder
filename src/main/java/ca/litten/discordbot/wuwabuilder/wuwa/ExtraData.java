@@ -2,7 +2,7 @@ package ca.litten.discordbot.wuwabuilder.wuwa;
 
 import javax.imageio.ImageIO;
 
-import static ca.litten.discordbot.wuwabuilder.HakushinInterface.StatPair;
+import static ca.litten.discordbot.wuwabuilder.WuwaDatabaseLoader.StatPair;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
