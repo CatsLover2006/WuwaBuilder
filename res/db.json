@@ -618,11 +618,21 @@
             "imageLoc": "weapon/21010011.png",
             "name": "Training Broadblade",
             "buffs": [
-                {},
-                {},
-                {},
-                {},
-                {}
+                {
+                    "percentATK": 4
+                },
+                {
+                    "percentATK": 5
+                },
+                {
+                    "percentATK": 6
+                },
+                {
+                    "percentATK": 7
+                },
+                {
+                    "percentATK": 8
+                }
             ],
             "stars": 1,
             "mainStatMag": [
@@ -829,11 +839,21 @@
             "imageLoc": "weapon/21010012.png",
             "name": "Tyro Broadblade",
             "buffs": [
-                {},
-                {},
-                {},
-                {},
-                {}
+                {
+                    "percentATK": 5
+                },
+                {
+                    "percentATK": 6.25
+                },
+                {
+                    "percentATK": 7.5
+                },
+                {
+                    "percentATK": 8.75
+                },
+                {
+                    "percentATK": 10
+                }
             ],
             "stars": 2,
             "mainStatMag": [
@@ -1251,11 +1271,21 @@
             "imageLoc": "weapon/21010015.png",
             "name": "Lustrous Razor",
             "buffs": [
-                {},
-                {},
-                {},
-                {},
-                {}
+                {
+                    "energyRegen": 12.8
+                },
+                {
+                    "energyRegen": 16
+                },
+                {
+                    "energyRegen": 19.2
+                },
+                {
+                    "energyRegen": 22.4
+                },
+                {
+                    "energyRegen": 25.6
+                }
             ],
             "stars": 5,
             "mainStatMag": [
@@ -1462,11 +1492,46 @@
             "imageLoc": "weapon/21010016.png",
             "name": "Verdant Summit",
             "buffs": [
-                {},
-                {},
-                {},
-                {},
-                {}
+                {
+                    "glacioBonus": 12,
+                    "spectroBonus": 12,
+                    "electroBonus": 12,
+                    "aeroBonus": 12,
+                    "fusionBonus": 12,
+                    "havocBonus": 12
+                },
+                {
+                    "glacioBonus": 15,
+                    "spectroBonus": 15,
+                    "electroBonus": 15,
+                    "aeroBonus": 15,
+                    "fusionBonus": 15,
+                    "havocBonus": 15
+                },
+                {
+                    "glacioBonus": 18,
+                    "spectroBonus": 18,
+                    "electroBonus": 18,
+                    "aeroBonus": 18,
+                    "fusionBonus": 18,
+                    "havocBonus": 18
+                },
+                {
+                    "glacioBonus": 21,
+                    "spectroBonus": 21,
+                    "electroBonus": 21,
+                    "aeroBonus": 21,
+                    "fusionBonus": 21,
+                    "havocBonus": 21
+                },
+                {
+                    "glacioBonus": 24,
+                    "spectroBonus": 24,
+                    "electroBonus": 24,
+                    "aeroBonus": 24,
+                    "fusionBonus": 24,
+                    "havocBonus": 24
+                }
             ],
             "stars": 5,
             "mainStatMag": [
@@ -2095,11 +2160,46 @@
             "imageLoc": "weapon/21010026.png",
             "name": "Ages of Harvest",
             "buffs": [
-                {},
-                {},
-                {},
-                {},
-                {}
+                {
+                    "glacioBonus": 12,
+                    "spectroBonus": 12,
+                    "electroBonus": 12,
+                    "aeroBonus": 12,
+                    "fusionBonus": 12,
+                    "havocBonus": 12
+                },
+                {
+                    "glacioBonus": 15,
+                    "spectroBonus": 15,
+                    "electroBonus": 15,
+                    "aeroBonus": 15,
+                    "fusionBonus": 15,
+                    "havocBonus": 15
+                },
+                {
+                    "glacioBonus": 18,
+                    "spectroBonus": 18,
+                    "electroBonus": 18,
+                    "aeroBonus": 18,
+                    "fusionBonus": 18,
+                    "havocBonus": 18
+                },
+                {
+                    "glacioBonus": 21,
+                    "spectroBonus": 21,
+                    "electroBonus": 21,
+                    "aeroBonus": 21,
+                    "fusionBonus": 21,
+                    "havocBonus": 21
+                },
+                {
+                    "glacioBonus": 24,
+                    "spectroBonus": 24,
+                    "electroBonus": 24,
+                    "aeroBonus": 24,
+                    "fusionBonus": 24,
+                    "havocBonus": 24
+                }
             ],
             "stars": 5,
             "mainStatMag": [
@@ -2306,11 +2406,21 @@
             "imageLoc": "weapon/21020011.png",
             "name": "Training Sword",
             "buffs": [
-                {},
-                {},
-                {},
-                {},
-                {}
+                {
+                    "percentATK": 4
+                },
+                {
+                    "percentATK": 5
+                },
+                {
+                    "percentATK": 6
+                },
+                {
+                    "percentATK": 7
+                },
+                {
+                    "percentATK": 8
+                }
             ],
             "stars": 1,
             "mainStatMag": [
@@ -2517,11 +2627,21 @@
             "imageLoc": "weapon/21020012.png",
             "name": "Tyro Sword",
             "buffs": [
-                {},
-                {},
-                {},
-                {},
-                {}
+                {
+                    "percentATK": 5
+                },
+                {
+                    "percentATK": 6.25
+                },
+                {
+                    "percentATK": 7.5
+                },
+                {
+                    "percentATK": 8.75
+                },
+                {
+                    "percentATK": 10
+                }
             ],
             "stars": 2,
             "mainStatMag": [
@@ -2939,11 +3059,21 @@
             "imageLoc": "weapon/21020015.png",
             "name": "Emerald of Genesis",
             "buffs": [
-                {},
-                {},
-                {},
-                {},
-                {}
+                {
+                    "energyRegen": 12.8
+                },
+                {
+                    "energyRegen": 16
+                },
+                {
+                    "energyRegen": 19.2
+                },
+                {
+                    "energyRegen": 22.4
+                },
+                {
+                    "energyRegen": 25.6
+                }
             ],
             "stars": 5,
             "mainStatMag": [
@@ -3150,11 +3280,21 @@
             "imageLoc": "weapon/21020016.png",
             "name": "Blazing Brilliance",
             "buffs": [
-                {},
-                {},
-                {},
-                {},
-                {}
+                {
+                    "percentATK": 12
+                },
+                {
+                    "percentATK": 15
+                },
+                {
+                    "percentATK": 18
+                },
+                {
+                    "percentATK": 21
+                },
+                {
+                    "percentATK": 24
+                }
             ],
             "stars": 5,
             "mainStatMag": [
@@ -3783,11 +3923,21 @@
             "imageLoc": "weapon/21010036.png",
             "name": "Wildfire Mark",
             "buffs": [
-                {},
-                {},
-                {},
-                {},
-                {}
+                {
+                    "percentATK": 12
+                },
+                {
+                    "percentATK": 15
+                },
+                {
+                    "percentATK": 18
+                },
+                {
+                    "percentATK": 21
+                },
+                {
+                    "percentATK": 24
+                }
             ],
             "stars": 5,
             "mainStatMag": [
@@ -4838,11 +4988,21 @@
             "imageLoc": "weapon/21030011.png",
             "name": "Training Pistols",
             "buffs": [
-                {},
-                {},
-                {},
-                {},
-                {}
+                {
+                    "percentATK": 4
+                },
+                {
+                    "percentATK": 5
+                },
+                {
+                    "percentATK": 6
+                },
+                {
+                    "percentATK": 7
+                },
+                {
+                    "percentATK": 8
+                }
             ],
             "stars": 1,
             "mainStatMag": [
@@ -5049,11 +5209,21 @@
             "imageLoc": "weapon/21030012.png",
             "name": "Tyro Pistols",
             "buffs": [
-                {},
-                {},
-                {},
-                {},
-                {}
+                {
+                    "percentATK": 5
+                },
+                {
+                    "percentATK": 6.25
+                },
+                {
+                    "percentATK": 7.5
+                },
+                {
+                    "percentATK": 8.75
+                },
+                {
+                    "percentATK": 10
+                }
             ],
             "stars": 2,
             "mainStatMag": [
@@ -5682,11 +5852,21 @@
             "imageLoc": "weapon/21010046.png",
             "name": "Thunderflare Dominion",
             "buffs": [
-                {},
-                {},
-                {},
-                {},
-                {}
+                {
+                    "percentATK": 12
+                },
+                {
+                    "percentATK": 15
+                },
+                {
+                    "percentATK": 18
+                },
+                {
+                    "percentATK": 21
+                },
+                {
+                    "percentATK": 24
+                }
             ],
             "stars": 5,
             "mainStatMag": [
@@ -5893,11 +6073,21 @@
             "imageLoc": "weapon/21030015.png",
             "name": "Static Mist",
             "buffs": [
-                {},
-                {},
-                {},
-                {},
-                {}
+                {
+                    "energyRegen": 12.8
+                },
+                {
+                    "energyRegen": 16
+                },
+                {
+                    "energyRegen": 19.2
+                },
+                {
+                    "energyRegen": 22.4
+                },
+                {
+                    "energyRegen": 25.6
+                }
             ],
             "stars": 5,
             "mainStatMag": [
@@ -6526,11 +6716,26 @@
             "imageLoc": "weapon/21050053.png",
             "name": "Guardian Rectifier",
             "buffs": [
-                {},
-                {},
-                {},
-                {},
-                {}
+                {
+                    "basicBonus": 12,
+                    "heavyBonus": 12
+                },
+                {
+                    "basicBonus": 15,
+                    "heavyBonus": 15
+                },
+                {
+                    "basicBonus": 18,
+                    "heavyBonus": 18
+                },
+                {
+                    "basicBonus": 21,
+                    "heavyBonus": 21
+                },
+                {
+                    "basicBonus": 24,
+                    "heavyBonus": 24
+                }
             ],
             "stars": 3,
             "mainStatMag": [
@@ -6948,11 +7153,21 @@
             "imageLoc": "weapon/21050056.png",
             "name": "Whispers of Sirens",
             "buffs": [
-                {},
-                {},
-                {},
-                {},
-                {}
+                {
+                    "percentATK": 12
+                },
+                {
+                    "percentATK": 15
+                },
+                {
+                    "percentATK": 18
+                },
+                {
+                    "percentATK": 21
+                },
+                {
+                    "percentATK": 24
+                }
             ],
             "stars": 5,
             "mainStatMag": [
@@ -7792,11 +8007,21 @@
             "imageLoc": "weapon/21050066.png",
             "name": "Lethean Elegy",
             "buffs": [
-                {},
-                {},
-                {},
-                {},
-                {}
+                {
+                    "percentATK": 12
+                },
+                {
+                    "percentATK": 15
+                },
+                {
+                    "percentATK": 18
+                },
+                {
+                    "percentATK": 21
+                },
+                {
+                    "percentATK": 24
+                }
             ],
             "stars": 5,
             "mainStatMag": [
@@ -9691,11 +9916,21 @@
             "imageLoc": "weapon/21030016.png",
             "name": "The Last Dance",
             "buffs": [
-                {},
-                {},
-                {},
-                {},
-                {}
+                {
+                    "percentATK": 12
+                },
+                {
+                    "percentATK": 15
+                },
+                {
+                    "percentATK": 18
+                },
+                {
+                    "percentATK": 21
+                },
+                {
+                    "percentATK": 24
+                }
             ],
             "stars": 5,
             "mainStatMag": [
@@ -10113,11 +10348,21 @@
             "imageLoc": "weapon/21020036.png",
             "name": "Unflickering Valor",
             "buffs": [
-                {},
-                {},
-                {},
-                {},
-                {}
+                {
+                    "critRate": 8
+                },
+                {
+                    "critRate": 10
+                },
+                {
+                    "critRate": 12
+                },
+                {
+                    "critRate": 14
+                },
+                {
+                    "critRate": 16
+                }
             ],
             "stars": 5,
             "mainStatMag": [
@@ -10324,11 +10569,26 @@
             "imageLoc": "weapon/21010053.png",
             "name": "Guardian Broadblade",
             "buffs": [
-                {},
-                {},
-                {},
-                {},
-                {}
+                {
+                    "basicBonus": 12,
+                    "heavyBonus": 12
+                },
+                {
+                    "basicBonus": 15,
+                    "heavyBonus": 15
+                },
+                {
+                    "basicBonus": 18,
+                    "heavyBonus": 18
+                },
+                {
+                    "basicBonus": 21,
+                    "heavyBonus": 21
+                },
+                {
+                    "basicBonus": 24,
+                    "heavyBonus": 24
+                }
             ],
             "stars": 3,
             "mainStatMag": [
@@ -10957,11 +11217,21 @@
             "imageLoc": "weapon/21030026.png",
             "name": "Woodland Aria",
             "buffs": [
-                {},
-                {},
-                {},
-                {},
-                {}
+                {
+                    "percentATK": 12
+                },
+                {
+                    "percentATK": 15
+                },
+                {
+                    "percentATK": 18
+                },
+                {
+                    "percentATK": 21
+                },
+                {
+                    "percentATK": 24
+                }
             ],
             "stars": 5,
             "mainStatMag": [
@@ -11168,11 +11438,21 @@
             "imageLoc": "weapon/21040011.png",
             "name": "Training Gauntlets",
             "buffs": [
-                {},
-                {},
-                {},
-                {},
-                {}
+                {
+                    "percentATK": 4
+                },
+                {
+                    "percentATK": 5
+                },
+                {
+                    "percentATK": 6
+                },
+                {
+                    "percentATK": 7
+                },
+                {
+                    "percentATK": 8
+                }
             ],
             "stars": 1,
             "mainStatMag": [
@@ -12012,11 +12292,21 @@
             "imageLoc": "weapon/21040012.png",
             "name": "Tyro Gauntlets",
             "buffs": [
-                {},
-                {},
-                {},
-                {},
-                {}
+                {
+                    "percentATK": 5
+                },
+                {
+                    "percentATK": 6.25
+                },
+                {
+                    "percentATK": 7.5
+                },
+                {
+                    "percentATK": 8.75
+                },
+                {
+                    "percentATK": 10
+                }
             ],
             "stars": 2,
             "mainStatMag": [
@@ -12434,11 +12724,21 @@
             "imageLoc": "weapon/21040015.png",
             "name": "Abyss Surges",
             "buffs": [
-                {},
-                {},
-                {},
-                {},
-                {}
+                {
+                    "energyRegen": 12.8
+                },
+                {
+                    "energyRegen": 16
+                },
+                {
+                    "energyRegen": 19.2
+                },
+                {
+                    "energyRegen": 22.4
+                },
+                {
+                    "energyRegen": 25.6
+                }
             ],
             "stars": 5,
             "mainStatMag": [
@@ -13067,11 +13367,46 @@
             "imageLoc": "weapon/21040016.png",
             "name": "Verity's Handle",
             "buffs": [
-                {},
-                {},
-                {},
-                {},
-                {}
+                {
+                    "glacioBonus": 12,
+                    "spectroBonus": 12,
+                    "electroBonus": 12,
+                    "aeroBonus": 12,
+                    "fusionBonus": 12,
+                    "havocBonus": 12
+                },
+                {
+                    "glacioBonus": 15,
+                    "spectroBonus": 15,
+                    "electroBonus": 15,
+                    "aeroBonus": 15,
+                    "fusionBonus": 15,
+                    "havocBonus": 15
+                },
+                {
+                    "glacioBonus": 18,
+                    "spectroBonus": 18,
+                    "electroBonus": 18,
+                    "aeroBonus": 18,
+                    "fusionBonus": 18,
+                    "havocBonus": 18
+                },
+                {
+                    "glacioBonus": 21,
+                    "spectroBonus": 21,
+                    "electroBonus": 21,
+                    "aeroBonus": 21,
+                    "fusionBonus": 21,
+                    "havocBonus": 21
+                },
+                {
+                    "glacioBonus": 24,
+                    "spectroBonus": 24,
+                    "electroBonus": 24,
+                    "aeroBonus": 24,
+                    "fusionBonus": 24,
+                    "havocBonus": 24
+                }
             ],
             "stars": 5,
             "mainStatMag": [
@@ -13489,11 +13824,21 @@
             "imageLoc": "weapon/21030036.png",
             "name": "Lux & Umbra",
             "buffs": [
-                {},
-                {},
-                {},
-                {},
-                {}
+                {
+                    "percentATK": 12
+                },
+                {
+                    "percentATK": 15
+                },
+                {
+                    "percentATK": 18
+                },
+                {
+                    "percentATK": 21
+                },
+                {
+                    "percentATK": 24
+                }
             ],
             "stars": 5,
             "mainStatMag": [
@@ -13700,11 +14045,21 @@
             "imageLoc": "weapon/21020053.png",
             "name": "Guardian Sword",
             "buffs": [
-                {},
-                {},
-                {},
-                {},
-                {}
+                {
+                    "skillBonus": 12
+                },
+                {
+                    "skillBonus": 15
+                },
+                {
+                    "skillBonus": 18
+                },
+                {
+                    "skillBonus": 21
+                },
+                {
+                    "skillBonus": 24
+                }
             ],
             "stars": 3,
             "mainStatMag": [
@@ -14122,11 +14477,21 @@
             "imageLoc": "weapon/21020056.png",
             "name": "Defier's Thorn",
             "buffs": [
-                {},
-                {},
-                {},
-                {},
-                {}
+                {
+                    "percentHP": 12
+                },
+                {
+                    "percentHP": 15
+                },
+                {
+                    "percentHP": 18
+                },
+                {
+                    "percentHP": 21
+                },
+                {
+                    "percentHP": 24
+                }
             ],
             "stars": 5,
             "mainStatMag": [
@@ -14544,11 +14909,21 @@
             "imageLoc": "weapon/21050011.png",
             "name": "Training Rectifier",
             "buffs": [
-                {},
-                {},
-                {},
-                {},
-                {}
+                {
+                    "percentATK": 4
+                },
+                {
+                    "percentATK": 5
+                },
+                {
+                    "percentATK": 6
+                },
+                {
+                    "percentATK": 7
+                },
+                {
+                    "percentATK": 8
+                }
             ],
             "stars": 1,
             "mainStatMag": [
@@ -14966,11 +15341,21 @@
             "imageLoc": "weapon/21040026.png",
             "name": "Tragicomedy",
             "buffs": [
-                {},
-                {},
-                {},
-                {},
-                {}
+                {
+                    "percentATK": 12
+                },
+                {
+                    "percentATK": 15
+                },
+                {
+                    "percentATK": 18
+                },
+                {
+                    "percentATK": 21
+                },
+                {
+                    "percentATK": 24
+                }
             ],
             "stars": 5,
             "mainStatMag": [
@@ -15810,11 +16195,21 @@
             "imageLoc": "weapon/21050012.png",
             "name": "Tyro Rectifier",
             "buffs": [
-                {},
-                {},
-                {},
-                {},
-                {}
+                {
+                    "percentATK": 5
+                },
+                {
+                    "percentATK": 6.25
+                },
+                {
+                    "percentATK": 7.5
+                },
+                {
+                    "percentATK": 8.75
+                },
+                {
+                    "percentATK": 10
+                }
             ],
             "stars": 2,
             "mainStatMag": [
@@ -16021,11 +16416,21 @@
             "imageLoc": "weapon/21050015.png",
             "name": "Cosmic Ripples",
             "buffs": [
-                {},
-                {},
-                {},
-                {},
-                {}
+                {
+                    "energyRegen": 12.8
+                },
+                {
+                    "energyRegen": 16
+                },
+                {
+                    "energyRegen": 19.2
+                },
+                {
+                    "energyRegen": 22.4
+                },
+                {
+                    "energyRegen": 25.6
+                }
             ],
             "stars": 5,
             "mainStatMag": [
@@ -16654,11 +17059,46 @@
             "imageLoc": "weapon/21050016.png",
             "name": "Stringmaster",
             "buffs": [
-                {},
-                {},
-                {},
-                {},
-                {}
+                {
+                    "glacioBonus": 12,
+                    "spectroBonus": 12,
+                    "electroBonus": 12,
+                    "aeroBonus": 12,
+                    "fusionBonus": 12,
+                    "havocBonus": 12
+                },
+                {
+                    "glacioBonus": 15,
+                    "spectroBonus": 15,
+                    "electroBonus": 15,
+                    "aeroBonus": 15,
+                    "fusionBonus": 15,
+                    "havocBonus": 15
+                },
+                {
+                    "glacioBonus": 18,
+                    "spectroBonus": 18,
+                    "electroBonus": 18,
+                    "aeroBonus": 18,
+                    "fusionBonus": 18,
+                    "havocBonus": 18
+                },
+                {
+                    "glacioBonus": 21,
+                    "spectroBonus": 21,
+                    "electroBonus": 21,
+                    "aeroBonus": 21,
+                    "fusionBonus": 21,
+                    "havocBonus": 21
+                },
+                {
+                    "glacioBonus": 24,
+                    "spectroBonus": 24,
+                    "electroBonus": 24,
+                    "aeroBonus": 24,
+                    "fusionBonus": 24,
+                    "havocBonus": 24
+                }
             ],
             "stars": 5,
             "mainStatMag": [
@@ -16865,11 +17305,21 @@
             "imageLoc": "weapon/21020066.png",
             "name": "Emerald Sentence",
             "buffs": [
-                {},
-                {},
-                {},
-                {},
-                {}
+                {
+                    "percentATK": 12
+                },
+                {
+                    "percentATK": 15
+                },
+                {
+                    "percentATK": 18
+                },
+                {
+                    "percentATK": 21
+                },
+                {
+                    "percentATK": 24
+                }
             ],
             "stars": 5,
             "mainStatMag": [
@@ -17498,11 +17948,21 @@
             "imageLoc": "weapon/21040036.png",
             "name": "Blazing Justice",
             "buffs": [
-                {},
-                {},
-                {},
-                {},
-                {}
+                {
+                    "percentATK": 12
+                },
+                {
+                    "percentATK": 15
+                },
+                {
+                    "percentATK": 18
+                },
+                {
+                    "percentATK": 21
+                },
+                {
+                    "percentATK": 24
+                }
             ],
             "stars": 5,
             "mainStatMag": [
@@ -17709,11 +18169,21 @@
             "imageLoc": "weapon/21030053.png",
             "name": "Guardian Pistols",
             "buffs": [
-                {},
-                {},
-                {},
-                {},
-                {}
+                {
+                    "skillBonus": 12
+                },
+                {
+                    "skillBonus": 15
+                },
+                {
+                    "skillBonus": 18
+                },
+                {
+                    "skillBonus": 21
+                },
+                {
+                    "skillBonus": 24
+                }
             ],
             "stars": 3,
             "mainStatMag": [
@@ -18975,11 +19445,21 @@
             "imageLoc": "weapon/21050026.png",
             "name": "Rime-Draped Sprouts",
             "buffs": [
-                {},
-                {},
-                {},
-                {},
-                {}
+                {
+                    "percentATK": 12
+                },
+                {
+                    "percentATK": 15
+                },
+                {
+                    "percentATK": 18
+                },
+                {
+                    "percentATK": 21
+                },
+                {
+                    "percentATK": 24
+                }
             ],
             "stars": 5,
             "mainStatMag": [
@@ -19608,11 +20088,21 @@
             "imageLoc": "weapon/21040046.png",
             "name": "Moongazer's Sigil",
             "buffs": [
-                {},
-                {},
-                {},
-                {},
-                {}
+                {
+                    "percentATK": 12
+                },
+                {
+                    "percentATK": 15
+                },
+                {
+                    "percentATK": 18
+                },
+                {
+                    "percentATK": 21
+                },
+                {
+                    "percentATK": 24
+                }
             ],
             "stars": 5,
             "mainStatMag": [
@@ -20452,11 +20942,21 @@
             "imageLoc": "weapon/21040053.png",
             "name": "Guardian Gauntlets",
             "buffs": [
-                {},
-                {},
-                {},
-                {},
-                {}
+                {
+                    "ultBonus": 12
+                },
+                {
+                    "ultBonus": 15
+                },
+                {
+                    "ultBonus": 18
+                },
+                {
+                    "ultBonus": 21
+                },
+                {
+                    "ultBonus": 24
+                }
             ],
             "stars": 3,
             "mainStatMag": [
@@ -20663,11 +21163,21 @@
             "imageLoc": "weapon/21050036.png",
             "name": "Stellar Symphony",
             "buffs": [
-                {},
-                {},
-                {},
-                {},
-                {}
+                {
+                    "percentHP": 12
+                },
+                {
+                    "percentHP": 15
+                },
+                {
+                    "percentHP": 18
+                },
+                {
+                    "percentHP": 21
+                },
+                {
+                    "percentHP": 24
+                }
             ],
             "stars": 5,
             "mainStatMag": [
@@ -21929,11 +22439,21 @@
             "imageLoc": "weapon/21050046.png",
             "name": "Luminous Hymn",
             "buffs": [
-                {},
-                {},
-                {},
-                {},
-                {}
+                {
+                    "percentATK": 12
+                },
+                {
+                    "percentATK": 15
+                },
+                {
+                    "percentATK": 18
+                },
+                {
+                    "percentATK": 21
+                },
+                {
+                    "percentATK": 24
+                }
             ],
             "stars": 5,
             "mainStatMag": [
